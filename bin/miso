@@ -1,6 +1,6 @@
 #!/bin/bash
 #this script mount a disk image
-username=$(logname)
+username=${SUDO_USER:-$(id -u -n)}
 Mountpoint="/run/media/$username/iso"
 SUDO=""
 if [ $EUID -ne 0 ]; then
