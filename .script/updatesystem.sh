@@ -3,7 +3,7 @@
 #this script check for archlinux news and if no news found update the system
 
 Args=$@ 
-USERNAME=$(id -u -n)
+USERNAME=$(logname)
 HOMEDIR="/home/$USERNAME"
 SUDO=""
 if [ $EUID -ne 0 ]; then
