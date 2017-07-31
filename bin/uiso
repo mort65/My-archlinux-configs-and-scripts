@@ -21,4 +21,5 @@ else
 	echo "$Mountpoint not found"
 	exit 1
 fi
+
 exit 0
