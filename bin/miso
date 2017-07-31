@@ -1,0 +1,22 @@
+#!/bin/bash
+
+username=$(id -u -n)
+Mountpoint="/run/media/$username/iso"
+SUDO=""
+if [ $EUID -ne 0 ]; then
+    SUDO='/usr/bin/sudo'
+fi
+
+if [ -d "$Mountpoint" ]; then
+	if [ "$(ls -A $Mountpoint)" ]; then
+     	echo "$Mountpoint is not Empty"
+		exit 1
+	else
+		$SUDO mount -o loop "$*" "$Mountpoint"
+		exit 0
+	fi
+else
+	$SUDO mkdir "$Mountpoint"
+    	$SUDO mount -o loop "$*" "$Mountpoint"
+	exit 0
+fi
