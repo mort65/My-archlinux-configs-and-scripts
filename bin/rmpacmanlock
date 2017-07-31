@@ -1,0 +1,17 @@
+#!/bin/bash
+#this script remove pacman's lock
+
+SUDO=""
+if [ $EUID -ne 0 ]; then
+    SUDO='/usr/bin/sudo'
+fi
+
+read -p "Are you sure you want to delete pacman's lock? [yes/no] " -r
+if [[ $REPLY =~ ^[Yy][Ee][Ss]$ ]]
+then
+    $SUDO rm /var/lib/pacman/db.lck
+    exit 0 
+else
+    exit 1
+
+fi
