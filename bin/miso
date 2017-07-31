@@ -1,5 +1,5 @@
 #!/bin/bash
-
+#this script mount a disk image
 username=$(id -u -n)
 Mountpoint="/run/media/$username/iso"
 SUDO=""
