@@ -1,1 +1,1 @@
-# My-archlinux-configs-and-scripts
+# my-archlinux-configs-and-scripts
