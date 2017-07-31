@@ -1,5 +1,5 @@
 #!/bin/bash
-# this script runs updatesystem in a tmux session
+# this script runs updatesystem.sh in a tmux session
 
 # Colors
 blue="\033[1;34m"
@@ -10,6 +10,8 @@ reset="\033[0m"
 
 session="update"
 programname="tupdatesystem"
+USERNAME=$(id -u -n)
+HOMEDIR="/home/$USERNAME"
 
 function usage {
     echo "Usage: $programname [OPTION]"
@@ -49,6 +51,6 @@ elif /usr/bin/tmux has-session -t $session 2>/dev/null; then  #checking if tmux 
 	exit 0
 fi
 
-tmux new-session -d -s $session "/usr/bin/sudo /home/mohsen/.script/updatesystem.sh ${1}"
+tmux new-session -d -s $session "/usr/bin/sudo $HOMEDIR/.script/updatesystem.sh ${1}"
 
 /usr/bin/tmux attach-session -t $session
