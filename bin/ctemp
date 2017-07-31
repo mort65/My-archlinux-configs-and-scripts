@@ -1,5 +1,5 @@
 #!/bin/bash
-#this script show cpu temperature
+#this script show my cpu temperature
 
 if [ "${#}" -gt 1 ]; then
   printf "Too many arguments\n"
