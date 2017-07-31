@@ -1,0 +1,39 @@
+#!/bin/bash
+#this script remove pacnew files
+
+# Colors
+blue="\033[1;34m"
+green="\033[1;32m"
+red="\033[1;31m"
+bold="\033[1;37m"
+reset="\033[0m"
+
+#making sure that script is running as root:
+if [ "$EUID" -ne 0 ];then 
+  echo -e $red"error:$reset you cannot perform this operation unless you are root."
+  exit 1
+fi
+
+pacnew=$(find /etc -type f -name "*.pacnew")
+
+#check if #pacnew is not empty
+if [ -n "$pacnew" ];then
+  echo "$pacnew"
+else
+  echo "no matching file found"
+  exit 1
+fi
+
+echo
+echo -e "$red!!!$reset This script will remove all *.pacnew files$red !!!$reset"
+read -r -p "Are you sure? [y/N] " response
+case "$response" in
+    [yY][eE][sS]|[yY]) 
+        find /etc -type f -name "*.pacnew" -exec rm {} \;
+        ;;
+    *)
+        exit 1
+        ;;
+esac
+
+exit 0
