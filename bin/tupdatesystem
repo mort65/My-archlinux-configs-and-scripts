@@ -10,7 +10,7 @@ reset="\033[0m"
 
 session="update"
 programname="tupdatesystem"
-USERNAME=$(id -u -n)
+USERNAME=$(logname)
 HOMEDIR="/home/$USERNAME"
 
 function usage {
