@@ -1,0 +1,54 @@
+#!/bin/bash
+# this script runs updatesystem in a tmux session
+
+# Colors
+blue="\033[1;34m"
+green="\033[1;32m"
+red="\033[1;31m"
+bold="\033[1;37m"
+reset="\033[0m"
+
+session="update"
+programname="tupdatesystem"
+
+function usage {
+    echo "Usage: $programname [OPTION]"
+    echo "A script for updating archlinux in a tmux session"
+    echo ""
+    echo "  -a,  --aur      Refresh package databases then synchronize all normal and aur packages"
+    echo "  -y,  --refresh  Force a refresh of all package databases instead of normal refresh" 
+    echo "  -s,  --sync     Refresh package databases then synchronize normal packages"
+    echo "  -r   --norss    Disable checking for archlinux news"
+    echo "  -p,  --nopac    Disable checking for pacnew files"    
+    echo "  -i,  --install  Install a package"
+    echo "  -b,  --build    Build a package"
+    echo "  -l   --nolog    Disable logging"
+    echo "  -m,  --mirror   Update mirrors"
+    echo "  -h,  --help     Display help"
+    exit 1
+}
+
+if [ "${#}" -gt 1 ]; then
+    echo -e $red"Error:$reset Invalid number of parameters"
+    echo ""
+    usage
+elif [ "${#}" -eq 0 ]; then
+    usage
+fi
+
+if [[ $1 =~ ^--[Hh][Ee][Ll][Pp]$ ]] || [[ $1 =~ ^-[Hh]$ ]]; then
+  usage
+fi
+
+if [ "$TERM" = "screen" ] && [ -n "$TMUX" ]; then #checking if script is running from a tmux session
+	echo "You are already attached to a tmux session"
+        exit 0
+
+elif /usr/bin/tmux has-session -t $session 2>/dev/null; then  #checking if tmux has a running session
+        /usr/bin/tmux attach-session -t $session
+	exit 0
+fi
+
+tmux new-session -d -s $session "/usr/bin/sudo /home/mohsen/.script/updatesystem.sh ${1}"
+
+/usr/bin/tmux attach-session -t $session
