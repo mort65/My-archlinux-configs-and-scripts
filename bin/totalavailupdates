@@ -11,7 +11,7 @@ HOMEDIR="/home/$USERNAME"
 
 NUM=0
 
-if [[ -s "/home/mohsen/.number_of_updates.txt" ]]; then
+if [[ -s "$HOMEDIR/.number_of_updates.txt" ]]; then
 	NUM=$(cat "$HOMEDIR/.number_of_updates.txt")
 	echo "$red$NUM$reset"
 else
