@@ -8,6 +8,12 @@ red="\033[1;31m"
 bold="\033[1;37m"
 reset="\033[0m"
 
+#making sure that script is not running as root:
+if [ "$EUID" -eq 0 ];then 
+  echo -e $red"error:$reset you cannot perform this operation as root."
+  exit 1
+fi
+
 session="update"
 programname="tupdatesystem"
 USERNAME=$(logname)
