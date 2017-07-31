@@ -1,5 +1,5 @@
 #!/bin/bash
-#this script check for archlinux news and if no news found update the system
+#this script check for arch linux news and if no news found update the system
 
 Args=$@ 
 USERNAME=$(id -u -n)
