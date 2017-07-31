@@ -1,5 +1,4 @@
 #!/bin/bash
-
 #this script check for archlinux news and if no news found update the system
 
 Args=$@ 
