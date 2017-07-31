@@ -1,5 +1,5 @@
 #!/bin/bash
-#this script show total amount of swap that is used by system
+#this script show total amount of swap space that is used by system
 
 #Total used memory = MemTotal - MemFree
 #Non cache/buffer memory (green) = Total used memory - (Buffers + Cached memory)
