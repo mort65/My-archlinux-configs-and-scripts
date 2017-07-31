@@ -16,7 +16,7 @@ fi
 
 session="update"
 programname="tupdatesystem"
-USERNAME=$(logname)
+USERNAME=${SUDO_USER:-$(id -u -n)}
 HOMEDIR="/home/$USERNAME"
 
 function usage {
