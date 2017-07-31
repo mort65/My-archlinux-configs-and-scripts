@@ -1,0 +1,75 @@
+#!/bin/bash
+#this script show total amount of free ram
+
+#Total used memory = MemTotal - MemFree
+#Non cache/buffer memory (green) = Total used memory - (Buffers + Cached memory)
+#Buffers (yellow) = Buffers
+#Cached memory (yellow) = Cached + SReclaimable - Shmem
+#Swap = SwapTotal - SwapFree
+
+
+shopt -s extglob
+
+UNIT="G"
+DIGIT=0
+
+#testing number of args:
+if [ "${#}" -gt 2 ]; then
+    echo "Invalid number of parameters"
+    exit 1
+fi
+
+# Tests whether command-line argument is present (non-empty).
+if [ -n "$1" ]; then
+  if [[ "$1" =~ ^-?[Mm]$ ]]; then
+	UNIT="M"
+  elif [[ "$1" =~ ^-?[Kk]$ ]]; then
+	UNIT="K"
+  elif [[ "$1" =~ ^-?[Gg]$ ]]; then
+	UNIT="G"
+  elif [[ "$1" =~ ^-?[Bb]$ ]]; then
+	UNIT="B"
+  else
+	echo "Invalid argument '${1}'"
+	exit 1
+  fi
+fi
+# In bash, ## removes a prefix pattern from the beginning
+#and  %% removes a prefix pattern from the the end of the variable.
+# (single #  or % returns the shortest occurrence)
+if [ -n "$2" ]; then
+  if [[ "$2" =~ ^-?[1-9]+$ ]]; then
+	DIGIT="${2#-}"
+  else
+	echo "Invalid argument '${2}'"
+	exit 1
+  fi
+elif [[ "$UNIT" == "G" ]]; then
+	DIGIT="1"
+fi
+
+
+totalmemK=$(awk '/^MemTotal:/ {print $2}' '/proc/meminfo')
+freememK=$(awk '/^MemFree:/ {print $2}' '/proc/meminfo')
+sharedK=$(awk '/^Shmem:/ {print $2}' '/proc/meminfo')
+bufferK=$(awk '/^Buffers:/ {print $2}' '/proc/meminfo')
+cachedK=$(awk '/^Cached:/ {print $2}' '/proc/meminfo')
+srecK=$(awk '/^SReclaimable:/ {print $2}' '/proc/meminfo')
+totalcachedK=$(($cachedK + $srecK - $sharedK))
+totalusedK=$(($totalmemK -$freememK))
+resultK=$(($totalusedK - $(($bufferK + $totalcachedK))))
+
+if [ $UNIT == "B" ]; then
+  resultB=$(($resultK * 1024))
+  printf "%.${DIGIT}fB\n" $resultB
+elif [ $UNIT == "K" ]; then
+  printf "%.${DIGIT}fK\n" $resultK
+elif [ $UNIT == "M" ]; then
+  resultM=$(bc -l <<< $resultK/1024)
+  printf "%.${DIGIT}fM\n" $resultM
+elif [ $UNIT == "G" ]; then
+  resultG=$(bc -l <<< $resultK/1024/1024)
+  printf "%.${DIGIT}fG\n" $resultG
+fi
+
+exit 0
