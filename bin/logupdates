@@ -1,4 +1,6 @@
 #!/bin/bash
+#this script log available arch linux updates
+
 USERNAME=$(id -u -n)
 HOMEDIR="/home/$USERNAME"
 
