@@ -20,3 +20,4 @@ else
     	$SUDO mount -o loop "$*" "$Mountpoint"
 	exit 0
 fi
+exit 0
