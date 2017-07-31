@@ -23,4 +23,5 @@ else
     mkdir "$Mountpoint"
     mount -o loop "$*" "$Mountpoint"
 fi
+
 exit 0
