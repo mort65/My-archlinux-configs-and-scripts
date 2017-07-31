@@ -7,7 +7,7 @@ if [ "$EUID" -ne 0 ];then
   exit 1
 fi
 
-username=$(logname)
+username=${SUDO_USER:-$(id -u -n)}
 Mountpoint="/run/media/$username/$(basename "$*")"
 
 
