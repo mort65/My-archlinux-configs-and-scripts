@@ -1,7 +1,7 @@
 #!/bin/bash
 #this script unmount a disk image 
 
-username=$(id -u -n)
+username=$(logname)
 Mountpoint="/run/media/$username/iso"
 SUDO=""
 
