@@ -6,10 +6,13 @@ red=`tput setaf 1`
 green=`tput setaf 2`
 reset=`tput sgr0`
 
+USERNAME=$(id -u -n)
+HOMEDIR="/home/$USERNAME"
+
 NUM=0
 
 if [[ -s "/home/mohsen/.number_of_updates.txt" ]]; then
-	NUM=$(cat "/home/mohsen/.number_of_updates.txt")
+	NUM=$(cat "$HOMEDIR/.number_of_updates.txt")
 	echo "$red$NUM$reset"
 else
 	echo "$NUM"
