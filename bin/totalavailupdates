@@ -1,0 +1,16 @@
+#!/bin/bash
+#this script show available updates available with using logupdates script
+
+# Colors
+red=`tput setaf 1`
+green=`tput setaf 2`
+reset=`tput sgr0`
+
+NUM=0
+
+if [[ -s "/home/mohsen/.number_of_updates.txt" ]]; then
+	NUM=$(cat "/home/mohsen/.number_of_updates.txt")
+	echo "$red$NUM$reset"
+else
+	echo "$NUM"
+fi
