@@ -9,7 +9,6 @@
 /usr/bin/nm-applet &
 /usr/bin/volumeicon &
 /usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1 &
-/usr/bin/setxkbmap us,ir -option 'grp:alt_shift_toggle'
 /usr/bin/python ~/bin/openbox/obwc.py &
 /usr/bin/clipit &
 
