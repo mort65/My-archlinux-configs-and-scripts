@@ -89,6 +89,11 @@ Plugin {
             action = lilyterm
         }
         button {
+            icon = mlterm
+            tooltip = Mlterm
+            action = mlterm
+        }
+        button {
             icon = firefox
             tooltip = Firefox
             action = firefox
@@ -257,40 +262,6 @@ Plugin {
         PollingTime = 15
         TextSize = large
         TextColor = #FFD000
-    }
-}
-Plugin {
-    type = space
-    config {
-        size = 3
-    }
-}
-Plugin {
-    type = genmon
-    expand = false
-    padding = 0
-    config {
-        Command = xkblayout-state print %s | awk '{print toupper($0)}'
-        PollingTime = 1
-        TextSize = large
-        TextColor = #95ceff
-    }
-}
-Plugin {
-    type = space
-    config {
-        size = 3
-    }
-}
-Plugin {
-    type = genmon
-    expand = false
-    padding = 0
-    config {
-        Command = /usr/bin/jdate  '+%h %d %b'
-        PollingTime = 60
-        TextSize = large
-        TextColor = #ff9ae3
     }
 }
 Plugin {
