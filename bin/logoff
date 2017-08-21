@@ -1,4 +1,4 @@
 #!/bin/bash
-# Logout current user
+# Logout current user with systemd
 USERNAME=${SUDO_USER:-$(id -u -n)}
 loginctl terminate-user $USERNAME
