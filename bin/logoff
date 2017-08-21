@@ -1,0 +1,4 @@
+#!/bin/bash
+# Logout current user
+USERNAME=${SUDO_USER:-$(id -u -n)}
+loginctl terminate-user $USERNAME
