@@ -1,0 +1,114 @@
+# conky configuration
+#
+# The list of variables has been removed from this file in favour
+# of keeping the documentation more maintainable.
+# Check http://conky.sf.net for an up-to-date-list.
+#
+# For ideas about how to modify conky, please see:
+# http://conky.sourceforge.net/variables.html
+#
+# For help with conky, please see:
+# http://conky.sourceforge.net/documentation.html
+#
+# Enjoy! :)
+##############################################
+# Settings
+##############################################
+background yes
+use_xft yes
+xftfont DejaVu Sans:size=9
+xftalpha 1
+update_interval 1.0
+total_run_times 0
+own_window yes
+own_window_class Conky
+own_window_type override
+own_window_transparent yes
+own_window_argb_visual yes
+own_window_hints undecorated,below,sticky,skip_taskbar,skip_pager
+double_buffer yes
+minimum_size 200 200
+maximum_width 240
+draw_shades yes
+draw_outline no
+draw_borders no
+draw_graph_borders no
+default_color 5BFCDB
+default_shade_color 828282
+default_outline_color 000000
+alignment top_right
+gap_x 12
+gap_y 56
+no_buffers yes
+uppercase no
+cpu_avg_samples 2
+override_utf8_locale yes
+
+# Color scheme #
+color1 88FFFF
+color2 FFFFFF
+color3 CCFFCC
+color4 FFFFFF
+color5 FFFFFF
+color6 FFFFFF
+color7 FFFFFF
+color8 FFFFFF
+##############################################
+#  Output
+##############################################
+TEXT
+${color2}S Y S T E M    I N F O
+${color3}${hr 3}
+${color1}Host:$alignr$nodename
+Uptime:$alignr$uptime
+RAM:$alignr$mem/$memmax
+Swap usage:$alignr$swap/$swapmax
+Disk usage /$alignr${fs_used /}/${fs_size /}
+Disk usage ~$alignr${fs_used /home}/${fs_size /home}
+CPU usage:$alignr${cpu cpu0}%
+#Updates:$alignr${execi 60 $HOME/bin/checkupdateslog}  
+Updates:$alignr${execi 60 [[ -s "$HOME/.number_of_updates.txt" ]] && cat "$HOME/.number_of_updates.txt" || echo "0"} 
+
+${color2}S H O R T C U T    K E Y S
+${color3}${hr 3}
+${color1}Super+⇧+q$alignr Close a window
+Super+d$alignr App launcher1
+Super+⇧+d$alignr App launcher2
+${color3}${hr}
+${color1}Super+⇧+0-9$alignr Switch win workspace
+Super+0-9$alignr Switch workspace
+${color3}${hr}
+${color1}Super+e$alignr Default layout
+Super+w$alignr Tabbed layout
+Super+s$alignr Stacking layout
+${color3}${hr}
+${color1}Super+⇧+f$alignr Toggle fullscreen
+Super+⇧+space$alignr Toggle floating
+Super+r$alignr Resize mode
+${color3}${hr}
+${color1}Super+⏎$alignr Terminal
+Super+t$alignr Floating terminal
+${color3}${hr}
+${color1}Super+delete$alignr Task Manager
+Super+home$alignr File Manager
+${color3}${hr}
+${color1}Super+g$alignr Geany
+Super+p$alignr Pluma
+${color3}${hr}
+${color1}Super+b$alignr Tor
+Super+o$alignr Opera
+Super+m$alignr Midori
+Super+v$alignr Vivaldi
+Super+f$alignr Firefox
+Super+u$alignr Qupzilla
+${color3}${hr}
+${color1}Super+addition$alignr Volume Up
+Super+subtract$alignr Volume Down
+Super+multiply$alignr Mute
+${color3}${hr}
+${color1}Super+⇧+e$alignr Exit i3
+Super+pause$alignr Exit Menu
+Super+⇧+c$alignr Reload config file
+Super+⇧+r$alignr Restart i3 inplace
+${color3}${hr}
+${color1}PrtSc$alignr Screenshot
