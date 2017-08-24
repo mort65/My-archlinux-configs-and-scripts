@@ -66,8 +66,8 @@ Swap usage:$alignr$swap/$swapmax
 Disk usage /$alignr${fs_used /}/${fs_size /}
 Disk usage ~$alignr${fs_used /home}/${fs_size /home}
 CPU usage:$alignr${cpu cpu0}%
-#Updates:$alignr${execi 60 $HOME/bin/checkupdateslog}  
-Updates:$alignr${execi 60 [[ -s "$HOME/.number_of_updates.txt" ]] && cat "$HOME/.number_of_updates.txt" || echo "0"} 
+#Updates:$alignr${execi 60 ~/bin/checkupdateslog}  
+Updates:$alignr${execi 60 [[ -s "~/.number_of_updates.txt" ]] && cat "~/.number_of_updates.txt" || echo "0"} 
 
 ${color2}S H O R T C U T    K E Y S
 ${color3}${hr 3}
