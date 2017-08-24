@@ -1,0 +1,61 @@
+#!/bin/bash
+
+shopt -s extglob
+
+UNIT="G"
+DIGIT=1
+
+#testing number of args:
+if [ "${#}" -gt 2 ]; then
+    echo "Illegal number of parameters"
+    exit 1
+fi
+
+# Test whether command-line argument is present (non-empty).
+if [ -n "$1" ]; then
+  if [[ "$1" == [-][Mm] || "$1" == "m" ]]; then
+	UNIT="M"
+  elif [[ "$1" == [-][Kk] || "$1" == "k" ]]; then
+	UNIT="K"
+  elif [[ "$1" == [-][Gg] || "$1" == "g" ]]; then
+	UNIT="G"
+  elif [[ "$1" == [-][Bb] || "$1" == "b" ]]; then
+	UNIT="B"
+  else
+	echo "Illegal argument \"${1}\""
+	exit 1
+  fi
+fi
+
+if [ -n "$2" ]; then
+  if [[ "$2" =~ [-][1-9]? ]]; then
+	DIGIT="${2##*-}"
+  elif [[ "$2" =~ [1-9]? ]]; then
+	DIGIT="$2"
+  fi
+fi
+
+if [[ $DIGIT -lt "0" || $DIGIT -gt "10" ]]; then
+	DIGIT="1"
+fi
+
+totalmemB=$(awk '/^Mem/ {print $2}' <(free -b))
+freememB=$(awk '/^Mem/ {print $4}' <(free -b))
+freesharedB=$(awk '/^Mem/ {print $5}' <(free -b))
+freebuffcacheB=$(awk '/^Mem/ {print $6}' <(free -b))
+totalfreeB=$(($freememB + $freebuffcacheB - $freesharedB))
+totalusedB=$(($totalmemB - $totalfreeB))
+
+if [ $UNIT == "B" ]; then
+  printf "%.${DIGIT}fB\n" $totalusedB
+elif [ $UNIT == "K" ]; then
+  totalusedK=$(bc -l <<< $totalusedB/1024)
+  printf "%.${DIGIT}fK\n" $totalusedK
+elif [ $UNIT == "M" ]; then
+  totalusedM=$(bc -l <<< $totalusedB/1024/1024)
+  printf "%.${DIGIT}fM\n" $totalusedM
+elif [ $UNIT == "G" ]; then
+  totalusedG=$(bc -l <<< $totalusedB/1024/1024/1024)
+  printf "%.${DIGIT}fG\n" $totalusedG
+fi
+
