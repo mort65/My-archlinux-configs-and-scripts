@@ -571,7 +571,7 @@ exec --no-startup-id /bin/bash ~/bin/keep_notif_log.sh ~/bin/tmp/log.txt &
 #exec --no-startup-id $feh -recursive --randomize --bg-fill ~/Pictures/Pics/*
 
 #put random wallpapers for each workspace in a directory:
-exec --no-startup-id /usr/bin/python ~/bin/i3/i3wc.py &
+exec --no-startup-id /usr/bin/python ~/bin/i3/i3ws.py &
 
 
 
