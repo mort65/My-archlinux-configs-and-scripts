@@ -1,42 +1,48 @@
 #!/bin/bash
-#this script log available arch linux updates
 
 USERNAME=${SUDO_USER:-$(id -u -n)}
 HOMEDIR="/home/$USERNAME"
 
-#enabling notify-send for cron
-if [ -r "$HOMEDIR/.dbus/Xdbus" ]; then
-  . "$HOMEDIR/.dbus/Xdbus"
-fi
-
-COMMAND="$((/usr/bin/checkupdates; /usr/bin/cower -u 2>/dev/null) | /usr/bin/wc -l)"
-TITLE="System Update"
-MSG=""
-CDATE=$(/usr/bin/date "+%a %b %d %H:%M")
-if [[ $COMMAND =~ ^[0-9]+$ ]]; then
-	if [[ "$COMMAND" -ne "0" ]]; then
-		if [[ "$COMMAND" -eq "1" ]]; then
-			MSG="an update is available"
-		elif [[ "$COMMAND" -gt "1" ]]; then
-			MSG="$COMMAND updates are available"
-		else
-			exit 1
-		fi
-
-		if [[ $XDG_CURRENT_DESKTOP == "KDE" ]]; then
-			#/usr/bin/notify-send --expire-time=0 "$TITLE" "\- $CDATE \-\n$MSG" --icon=software-update-available
-			/usr/bin/notify-send --expire-time=30000 "$TITLE" "\- $CDATE \-\n$MSG" --icon=software-update-available
-		else
-			/usr/bin/notify-send --expire-time=30000 "$TITLE" "\- $CDATE \-\n$MSG" --icon=software-update-available
-		fi
-		echo "$COMMAND" > "$HOMEDIR/.number_of_updates.txt"
-	else
-		#clear content of the file
-		/usr/bin/truncate -s 0 "$HOMEDIR/.number_of_updates.txt"
-	fi
-else
-	exit 1
-	
+if [[ -s "$HOMEDIR/.number_of_updates.txt" ]]; then
+    NUM=$(cat "$HOMEDIR/.number_of_updates.txt")
+    if [[ $NUM =~ ^[0-9]+$ ]]; then
+        if [[ NUM -le 1000 ]]; then
+            string="${NUM}"
+        elif [[ NUM -gt 999999999999999 ]]; then
+            string="N"
+        else
+            ABBR='t'
+            RNG='1000000000000'
+            declare -a ABBRC=('k' 'm' 'b' 't');
+            declare -a ABBRN=('1000' '1000000' '1000000000' '1000000000000');
+            for (( i=1; i<${#ABBRN[@]}; i++ )); do
+                if [[  $(( $NUM / ${ABBRN[$i]} )) -eq 0 ]]; then
+                    ABBR=${ABBRC[$((i-1))]}
+                    RNG=${ABBRN[$((i-1))]}
+                    break
+                fi
+            done
+            TMP=$(( $NUM / $RNG ))
+            case "${#TMP}" in
+                1 )
+                    if [ "$NUM" != "$RNG" ]; then
+                        string="${TMP}.${NUM:1:1}${ABBR}" 
+                    else
+                        string="1${ABBR}"
+                    fi 
+                    ;;
+                2 )
+                    string="${TMP}${ABBR}" 
+                    ;;
+                3 )
+                    string="${TMP:0:1}${TMP:1:1}${TMP:2:1}${ABBRC[$(( i-1 ))]}"
+                    ;;
+           esac
+        fi
+        echo "$string"
+    else
+        echo "!"
+    fi	
 fi
 
 exit 0
