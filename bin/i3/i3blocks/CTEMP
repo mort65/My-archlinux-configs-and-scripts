@@ -1,0 +1,65 @@
+#!/bin/bash
+
+if [ "${#}" -gt 1 ]; then
+  printf "Too many arguments\n"
+  exit 1
+fi
+
+TEMP1=$(sensors | grep "Core 0" | cut -c 17-18)
+TEMP2=$(sensors | grep "Core 1" | cut -c 17-18)
+TEMP3=$(sensors | grep "Core 2" | cut -c 17-18)
+TEMP4=$(sensors | grep "Core 3" | cut -c 17-18)
+
+if [ -n "$1" ]; then
+  if [[ $1 =~ ^-?[1234]$ ]]; then
+    VAL="TEMP${1#"-"}"
+    printf "${!VAL}°C\n"
+    exit 0
+  elif [[ $1 =~ ^-?-?[Mm][Ii][Nn]$ ]]; then
+    MIN=$TEMP1
+    VAL=""
+    for i in 2 3 4
+      do
+        VAL="TEMP$i"
+        if (( $(echo "$MIN > ${!VAL}" | bc -l) )); then
+          MIN=${!VAL}
+        fi
+    done
+    printf "$MIN°C\n"
+    exit 0
+  elif [[ $1 =~ ^-?-?[Mm][Aa][Xx]$ ]]; then
+    MAX=$TEMP1
+    VAL=""
+    for i in 2 3 4
+      do
+        VAL="TEMP$i"
+        if (( $(echo "$MAX < ${!VAL}" | bc -l) )); then
+          MAX=${!VAL}
+        fi
+    done
+    printf "$MAX°C\n"
+    exit 0
+  elif [[ $1 =~ ^-?-?[Aa][Vv][Gg]$ ]]; then
+    SUM=$TEMP1
+    AVG=""
+    VAL=""
+    for i in 2 3 4
+      do
+        VAL="TEMP$i"
+        SUM=$(echo "$SUM + ${!VAL}" | bc -l)
+    done
+    AVG=$(echo "$SUM/4" | bc -l)
+    printf "%.0f°C\n" $AVG
+    exit 0
+else
+  printf "Invalid argument '$1'\n"
+  exit 1
+  fi
+fi
+
+printf "$TEMP1°C\n"
+printf "$TEMP2°C\n"
+printf "$TEMP3°C\n"
+printf "$TEMP4°C\n"
+
+exit 0
