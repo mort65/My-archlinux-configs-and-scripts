@@ -606,7 +606,7 @@ exec --no-startup-id /usr/bin/conky -c ~/bin/i3/conky/.conkyrc &
 #start dropbox
 exec --no-startup-id ~/.dropbox-dist/dropboxd &
 exec --no-startup-id /usr/bin/sudo bash -c "echo 100000 > /proc/sys/fs/inotify/max_user_watches" &
-exec --no-startup-id /usr/bin/synapse &
+#exec --no-startup-id /usr/bin/synapse &
 exec --no-startup-id /usr/bin/startupsound &
 exec --no-startup-id $HOME/bin/redshift-kerman.sh &
 exec --no-startup-id /usr/bin/indicator-kdeconnect &
