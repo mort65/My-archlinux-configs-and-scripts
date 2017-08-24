@@ -1,0 +1,30 @@
+#!/bin/sh
+lock() {
+    /usr/bin/i3lock
+}
+
+case "$1" in
+    lock)
+        lock
+        ;;
+    logout)
+        /usr/bin/i3-msg exit
+        ;;
+    suspend)
+        /usr/bin/systemctl suspend
+        ;;
+    hibernate)
+        /usr/bin/systemctl hibernate
+        ;;
+    reboot)
+        /usr/bin/systemctl reboot
+        ;;
+    shutdown)
+        /usr/bin/systemctl poweroff
+        ;;
+    *)
+        echo "Usage: $0 {lock|logout|suspend|hibernate|reboot|shutdown}"
+        exit 2
+esac
+
+exit 0
