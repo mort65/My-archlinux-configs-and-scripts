@@ -597,8 +597,8 @@ exec --no-startup-id /usr/bin/nm-applet &
 exec --no-startup-id /usr/bin/compton -b &
 #exec --no-startup-id /usr/bin/pasystray &
 exec --no-startup-id /usr/bin/volumeicon &
-#exec --no-startup-id /usr/bin/tilda &
-exec --no-startup-id /usr/bin/guake &
+exec --no-startup-id /usr/bin/tilda &
+#exec --no-startup-id /usr/bin/guake &
 #exec --no-startup-id /usr/bin/quiterss &
 exec --no-startup-id /usr/bin/conky -c ~/bin/i3/conky/.conkyrc &
 #exec --no-startup-id /usr/bin/parcellite &
