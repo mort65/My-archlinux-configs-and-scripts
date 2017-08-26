@@ -7,9 +7,9 @@ if [ "${#}" -gt 1 ]; then
 elif [ "${#}" -eq 1 ]; then
     PT=$1
 fi
+Total=$(find "${PT}" -maxdepth 1 -printf "." | wc -c)
 Files=$(find "${PT}" -maxdepth 1 -type f -printf "." | wc -c)
 Dirs=$(find "${PT}" -maxdepth 1 -type d -printf "." | wc -c)
-Total=$(find "${PT}" -maxdepth 1 -printf "." | wc -c)
 Others=$(bc -l <<< "$Total - ($Dirs + $Files)")
 expr `/bin/ls -f "${PT}" | wc -l` - 2
 echo Dir $Dirs
