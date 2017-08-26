@@ -1,11 +1,6 @@
 #!/bin/bash
 #Counts number of files and dirs in current directory or a path with two diffrent methods
 PT=$(pwd)
-Total=0
-Files=0
-Dirs=0
-Links=0
-Others=0
 if [ "${#}" -gt 1 ]; then
     echo -e $red"Error:$reset Invalid number of parameters"
    exit 1
