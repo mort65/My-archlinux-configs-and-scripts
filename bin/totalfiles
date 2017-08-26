@@ -1,19 +1,26 @@
 #!/bin/bash
 #Counts number of files and dirs in current directory or a path with two diffrent methods
 PT=$(pwd)
+Total=0
+Files=0
+Dirs=0
+Links=0
+Others=0
 if [ "${#}" -gt 1 ]; then
     echo -e $red"Error:$reset Invalid number of parameters"
    exit 1
 elif [ "${#}" -eq 1 ]; then
     PT=$1
 fi
-Total=$(find "${PT}" -maxdepth 1 -printf "." | wc -c)
+Total=$(bc -l <<< "$(find "${PT}" -maxdepth 1 -printf "." | wc -c) - 1")
 Files=$(find "${PT}" -maxdepth 1 -type f -printf "." | wc -c)
-Dirs=$(find "${PT}" -maxdepth 1 -type d -printf "." | wc -c)
-Others=$(bc -l <<< "$Total - ($Dirs + $Files)")
+Dirs=$(bc -l <<< "$(find "${PT}" -maxdepth 1 -type d -printf "." | wc -c) - 1")
+Links=$(find "${PT}" -maxdepth 1 -type l -printf "." | wc -c)
+Others=$(bc -l <<< "$Total - ($Dirs + $Files + $Links)")
 expr `/bin/ls -f "${PT}" | wc -l` - 2
 echo Dir $Dirs
 echo File $Files
+echo Link $Links
 echo Other $Others
 echo Total $Total
 exit 0
