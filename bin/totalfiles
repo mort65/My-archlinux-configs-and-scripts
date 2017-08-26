@@ -3,7 +3,9 @@
 PT=$(pwd)
 if [ "${#}" -gt 1 ]; then
     echo -e $red"Error:$reset Invalid number of parameters"
+    exit 1
 elif [ "${#}" -eq 1 ]; then
     PT=$1
 fi
 expr `/bin/ls -f "${PT}" | wc -l` - 2
+exit 0
