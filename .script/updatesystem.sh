@@ -342,6 +342,7 @@ if [[ $RSSOff == "No" ]]; then
     fi
 fi
 if [[ $Mirror == "Yes" ]]; then
+	echo
         echo -e  $blue"===>$reset Updating mirrorlist..."
         { $SUDO /usr/bin/cp -f /etc/pacman.d/mirrorlist /etc/pacman.d/mirrorlist.bak ; } || { echo -e $red"Error:$reset Cannot backup mirrorlist" ; read -p "Press enter to exit..." ; exit 1; }
         { $SUDO reflector --save /etc/pacman.d/mirrorlist --sort rate --latest 10 --protocol https --protocol ftp --age 6 ; } || { echo -e $red"Error:$reset Cannot update mirrors"; }
