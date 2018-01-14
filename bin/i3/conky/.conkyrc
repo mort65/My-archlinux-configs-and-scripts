@@ -97,10 +97,10 @@ Super+p$alignr Pluma
 ${color3}${hr}
 ${color1}Super+b$alignr Tor
 Super+o$alignr Opera
-Super+m$alignr Midori
 Super+v$alignr Vivaldi
-Super+f$alignr Firefox
-Super+u$alignr Qupzilla
+Super+f$alignr Waterfox
+Super+c$alignr Chromium
+Super+m$alignr Clementine
 ${color3}${hr}
 ${color1}Super+addition$alignr Volume Up
 Super+subtract$alignr Volume Down
@@ -112,3 +112,4 @@ Super+⇧+c$alignr Reload config file
 Super+⇧+r$alignr Restart i3 inplace
 ${color3}${hr}
 ${color1}PrtSc$alignr Screenshot
+
