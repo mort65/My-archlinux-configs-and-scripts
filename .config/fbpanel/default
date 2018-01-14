@@ -134,16 +134,6 @@ Plugin {
             action = leafpad
         }
         button {
-            icon = atom
-            tooltip = Atom
-            action = atom
-        }
-        button {
-            icon = libreoffice-writer
-            tooltip = Libreoffice Writer
-            action = libreoffice --writer
-        }
-        button {
             icon = gimp
             tooltip = Gimp
             action = gimp
@@ -178,12 +168,6 @@ Plugin {
             tooltip = Telegram
             action = telegram-desktop
         }
-    }
-}
-Plugin {
-    type = launchbar
-    expand = false
-    config {
         button {
             icon = dropbox
             tooltip = Dropbox
@@ -194,6 +178,12 @@ Plugin {
             tooltip = Dukto
             action = dukto
         }
+    }
+}
+Plugin {
+    type = launchbar
+    expand = false
+    config {
         button {
             icon = tixati
             tooltip = Tixati
