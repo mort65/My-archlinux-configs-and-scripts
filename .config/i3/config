@@ -99,20 +99,20 @@ bindsym $mod+Delete exec --no-startup-id "pgrep -c lxtask || /usr/bin/lxtask"; w
 #start opera and switch to it's workspace
 bindsym $mod+o exec --no-startup-id "pgrep -c opera || /bin/opera"; workspace $workspace2
 
+#start waterfox and switch to it's workspace
+bindsym $mod+f exec --no-startup-id "pgrep -c waterfox || /usr/bin/waterfox"; workspace $workspace2
+
+#start chromium and switch to it's workspace
+bindsym $mod+c exec --no-startup-id "pgrep -c chromium || /usr/bin/chromium"; workspace $workspace2
+
 #start clementine and switch to it's workspace
-bindsym $mod+c exec --no-startup-id "pgrep -c clementine || /usr/bin/clementine"; workspace $workspace7
+bindsym $mod+m exec --no-startup-id "pgrep -c clementine || /usr/bin/clementine"; workspace $workspace7
 
 #start qupzilla and switch to it's workspace
 bindsym $mod+u exec --no-startup-id "pgrep -c qupzilla || /usr/bin/qupzilla"; workspace $workspace2
 
-#start Midori and switch to it's workspace
-bindsym $mod+m exec --no-startup-id "pgrep -c midori || /usr/bin/midori"; workspace $workspace2
-
 #start Vivaldi and switch to it's workspace
 bindsym $mod+v exec --no-startup-id "pgrep -c vivaldi || /usr/bin/vivaldi-stable"; workspace $workspace2
-
-#start firefox and switch to it's workspace
-bindsym $mod+f exec --no-startup-id "pgrep -c firefox || /usr/bin/firefox"; workspace $workspace2
 
 #start gedit and switch to it's workspace
 bindsym $mod+g exec --no-startup-id "pgrep -c gedit || /usr/bin/gedit"; workspace $workspace5
@@ -191,8 +191,8 @@ bindsym $mod+a focus parent
 # Set default desktop layout (default is tiling) (stacking or tabbed)
 workspace_layout tabbed 
 
-set $workspace1 1: main 
-set $workspace2 2: web   
+set $workspace1 1: main  🏠
+set $workspace2 2: web   🌐
 set $workspace3 3: term  
 set $workspace4 4: dir      📁
 set $workspace5 5: edit    📓
@@ -260,8 +260,8 @@ bindsym XF86AudioLowerVolume exec --no-startup-id /usr/bin/pactl set-sink-volume
 bindsym XF86AudioMute exec --no-startup-id /usr/bin/pactl set-sink-mute alsa_output.pci-0000_00_1b.0.analog-stereo toggle # mute sound
 
 #change keyboard layout:
-setxkbmap -layout us,ir
-setxkbmap -option 'grp:alt_shift_toggle'
+#setxkbmap -layout us,ir
+#setxkbmap -option 'grp:alt_shift_toggle'
 
 #switch work space
 bindsym $mod+Tab workspace next
@@ -383,6 +383,8 @@ for_window [class="obs"] floating enable
 for_window [class="Firefox"] floating enable
 for_window [class="Code"] floating disable
 for_window [class="Midori"] floating disable
+for_window [class="Waterfox"] floating disable
+for_window [class="Chromium"] floating disable
 for_window [class="Tor Browser"] floating enable
 for_window [class="Gufw.py"] floating enable
 #for_window [class="LilyTerm"] floating enable
@@ -406,6 +408,7 @@ assign [class="luakit"] → $workspace2
 assign [class="Firefox"] → $workspace2
 assign [class="Opera"] → $workspace2
 assign [class="Google-chrome"] → $workspace2
+assign [class="Chromium"] → $workspace2
 assign [class="Vivaldi-stable"] → $workspace2
 assign [class="Midori"] → $workspace2
 assign [class="Vlc"] → $workspace7
@@ -457,6 +460,7 @@ assign [title="PlayOnLinux"] → $workspace8
 assign [class="Dukto"] → $workspace9
 #assign [class="QuiteRss"] → $workspace9
 assign [class="Tor Browser"] → $workspace2
+assign [class="Waterfox"] → $workspace2
 assign [class="Urxvt-tabbed"] → $workspace3
 assign [class="Urxvt"] → $workspace3
 assign [class="mlterm"] → $workspace3
@@ -469,7 +473,9 @@ assign [class="Gnome-mpv"] → $workspace7
 for_window [class=(?i)MPlayer] focus
 for_window [class=(?i)Opera] focus
 for_window [class=(?i)Firefox] focus
+for_window [class=(?i)Waterfox] focus
 for_window [class=(?i)Google-chrome] focus
+for_window [class=(?i)Chromium] focus
 for_window [class=(?i)Vivaldi-stable] focus
 for_window [class=(?i)Vlc] focus
 for_window [class=(?i)xv/mplayer] focus
@@ -607,7 +613,7 @@ exec --no-startup-id /usr/bin/conky -c ~/bin/i3/conky/.conkyrc &
 exec --no-startup-id ~/.dropbox-dist/dropboxd &
 exec --no-startup-id /usr/bin/sudo bash -c "echo 100000 > /proc/sys/fs/inotify/max_user_watches" &
 #exec --no-startup-id /usr/bin/synapse &
-exec --no-startup-id /usr/bin/startupsound &
+#exec --no-startup-id /usr/bin/startupsound &
 exec --no-startup-id $HOME/bin/redshift-kerman.sh &
 exec --no-startup-id /usr/bin/indicator-kdeconnect &
 exec --no-startup-id $HOME/bin/brush-teeth-reminder &
