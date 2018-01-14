@@ -67,6 +67,8 @@ our $SCHEMA = [
     ## Custom advanced settings
     {sep       => undef},
     {begin_cat => ['Advanced Settings', 'applications-engineering']},
+	#Appearance
+        {item      => ["/usr/bin/lxappearance", 'Look and Feel',   'text-x-generic']},
       #Wallpaper
       {item => ["/usr/bin/nitrogen",              'Wallpaper Setter',    'text-x-generic']},
 
