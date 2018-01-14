@@ -249,21 +249,27 @@
       <action name="ToggleShowDesktop"/>
     </keybind>
     <keybind key="W-Right">
-      <action name="GoToDesktop"><to>next</to><wrap>yes</wrap></action>
+      <action name="GoToDesktop">
+        <to>next</to>
+        <wrap>yes</wrap>
+      </action>
     </keybind>
     <keybind key="W-Left">
-      <action name="GoToDesktop"><to>previous</to><wrap>yes</wrap></action>
+      <action name="GoToDesktop">
+        <to>previous</to>
+        <wrap>yes</wrap>
+      </action>
     </keybind>
- <!-- Keybinding for showing the exit menu -->
-  <keybind key="W-S-x">
-   <action name="Execute">
-    <startupnotify>
-     <enabled>true</enabled>
-      <name>oblogut</name>
-    </startupnotify>
-    <command>oblogout</command>
-   </action>
-  </keybind>
+    <!-- Keybinding for showing the exit menu -->
+    <keybind key="W-S-x">
+      <action name="Execute">
+        <startupnotify>
+          <enabled>true</enabled>
+          <name>oblogut</name>
+        </startupnotify>
+        <command>oblogout</command>
+      </action>
+    </keybind>
     <!-- Keybindings for windows -->
     <keybind key="A-F4">
       <action name="Close"/>
@@ -346,16 +352,18 @@
       </action>
     </keybind>
     <!-- Custom Keybindings -->
-   <keybind key="W-C-d">
-     <action name="ToggleDecorations"/>
-   </keybind>
+    <keybind key="W-C-d">
+      <action name="ToggleDecorations"/>
+    </keybind>
     <keybind key="W-A-Left">
-      <action name="SendToDesktop"><to>previous</to>
+      <action name="SendToDesktop">
+        <to>previous</to>
         <wrap>yes</wrap>
       </action>
     </keybind>
     <keybind key="W-A-Right">
-      <action name="SendToDesktop"><to>next</to>
+      <action name="SendToDesktop">
+        <to>next</to>
         <wrap>yes</wrap>
       </action>
     </keybind>
@@ -409,9 +417,9 @@
         <command>vivaldi-stable </command>
       </action>
     </keybind>
-    <keybind key="W-f">
+    <keybind key="W-w">
       <action name="Execute">
-        <command>firefox</command>
+        <command>waterfox</command>
       </action>
     </keybind>
     <keybind key="W-l">
@@ -427,11 +435,6 @@
     <keybind key="W-g">
       <action name="Execute">
         <command>geany</command>
-      </action>
-    </keybind>
-    <keybind key="W-q">
-      <action name="Execute">
-        <command>qupzilla</command>
       </action>
     </keybind>
     <keybind key="W-Return">
@@ -452,11 +455,6 @@
     <keybind key="W-e">
       <action name="Execute">
         <command>gedit</command>
-      </action>
-    </keybind>
-    <keybind key="W-o">
-      <action name="Execute">
-        <command>opera</command>
       </action>
     </keybind>
     <keybind key="W-Delete">
@@ -523,7 +521,9 @@
       </action>
     </keybind>
     <keybind key="Menu">
-      <action name="ShowMenu"><menu>root-menu</menu></action>
+      <action name="ShowMenu">
+        <menu>root-menu</menu>
+      </action>
     </keybind>
     <!-- Keybindings for running applications -->
   </keyboard>
