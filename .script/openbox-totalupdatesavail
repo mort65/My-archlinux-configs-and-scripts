@@ -1,9 +1,10 @@
 #!/bin/bash
-#This script returns a string which shows number of available updates for fbpanel
+
+#This script returns a string which shows number of available updates for Tint2
 
 if [[ -s "/home/mohsen/.number_of_updates.txt" ]]; then
     NUM=$(cat "/home/mohsen/.number_of_updates.txt")
-    string="🕭"
+    string="🔔"
     if [[ $NUM =~ ^[0-9]+$ ]]; then
         if [[ NUM -le 1000 ]]; then
             string="${string}${NUM}"
@@ -40,10 +41,10 @@ if [[ -s "/home/mohsen/.number_of_updates.txt" ]]; then
         fi
         echo "$string"
     else
-        echo "✅"
+        echo ""
     fi	
 else
-    echo "❕"
+    echo ""
 
 fi
 
