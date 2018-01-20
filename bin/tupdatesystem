@@ -1,5 +1,5 @@
 #!/bin/bash
-# this script runs updatesystem.sh in a tmux session
+# this script runs updatesystem in a tmux session
 
 # Colors
 blue="\033[1;34m"
@@ -21,18 +21,18 @@ HOMEDIR="/home/$USERNAME"
 
 function usage {
     echo "Usage: $programname [OPTION]"
-    echo "A script for updating archlinux in a tmux session"
+    echo "A script for updating archlinux"
     echo ""
-    echo "  -a,  --aur      Refresh package databases then synchronize all normal and aur packages"
-    echo "  -y,  --refresh  Force a refresh of all package databases instead of normal refresh" 
-    echo "  -s,  --sync     Refresh package databases then synchronize normal packages"
-    echo "  -r   --norss    Disable checking for archlinux news"
-    echo "  -p,  --nopac    Disable checking for pacnew files"    
-    echo "  -i,  --install  Install a package"
-    echo "  -b,  --build    Build a package"
-    echo "  -l   --nolog    Disable logging"
-    echo "  -m,  --mirror   Update mirrors"
-    echo "  -h,  --help     Display help"
+    echo "  -a, --aur     Refresh and synchronize all normal and aur package databases"
+    echo "  -s, --sync    Refresh and synchronize normal package databases"
+    echo "  -y, --refresh Force the refresh of all package databases" 
+    echo "  -r  --norss   Disable checking for archlinux news" 
+    echo "  -p, --nopac   Disable checking for pacnew files" 
+    echo "  -i, --install Install a package"
+    echo "  -b, --build   Build a package"
+    echo "  -l  --nolog   Disable logging"
+    echo "  -m, --mirror  Update mirrors"
+    echo "  -h, --help    Display help"
     exit 1
 }
 
