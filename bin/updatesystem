@@ -144,7 +144,6 @@ if [ -n "$1" ]; then #non-empty
         echo ""
 		usage
 	  fi  
-      
     elif [[ $PARAM =~ ^--[Tt][Mm][Uu][Xx]$ ]] || [[ $PARAM =~ ^-[Tt]$ ]]; then
       if [[ $Tmux == "" ]]; then
         Tmux="Yes"
@@ -153,7 +152,6 @@ if [ -n "$1" ]; then #non-empty
         echo ""
 		usage
 	  fi  
-      
     elif [[ $PARAM =~ ^-[AaBbIiLlMmPpRrSsTtYy][AaBbIiLlMmPpRrSsTtYy][AaBbIiLlMmPpRrSsTtYy]?[AaBbIiLlMmPpRrSsTtYy]?[AaBbIiLlMmPpRrSsTtYy]?[AaBbIiLlMmPpRrSsTtYy]?[AaBbIiLlMmPpRrSsTtYy]?[AaBbIiLlMmPpRrSsTtYy]?[AaBbIiLlMmPpRrSsTtYy]?[AaBbIiLlMmPpRrSsTtYy]?$ ]]; then
 	  i=1
 	  while (( i++ < ${#PARAM} ))
