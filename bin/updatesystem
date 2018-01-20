@@ -1,5 +1,13 @@
 #!/bin/bash
-#this script check for arch linux news and if no news found update the system
+
+#this script check for archlinux news and if no news found update the system
+
+# Colors
+blue="\033[1;34m"
+green="\033[1;32m"
+red="\033[1;31m"
+bold="\033[1;37m"
+reset="\033[0m"
 
 Args=$@ 
 USERNAME=${SUDO_USER:-$(id -u -n)}
@@ -8,13 +16,6 @@ SUDO=""
 if [ $EUID -ne 0 ]; then
     SUDO='/usr/bin/sudo'
 fi
-
-# Colors
-blue="\033[1;34m"
-green="\033[1;32m"
-red="\033[1;31m"
-bold="\033[1;37m"
-reset="\033[0m"
 
 programname="updatesystem"
 RSSFILE="$HOMEDIR/.archnews"
@@ -29,26 +30,29 @@ Sync=""
 LoggingOff=""
 RSSOff=""
 PacOff=""
+Tmux=""
+Arguments=""
 
 function usage {
     echo "Usage: $programname [OPTION]"
     echo "A script for updating archlinux"
     echo ""
-    echo "  -a,  --aur      Refresh package databases then synchronize all normal and aur packages"
-    echo "  -y,  --refresh  Force a refresh of all package databases instead of normal refresh" 
-    echo "  -s,  --sync     Refresh package databases then synchronize normal packages"
-    echo "  -r   --norss    Disable checking for archlinux news"
-    echo "  -p,  --nopac    Disable checking for pacnew files"    
-    echo "  -i,  --install  Install a package"
-    echo "  -b,  --build    Build a package"
-    echo "  -l   --nolog    Disable logging"
-    echo "  -m,  --mirror   Update mirrors"
-    echo "  -h,  --help     Display help"
+    echo "  -a, --aur     Refresh and synchronize all normal and aur package databases"
+    echo "  -s, --sync    Refresh and synchronize normal package databases"
+    echo "  -y, --refresh Force the refresh of all package databases" 
+    echo "  -r  --norss   Disable checking for archlinux news"
+    echo "  -t, --tmux    Run this script in a tmux session"   
+    echo "  -p, --nopac   Disable checking for pacnew files" 
+    echo "  -i, --install Install a package"
+    echo "  -b, --build   Build a package"
+    echo "  -l  --nolog   Disable logging"
+    echo "  -m, --mirror  Update mirrors"
+    echo "  -h, --help    Display help"
     exit 1
 }
 
 #testing number of args:
-if [ "${#}" -gt 9 ]; then
+if [ "${#}" -gt 10 ]; then
     echo -e $red"Error:$reset Invalid number of parameters"
     echo ""
     usage
@@ -140,7 +144,17 @@ if [ -n "$1" ]; then #non-empty
         echo ""
 		usage
 	  fi  
-    elif [[ $PARAM =~ ^-[AaBbIiLlMmPpRrSsYy][AaBbIiLlMmPpRrSsYy][AaBbIiLlMmPpRrSsYy]?[AaBbIiLlMmPpRrSsYy]?[AaBbIiLlMmPpRrSsYy]?[AaBbIiLlMmPpRrSsYy]?[AaBbIiLlMmPpRrSsYy]?[AaBbIiLlMmPpRrSsYy]?[AaBbIiLlMmPpRrSsYy]?$ ]]; then
+      
+    elif [[ $PARAM =~ ^--[Tt][Mm][Uu][Xx]$ ]] || [[ $PARAM =~ ^-[Tt]$ ]]; then
+      if [[ $Tmux == "" ]]; then
+        Tmux="Yes"
+	  else
+        echo -e $red"Error:$reset Invalid arguments '${Args}'"
+        echo ""
+		usage
+	  fi  
+      
+    elif [[ $PARAM =~ ^-[AaBbIiLlMmPpRrSsTtYy][AaBbIiLlMmPpRrSsTtYy][AaBbIiLlMmPpRrSsTtYy]?[AaBbIiLlMmPpRrSsTtYy]?[AaBbIiLlMmPpRrSsTtYy]?[AaBbIiLlMmPpRrSsTtYy]?[AaBbIiLlMmPpRrSsTtYy]?[AaBbIiLlMmPpRrSsTtYy]?[AaBbIiLlMmPpRrSsTtYy]?[AaBbIiLlMmPpRrSsTtYy]?$ ]]; then
 	  i=1
 	  while (( i++ < ${#PARAM} ))
 	  do
@@ -216,8 +230,16 @@ if [ -n "$1" ]; then #non-empty
 				echo -e $red"Error:$reset Invalid arguments '${Args}'"
 				echo ""
 				usage
-			fi			
-		else
+			fi
+        elif [[ $char =~ [Tt] ]]; then
+			if [[ $Tmux == "" ]]; then
+				Tmux="Yes"
+			else
+				echo -e $red"Error:$reset Invalid arguments '${Args}'"
+				echo ""
+				usage
+			fi		
+        else
 			echo -e $red"Error:$reset Invalid argument '$PARAM'"
 			echo ""
 			usage
@@ -234,6 +256,46 @@ fi
 
 if [[ $Help == "Yes" ]]; then
 	usage
+fi
+
+if [[ $Tmux == "Yes" ]]; then
+    if [[ $Sync == "Yes" ]]; then
+        Arguments="${Arguments}s"
+    fi
+    
+    if [[ $AUR == "Yes" ]]; then
+        Arguments="${Arguments}a"
+    fi
+    
+    if [[ $Install == "Yes" ]]; then
+        Arguments="${Arguments}i"
+    fi
+
+    if [[ $Build == "Yes" ]]; then
+        Arguments="${Arguments}b"
+    fi
+
+    if [[ $Mirror == "Yes" ]]; then
+        Arguments="${Arguments}m"
+    fi
+
+    if [[ $Refresh == "Yes" ]]; then
+        Arguments="${Arguments}y"
+    fi
+
+    if [[ $LoggingOff == "Yes" ]]; then
+        Arguments = "${Arguments}l"
+    fi
+
+    if [[ $RSSOff == "Yes" ]]; then
+        Arguments="${Arguments}r"
+    fi
+
+    if [[ $PacOff == "Yes" ]]; then
+        Arguments="${Arguments}p"
+    fi
+    { /usr/bin/sudo -u $USERNAME $HOMEDIR/bin/tupdatesystem "-${Arguments}" ; } || { exit 1 ; }
+    exit 0
 fi
 
 if [[ $AUR == "Yes" ]]; then
@@ -288,16 +350,16 @@ if [[ $PacOff == "No" ]]; then
   echo
   echo -e $blue"===>$reset Checking for pacnew files..."
   echo
-  if [[ $($SUDO find /etc -regextype posix-extended -regex ".+\.pac(new|save)" 2> /dev/null) ]]; then
-  	echo -e $red"Error:$reset Pacnew file(s) found! (Use pacdiff to deal with them):"
+    if [[ $($SUDO find /etc -regextype posix-extended -regex ".+\.pac(new|save)" 2> /dev/null) ]]; then
+        echo -e $red"Error:$reset Pacnew file(s) found! (Use pacdiff to deal with them):"
         echo
         $SUDO find /etc -regextype posix-extended -regex ".+\.pac(new|save)" 2> /dev/null
         echo
         exit 1
-  else
+    else
         echo 
         echo "No pacnew file found"
-  fi
+    fi
   echo
   echo
 fi
@@ -341,7 +403,7 @@ if [[ $Mirror == "Yes" ]]; then
     echo
     echo -e  $blue"===>$reset Updating mirrorlist..."
 	{ $SUDO /usr/bin/cp -f /etc/pacman.d/mirrorlist /etc/pacman.d/mirrorlist.bak ; } || { echo -e $red"Error:$reset Cannot backup mirrorlist" ; exit 1; }
-	{ $SUDO reflector --save /etc/pacman.d/mirrorlist --sort rate --latest 10 --protocol https --protocol ftp --age 6 ; } || { echo -e $red"Error:$reset Cannot update mirrors"; }
+	{ $SUDO reflector --save /etc/pacman.d/mirrorlist --country 'United States' --country Canada --country 'United Kingdom' --country Denmark --country Greece --country 'South Korea' --country Japan --country India --country Qatar --country Turkey --country Iran --sort rate --latest 10 --protocol https --protocol ftp --age 6 ; } || { echo -e $red"Error:$reset Cannot update mirrors"; }
 fi
 if [[ $Install == "Yes" ]] || [[ $Build == "Yes" ]]; then
     if [[ $Build == "Yes" ]]; then
@@ -422,5 +484,4 @@ if [[ $RSSOff == "No" ]]; then
   [ -f $RSSFILE ] && cat "${RSSFILE}" 2> /dev/null
   echo
 fi  
-
-exit 0
+exit
