@@ -2,7 +2,7 @@
 
 #this script check for archlinux news and if no news found update the system
 
-Args=$@ 
+Args=$@
 USERNAME=${SUDO_USER:-$(id -u -n)}
 HOMEDIR="/home/$USERNAME"
 SUDO=""
@@ -35,16 +35,16 @@ function usage {
     echo "Usage: $programname [OPTION]"
     echo "A script for updating archlinux"
     echo ""
-    echo "  -a,  --aur      Refresh package databases then synchronize all normal and aur packages"
-    echo "  -y,  --refresh  Force a refresh of all package databases instead of normal refresh" 
-    echo "  -s,  --sync     Refresh package databases then synchronize normal packages"
-    echo "  -r   --norss    Disable checking for archlinux news"
-    echo "  -p,  --nopac    Disable checking for pacnew files"    
-    echo "  -i,  --install  Install a package"
-    echo "  -b,  --build    Build a package"
-    echo "  -l   --nolog    Disable logging"
-    echo "  -m,  --mirror   Update mirrors"
-    echo "  -h,  --help     Display help"
+    echo "  -a, --aur     Refresh and synchronize all normal and aur package databases"
+    echo "  -s, --sync    Refresh and synchronize normal package databases"
+    echo "  -y, --refresh Force the refresh of all package databases" 
+    echo "  -r  --norss   Disable checking for archlinux news" 
+    echo "  -p, --nopac   Disable checking for pacnew files" 
+    echo "  -i, --install Install a package"
+    echo "  -b, --build   Build a package"
+    echo "  -l  --nolog   Disable logging"
+    echo "  -m, --mirror  Update mirrors"
+    echo "  -h, --help    Display help"
     echo ""
     read -p "Press enter to exit..."
     exit 1
@@ -342,10 +342,10 @@ if [[ $RSSOff == "No" ]]; then
     fi
 fi
 if [[ $Mirror == "Yes" ]]; then
-	echo
+        echo
         echo -e  $blue"===>$reset Updating mirrorlist..."
         { $SUDO /usr/bin/cp -f /etc/pacman.d/mirrorlist /etc/pacman.d/mirrorlist.bak ; } || { echo -e $red"Error:$reset Cannot backup mirrorlist" ; read -p "Press enter to exit..." ; exit 1; }
-        { $SUDO reflector --save /etc/pacman.d/mirrorlist --sort rate --latest 10 --protocol https --protocol ftp --age 6 ; } || { echo -e $red"Error:$reset Cannot update mirrors"; }
+        { $SUDO reflector --save /etc/pacman.d/mirrorlist --country 'United States' --country Canada --country 'United Kingdom' --country Denmark --country Greece --country 'South Korea' --country Japan --country India --country Qatar --country Turkey --country Iran --sort rate --latest 10 --protocol https --protocol ftp --age 6 ; } || { echo -e $red"Error:$reset Cannot update mirrors"; }
 fi
 if [[ $Install == "Yes" ]] || [[ $Build == "Yes" ]]; then
     if [[ $Build == "Yes" ]]; then
@@ -427,5 +427,4 @@ if [[ $RSSOff == "No" ]]; then
 fi
 echo
 read -p "Press enter to exit..."
-
 exit 0
