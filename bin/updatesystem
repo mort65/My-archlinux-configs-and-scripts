@@ -243,12 +243,12 @@ if [ -n "$1" ]; then #non-empty
 			usage
 		fi
 	  done
-      else
+    else
 	    echo -e $red"Error:$reset Invalid argument '$PARAM'"
 	    echo ""
 	    usage
-      fi
-      shift
+    fi
+    shift
   done
 fi
 
