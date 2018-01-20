@@ -165,7 +165,7 @@ if [ -n "$1" ]; then #non-empty
 				echo ""
 				usage
 			fi
-        elif [[ $char =~ [Aa] ]]; then
+        	elif [[ $char =~ [Aa] ]]; then
 			if [[ $AUR == "" ]]; then
 				AUR="Yes"
 			else
@@ -189,7 +189,7 @@ if [ -n "$1" ]; then #non-empty
 				echo ""
 				usage
 			fi
-        elif [[ $char =~ [Yy] ]]; then
+        	elif [[ $char =~ [Yy] ]]; then
 			if [[ $Refresh == "" ]]; then
 				Refresh="Yes"
 			else
@@ -229,7 +229,7 @@ if [ -n "$1" ]; then #non-empty
 				echo ""
 				usage
 			fi
-        elif [[ $char =~ [Tt] ]]; then
+        	elif [[ $char =~ [Tt] ]]; then
 			if [[ $Tmux == "" ]]; then
 				Tmux="Yes"
 			else
@@ -237,7 +237,7 @@ if [ -n "$1" ]; then #non-empty
 				echo ""
 				usage
 			fi		
-        else
+        	else
 			echo -e $red"Error:$reset Invalid argument '$PARAM'"
 			echo ""
 			usage
