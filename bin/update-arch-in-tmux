@@ -1,5 +1,5 @@
 #!/bin/bash
-# this script runs updatesystem in a tmux session
+# this script updates archlinux in a tmux session
 
 # Colors
 blue="\033[1;34m"
@@ -57,6 +57,6 @@ elif /usr/bin/tmux has-session -t $session 2>/dev/null; then  #checking if tmux 
 	exit 0
 fi
 
-tmux new-session -d -s $session "/usr/bin/sudo $HOMEDIR/.script/updatesystem.sh ${1}"
+tmux new-session -d -s $session "/usr/bin/sudo $HOMEDIR/.script/update-arch-in-tmux.sh ${1}"
 
 /usr/bin/tmux attach-session -t $session
