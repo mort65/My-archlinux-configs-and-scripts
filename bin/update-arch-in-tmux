@@ -1,5 +1,5 @@
 #!/bin/bash
-# this script runs update-arch-in-tmux.sh in a tmux session
+# this script runs update-arch-in-tmux.sh in a tmux session.
 
 # Colors
 blue="\033[1;34m"
