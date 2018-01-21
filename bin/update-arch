@@ -292,7 +292,7 @@ if [[ $Tmux == "Yes" ]]; then
     if [[ $PacOff == "Yes" ]]; then
         Arguments="${Arguments}p"
     fi
-    { /usr/bin/sudo -u $USERNAME $HOMEDIR/bin/tupdatesystem "-${Arguments}" ; } || { exit 1 ; }
+    { /usr/bin/sudo -u $USERNAME $HOMEDIR/bin/update-arch-in-tmux "-${Arguments}" ; } || { exit 1 ; }
     exit 0
 fi
 
