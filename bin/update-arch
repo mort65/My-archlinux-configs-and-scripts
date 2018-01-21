@@ -1,6 +1,6 @@
 #!/bin/bash
 
-#this script check for archlinux news and if no news found update the system
+#this script check for archlinux news, update archlinux, refresh mirrors...
 
 # Colors
 blue="\033[1;34m"
