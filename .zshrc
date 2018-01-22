@@ -7,7 +7,7 @@ setopt appendhistory autocd no_beep extendedglob nomatch notify
 bindkey -v
 # End of lines configured by zsh-newuser-install
 # The following lines were added by compinstall
-zstyle :compinstall filename '/home/mohsen/.zshrc'
+zstyle :compinstall filename "/home/${SUDO_USER:-$(id -u -n)}/.zshrc"
 
 autoload -Uz compinit
 compinit
