@@ -104,7 +104,7 @@ if [[ ! -d $ZSH_CACHE_DIR ]]; then
   mkdir $ZSH_CACHE_DIR
 fi
 
-export DEFAULT_USER="mohsen"
+export DEFAULT_USER=${SUDO_USER:-$(id -u -n)}
 source $ZSH/oh-my-zsh.sh
 source /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 
@@ -329,4 +329,3 @@ archey3
 #neofetch
 echo "${Cyan} $(/usr/bin/jdate '+%h %d %B %Y %H:%M %p')"
 echo '\n'
-
