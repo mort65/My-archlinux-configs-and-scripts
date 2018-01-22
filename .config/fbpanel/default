@@ -109,9 +109,9 @@ Plugin {
             action = bleachbit
         }
         button {
-            icon = clementine
-            tooltip = Clementine
-            action = clementine
+            icon = pragha
+            tooltip = Pragha
+            action = pragha
         }
         button {
             icon = calibre-gui
