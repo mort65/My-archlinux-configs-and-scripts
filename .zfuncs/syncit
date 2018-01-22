@@ -1,7 +1,6 @@
 #!/bin/bash
 username=${SUDO_USER:-$(id -u -n)}
 HOMEDIR="/home/$USERNAME"
-
 syncit() {
 /usr/bin/rsync -avz $HOMEDIR/Apps/Programming $HOMEDIR/Apps/'Usefull Commands' 192.168.1."$1":~/backup/
 return
