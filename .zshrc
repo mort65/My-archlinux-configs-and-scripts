@@ -7,7 +7,7 @@ setopt appendhistory autocd no_beep extendedglob nomatch notify
 bindkey -v
 # End of lines configured by zsh-newuser-install
 # The following lines were added by compinstall
-zstyle :compinstall filename "/home/${SUDO_USER:-$(id -u -n)}/.zshrc"
+zstyle :compinstall filename "/home/$(id -u -n)/.zshrc"
 
 autoload -Uz compinit
 compinit
@@ -104,7 +104,7 @@ if [[ ! -d $ZSH_CACHE_DIR ]]; then
   mkdir $ZSH_CACHE_DIR
 fi
 
-export DEFAULT_USER=${SUDO_USER:-$(id -u -n)}
+export DEFAULT_USER=$(id -u -n)
 source $ZSH/oh-my-zsh.sh
 source /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 
