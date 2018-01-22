@@ -106,7 +106,7 @@ bindsym $mod+f exec --no-startup-id "pgrep -c waterfox || /usr/bin/waterfox"; wo
 bindsym $mod+c exec --no-startup-id "pgrep -c chromium || /usr/bin/chromium"; workspace $workspace2
 
 #start clementine and switch to it's workspace
-bindsym $mod+m exec --no-startup-id "pgrep -c clementine || /usr/bin/clementine"; workspace $workspace7
+bindsym $mod+m exec --no-startup-id "pgrep -c pragha || /usr/bin/pragha"; workspace $workspace7
 
 #start qupzilla and switch to it's workspace
 bindsym $mod+u exec --no-startup-id "pgrep -c qupzilla || /usr/bin/qupzilla"; workspace $workspace2
@@ -466,6 +466,8 @@ assign [class="Urxvt"] → $workspace3
 assign [class="mlterm"] → $workspace3
 assign [class="Filezilla"] → $workspace9
 assign [class="Gnome-mpv"] → $workspace7
+assign [class="Rhythmbox"] → $workspace7
+assign [class="Pragha"] → $workspace7
 
 
 
@@ -534,6 +536,8 @@ for_window [class=(?i)Clementine] focus
 for_window [class=(?i)Filezilla] focus
 for_window [class=(?i)Atom] focus
 for_window [class=(?i)Gnome-mpv] focus
+for_window [class=(?i)Rhythmbox] focus
+for_window [class=(?i)Pragha] focus
 
 # focus wrapping
 force_focus_wrapping yes
