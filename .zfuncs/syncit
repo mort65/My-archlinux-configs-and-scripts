@@ -1,0 +1,5 @@
+#!/bin/bash
+syncit() {
+/usr/bin/rsync -avz /home/mohsen/Apps/Programming /home/mohsen/Apps/'Usefull Commands' 192.168.1."$1":~/backup/
+return
+}
