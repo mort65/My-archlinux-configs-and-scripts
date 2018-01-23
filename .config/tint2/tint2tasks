@@ -73,7 +73,7 @@ background_content_tint_weight = 0
 #-------------------------------------
 # Panel
 panel_items = T:P
-panel_size = 100% 28
+panel_size = 100% 30
 panel_margin = 0 0
 panel_padding = 2 0 2
 panel_background_id = 1
@@ -194,4 +194,3 @@ tooltip_hide_timeout = 0.1
 tooltip_padding = 2 2
 tooltip_background_id = 5
 tooltip_font_color = #222222 100
-
