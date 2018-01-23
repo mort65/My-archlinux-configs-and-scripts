@@ -181,6 +181,7 @@ launcher_item_app = /usr/share/applications/keepass.desktop
 launcher_item_app = /usr/share/applications/steam-native.desktop
 launcher_item_app = /usr/share/applications/dukto.desktop
 launcher_item_app = /usr/share/applications/filezilla.desktop
+launcher_item_app = /usr/share/applications/pamac-manager.desktop
 
 #-------------------------------------
 # Clock
@@ -336,4 +337,3 @@ tooltip_hide_timeout = 0.1
 tooltip_padding = 2 2
 tooltip_background_id = 5
 tooltip_font_color = #222222 100
-
