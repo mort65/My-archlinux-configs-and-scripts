@@ -31,7 +31,7 @@ our $SCHEMA = [
 
     #          COMMAND                 LABEL              ICON
     {item => ['xdg-open .',       'File Manager', 'system-file-manager']},
-    {item => ['mlterm',            'Terminal',     'utilities-terminal']},
+    {item => ['lxterminal',            'Terminal',     'utilities-terminal']},
     {item => ['xdg-open https://www.archlinux.org/', 'Web Browser',  'web-browser']},
     {item => ['gmrun',            'Run command',  'system-run']},
 
@@ -82,6 +82,16 @@ our $SCHEMA = [
       {item => ["$editor ~/.config/fbpanel/tasks", 'Fbpanel Panel Bottom',    'text-x-generic']},
       
      {end_cat => undef},
+     {begin_cat => ['Tint2']},
+     
+      # Configuration editor
+      {item => ['tint2conf',              'Tint2 Config',    'text-x-generic']},
+     
+      # Configuration files
+      {item => ["$editor ~/.config/tint2/tint2rc", 'Fbpanel Panel Top', 'text-x-generic']},
+      {item => ["$editor ~/.config/tint2/tint2tasks", 'Fbpanel Panel Bottom',    'text-x-generic']},
+      
+     {end_cat => undef},
      
       # obmenu-generator category
       {begin_cat => ['Obmenu-Generator', 'accessories-text-editor']},
@@ -106,7 +116,8 @@ our $SCHEMA = [
         {item      => ["$editor ~/.config/openbox/rc.xml",    'Openbox RC',          'text-x-generic']},
         {item      => ["$editor ~/.config/openbox/menu.xml",  'Openbox Menu',        'text-x-generic']},
         {item      => ['openbox --reconfigure',               'Reconfigure Openbox', 'openbox']},
-	{sep => undef},
+     {end_cat => undef},
+     {sep => undef},
       # Exit category
       {begin_cat => ['Exit', 'application-exit']},
         {item      => ['openbox --exit', 'Log Out', 'text-x-generic']},
@@ -115,7 +126,6 @@ our $SCHEMA = [
         {item      => ['systemctl suspend', 'Suspend', 'text-x-generic']},
         {item      => ['systemctl hibernate', 'Hibernate', 'text-x-generic']},
       {end_cat => undef},
-     {end_cat => undef},
     {end_cat => undef},
 
     {sep => undef},
