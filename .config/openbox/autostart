@@ -2,15 +2,37 @@
 # These things are run when an Openbox X Session is started.
 # You may place a similar script in $HOME/.config/openbox/autostart
 # to run user-specific things.
+#
 
-/usr/bin/fbpanel &
-/usr/bin/fbpanel -p tasks & 
+# If you want to use GNOME config tools...
+#
+#if test -x /usr/lib/openbox/gnome-settings-daemon >/dev/null; then
+#  /usr/lib/openbox/gnome-settings-daemon &
+#elif which gnome-settings-daemon >/dev/null 2>&1; then
+#  gnome-settings-daemon &
+#fi
+
+# If you want to use XFCE config tools...
+#
+#xfce-mcs-manager &
+#~/bin/openbox/openbox_workspace_monitor &
+
+/usr/bin/tint2 &
+/usr/bin/tint2 -c ~/.config/tint2/tint2tasks &
+#/usr/bin/fbpanel &
+#/usr/bin/fbpanel -p tasks & 
 /usr/bin/compton &
 /usr/bin/nm-applet &
+#/usr/bin/pasystray &
 /usr/bin/volumeicon &
-/usr/bin/setxkbmap us,ir -option 'grp:alt_shift_toggle'
 /usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1 &
+#/usr/bin/nitrogen --restore &
+/usr/bin/setxkbmap us,ir -option 'grp:alt_shift_toggle'
+#/usr/bin/udiskie -2 -s &
 /usr/bin/python ~/bin/openbox/obwc.py &
+#/usr/bin/goldendict &
+#/usr/bin/tilda &
+#/usr/bin/guake &
 /usr/bin/clipit &
 
 #replace current notification daemon with xfce notification daemon:
