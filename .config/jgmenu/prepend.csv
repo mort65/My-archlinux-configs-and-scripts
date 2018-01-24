@@ -1,4 +1,4 @@
 File manager,pcmanfm,system-file-manager
-Web Browser,xdg-open https://www.archlinux.org/,web-browser
 Terminal,lxterminal,utilities-terminal
+Web Browser,xdg-open https://www.archlinux.org/,web-browser
 ^sep()
