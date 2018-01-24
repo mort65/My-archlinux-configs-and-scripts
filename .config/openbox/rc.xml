@@ -462,6 +462,11 @@
         <command>mate-system-monitor</command>
       </action>
     </keybind>
+    <keybind key="W-F1">
+      <action name="Execute">
+        <command>jgmenu_run</command>
+      </action>
+    </keybind>
     <keybind key="W-1">
       <action name="Desktop">
         <desktop>1</desktop>
