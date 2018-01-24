@@ -1,0 +1,13 @@
+[Desktop Entry]
+Encoding=UTF-8
+Name=Tint2 Openbox Menu
+Comment=Tint2 Openbox Menu Hack
+X-GNOME-FullName=Openbox Menu
+Exec=/home/mohsen/bin/openbox/start_menu.sh
+Terminal=false
+X-MultipleArgs=false
+Type=Application
+Icon=~/Pictures/Icons/App-Menu2.png
+Categories=Menu;
+MimeType=
+StartupNotify=true
