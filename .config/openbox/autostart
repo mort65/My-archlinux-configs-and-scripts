@@ -18,7 +18,8 @@
 #~/bin/openbox/openbox_workspace_monitor &
 
 /usr/bin/tint2 &
-/usr/bin/tint2 -c ~/.config/tint2/tint2tasks &
+/usr/bin/tint2 -c ~/.config/tint2/tint2launcher &
+#/usr/bin/tint2 -c ~/.config/tint2/tint2tasks &
 #/usr/bin/fbpanel &
 #/usr/bin/fbpanel -p tasks & 
 /usr/bin/compton &
