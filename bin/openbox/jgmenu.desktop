@@ -1,0 +1,12 @@
+[Desktop Entry]
+Encoding=UTF-8
+Name=jgmenu
+X-GNOME-FullName=Menu
+Exec=jgmenu_run
+Terminal=false
+X-MultipleArgs=false
+Type=Application
+Icon=/home/mohsen/Pictures/Icons/App-Menu2.png
+Categories=Menu
+MimeType=
+StartupNotify=false
