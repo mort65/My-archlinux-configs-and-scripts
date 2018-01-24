@@ -1,4 +1,4 @@
 File manager,pcmanfm,system-file-manager
-Browser,waterfox,waterfox-icon
+Web Browser,xdg-open https://www.archlinux.org/,web-browser
 Terminal,lxterminal,utilities-terminal
 ^sep()
