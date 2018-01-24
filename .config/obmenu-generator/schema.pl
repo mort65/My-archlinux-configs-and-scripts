@@ -33,7 +33,7 @@ our $SCHEMA = [
     {item => ['xdg-open .',       'File Manager', 'system-file-manager']},
     {item => ['lxterminal',            'Terminal',     'utilities-terminal']},
     {item => ['xdg-open https://www.archlinux.org/', 'Web Browser',  'web-browser']},
-    {item => ['gmrun',            'Run command',  'system-run']},
+    {item => ['gmrun',            'Run Program',  'system-run']},
 
     #{sep => 'Categories'},
     {sep  => undef},
