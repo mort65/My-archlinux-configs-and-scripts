@@ -120,11 +120,11 @@ our $SCHEMA = [
      {sep => undef},
       # Exit category
       {begin_cat => ['Exit', 'application-exit']},
-        {item      => ['openbox --exit', 'Log Out', 'text-x-generic']},
-        {item      => ['systemctl poweroff', 'Shutdown', 'text-x-generic']},
-        {item      => ['systemctl reboot', 'Restart', 'text-x-generic']},
-        {item      => ['systemctl suspend', 'Suspend', 'text-x-generic']},
+        {item      => ['openbox --exit', 'Logout', 'text-x-generic']},
+	{item      => ['systemctl suspend', 'Suspend', 'text-x-generic']},
         {item      => ['systemctl hibernate', 'Hibernate', 'text-x-generic']},
+        {item      => ['systemctl reboot', 'Restart', 'text-x-generic']},
+        {item      => ['systemctl poweroff', 'Shutdown', 'text-x-generic']},
       {end_cat => undef},
     {end_cat => undef},
 
@@ -137,7 +137,7 @@ our $SCHEMA = [
     ##{exit => ['Exit', 'application-exit']},
       # Exit category
       #{begin_cat => ['Exit', 'application-exit']},
-      #  {item      => ['openbox --exit', 'Log Out', 'text-x-generic']},
+      #  {item      => ['openbox --exit', 'Logout', 'text-x-generic']},
       #  {item      => ['systemctl poweroff', 'Shutdown', 'text-x-generic']},
       #  {item      => ['systemctl reboot', 'Restart', 'text-x-generic']},
       #  {item      => ['systemctl suspend', 'Suspend', 'text-x-generic']},
