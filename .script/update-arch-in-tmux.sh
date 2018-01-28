@@ -457,7 +457,7 @@ if [[ $Sleep == "Yes" ]]; then
     do
      sleep 1s
      clear
-     echo -e $red"Suspend$reset in$blue $x$reset seconds..."
+     echo -e $red"Suspend$reset in$green $x$reset seconds..."
      x=$(( $x - 1 ))
   done
   eval "${SuspendCMD}"
@@ -468,7 +468,7 @@ elif [[ $Shutdown == "Yes" ]]; then
     do
      sleep 1s
      clear
-     echo -e $red"Shutdown$reset in$blue $x$reset seconds..."
+     echo -e $red"Shutdown$reset in$green $x$reset seconds..."
      x=$(( $x - 1 ))
   done
   eval "${ShutdownCMD}"
