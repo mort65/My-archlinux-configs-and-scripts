@@ -18,14 +18,22 @@ usage = False
 def show_usage():
     print("""Usage: pysearch [OPTION]... [PATH] [TEXT]
 search for TEXT in the given PATH.
+Text can be a regular expression but doesn't work if -i is used.
   -h, --help                 display this help 
   -r, --recursive            search recursively  
   -f, --file                 search for files
   -l, --link                 search for links
   -d, --dir                  search for directories 
-  -i, --ignore-case          ignore case in the search result    
+  -i, --ignore-case          ignore case in the search result.    
   -s, --short-name           don't show fullpath in the result
-  -m, --mark                 mark files,dirs and links with f,d and l""")
+  -m, --mark                 mark files,dirs and links with f,d and l
+  
+Examples:
+  pysearch -if /bin vim    "Find files in /bin dir that have 
+  vim in their names, without case sensitivity."
+  pysearch -lr /bin 'vim$' "Find links in /bin dir 
+  that have vim at the end of their names, recursively.
+  """)
 
 if len(sys.argv) > 1:
     for i in range(1,len(sys.argv)):
@@ -317,3 +325,4 @@ for i in result:
     if i not in unique_result:
       unique_result.append(i)
       print(i)  
+
