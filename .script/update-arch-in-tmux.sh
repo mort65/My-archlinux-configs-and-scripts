@@ -40,20 +40,20 @@ function usage {
     echo "Usage: $programname [OPTION]"
     echo "A script for updating archlinux"
     echo ""
-    echo "  -a, --aur     Refresh and synchronize all normal and aur package databases"
-    echo "  --poweroff    Shutdown computer if the script finished without error" 
-    echo "  --shutdown    Shutdown computer if the script finished without error" 
-    echo "  --suspend     suspend computer if the script finished without error" 
-    echo "  --sleep       suspend computer if the script finished without error"     
-    echo "  -s, --sync    Refresh and synchronize normal package databases"
-    echo "  -y, --refresh Force the refresh of all package databases" 
-    echo "  -r  --norss   Disable checking for archlinux news" 
-    echo "  -p, --nopac   Disable checking for pacnew files" 
-    echo "  -i, --install Install a package"
-    echo "  -b, --build   Build a package"
-    echo "  -l  --nolog   Disable logging"
-    echo "  -m, --mirror  Update mirrors"
-    echo "  -h, --help    Display help"
+    echo "  -a, --aur      Refresh and synchronize all normal and aur package databases"
+    echo "  -o  --poweroff Shutdown computer if the script finished without error" 
+    echo "  -u  --suspend  suspend computer if the script finished without error" 
+    echo "  --shutdown     Shutdown computer if the script finished without error" 
+    echo "  --sleep        suspend computer if the script finished without error"     
+    echo "  -s, --sync     Refresh and synchronize normal package databases"
+    echo "  -y, --refresh  Force the refresh of all package databases" 
+    echo "  -r  --norss    Disable checking for archlinux news" 
+    echo "  -p, --nopac    Disable checking for pacnew files" 
+    echo "  -i, --install  Install a package"
+    echo "  -b, --build    Build a package"
+    echo "  -l  --nolog    Disable logging"
+    echo "  -m, --mirror   Update mirrors"
+    echo "  -h, --help     Display help"
     echo ""
     read -p "Press enter to exit..."
     exit 1
@@ -152,7 +152,7 @@ if [ -n "$1" ]; then #non-empty
         echo ""
 		usage
 	  fi 
-    elif [[ $PARAM =~ ^--[Pp][Oo][Ww][Ee][Rr][Oo][Ff][Ff]$ ]] || [[ $PARAM =~ ^--[Ss][Hh][Uu][Tt][Dd][Oo][Ww][Nn]$ ]]; then
+    elif [[ $PARAM =~ ^--[Pp][Oo][Ww][Ee][Rr][Oo][Ff][Ff]$ ]] || [[ $PARAM =~ ^--[Ss][Hh][Uu][Tt][Dd][Oo][Ww][Nn]$ ]] || [[ $PARAM =~ ^-[Oo]$ ]]; then
       if [[ $Shutdown == "" ]] && [[ $Sleep == "" ]]; then
         Shutdown="Yes"
       else
@@ -160,7 +160,7 @@ if [ -n "$1" ]; then #non-empty
         echo ""
 		usage
 	  fi  
-    elif [[ $PARAM =~ ^--[Ss][Uu][Ss][Pp][Ee][Nn][Dd]$ ]] || [[ $PARAM =~ ^--[Ss][Ll][Ee][Ee][Pp]$ ]]; then
+    elif [[ $PARAM =~ ^--[Ss][Uu][Ss][Pp][Ee][Nn][Dd]$ ]] || [[ $PARAM =~ ^--[Ss][Ll][Ee][Ee][Pp]$ ]] || [[ $PARAM =~ ^-[Uu]$ ]]; then
       if [[ $Sleep == "" ]] && [[ $Shutdown == "" ]]; then
         Sleep="Yes"
       else
@@ -168,7 +168,7 @@ if [ -n "$1" ]; then #non-empty
         echo ""
 		usage
 	  fi         
-    elif [[ $PARAM =~ ^-[AaBbIiLlMmPpRrSsYy][AaBbIiLlMmPpRrSsYy][AaBbIiLlMmPpRrSsYy]?[AaBbIiLlMmPpRrSsYy]?[AaBbIiLlMmPpRrSsYy]?[AaBbIiLlMmPpRrSsYy]?[AaBbIiLlMmPpRrSsYy]?[AaBbIiLlMmPpRrSsYy]?[AaBbIiLlMmPpRrSsYy]?$ ]]; then
+    elif [[ $PARAM =~ ^-[AaBbIiLlMmPpRrSsTtYyOoUu][AaBbIiLlMmPpRrSsTtYyOoUu][AaBbIiLlMmPpRrSsTtYyOoUu]?[AaBbIiLlMmPpRrSsTtYyOoUu]?[AaBbIiLlMmPpRrSsTtYyOoUu]?[AaBbIiLlMmPpRrSsTtYyOoUu]?[AaBbIiLlMmPpRrSsTtYyOoUu]?[AaBbIiLlMmPpRrSsTtYyOoUu]?[AaBbIiLlMmPpRrSsTtYyOoUu]?[AaBbIiLlMmPpRrSsTtYyOoUu]?[AaBbIiLlMmPpRrSsTtYyOoUu]?[AaBbIiLlMmPpRrSsTtYyOoUu]?$ ]]; then
 	  i=1
 	  while (( i++ < ${#PARAM} ))
 	  do
@@ -244,7 +244,23 @@ if [ -n "$1" ]; then #non-empty
 				echo -e $red"Error:$reset Invalid arguments '${Args}'"
 				echo ""
 				usage
-			fi		
+			fi
+        elif [[ $char =~ [Uu] ]]; then
+            if [[ $Sleep == "" ]] && [[ $Shutdown == "" ]]; then
+                Sleep="Yes"
+            else
+                echo -e $red"Error:$reset Invalid arguments '${Args}'"
+                echo ""
+                usage
+            fi  
+        elif [[ $char =~ [Oo] ]]; then
+            if [[ $Shutdown == "" ]] && [[ $Sleep == "" ]]; then
+                Shutdown="Yes"
+            else
+                echo -e $red"Error:$reset Invalid arguments '${Args}'"
+                echo ""
+                usage
+            fi  
 		else
 			echo -e $red"Error:$reset Invalid argument '$PARAM'"
             echo ""
