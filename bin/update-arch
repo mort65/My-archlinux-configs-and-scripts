@@ -32,12 +32,21 @@ RSSOff=""
 PacOff=""
 Tmux=""
 Arguments=""
+Shutdown=""
+Sleep=""
+UpdateMirrorCMD="${SUDO} reflector --country 'United States' --country Canada --country 'United Kingdom' --country Denmark --country Greece --country 'South Korea' --country Japan --country India --country Qatar --country Turkey --country Iran --sort rate --latest 10 --protocol https --protocol ftp --age 6 --save /etc/pacman.d/mirrorlist"
+SuspendCMD="/usr/bin/systemctl -i suspend"
+ShutdownCMD="/usr/bin/systemctl -i poweroff"
 
 function usage {
     echo "Usage: $programname [OPTION]"
     echo "A script for updating archlinux"
     echo ""
     echo "  -a, --aur     Refresh and synchronize all normal and aur package databases"
+    echo "  --poweroff    Shutdown computer if the script finished without error" 
+    echo "  --shutdown    Shutdown computer if the script finished without error" 
+    echo "  --suspend     suspend computer if the script finished without error" 
+    echo "  --sleep       suspend computer if the script finished without error" 
     echo "  -s, --sync    Refresh and synchronize normal package databases"
     echo "  -y, --refresh Force the refresh of all package databases" 
     echo "  -r  --norss   Disable checking for archlinux news"
@@ -148,6 +157,22 @@ if [ -n "$1" ]; then #non-empty
       if [[ $Tmux == "" ]]; then
         Tmux="Yes"
 	  else
+        echo -e $red"Error:$reset Invalid arguments '${Args}'"
+        echo ""
+		usage
+	  fi  
+    elif [[ $PARAM =~ ^--[Pp][Oo][Ww][Ee][Rr][Oo][Ff][Ff]$ ]] || [[ $PARAM =~ ^--[Ss][Hh][Uu][Tt][Dd][Oo][Ww][Nn]$ ]]; then
+      if [[ $Shutdown == "" ]] && [[ $Sleep == "" ]]; then
+        Shutdown="Yes"
+      else
+        echo -e $red"Error:$reset Invalid arguments '${Args}'"
+        echo ""
+		usage
+	  fi  
+    elif [[ $PARAM =~ ^--[Ss][Uu][Ss][Pp][Ee][Nn][Dd]$ ]] || [[ $PARAM =~ ^--[Ss][Ll][Ee][Ee][Pp]$ ]]; then
+      if [[ $Sleep == "" ]] && [[ $Shutdown == "" ]]; then
+        Sleep="Yes"
+      else
         echo -e $red"Error:$reset Invalid arguments '${Args}'"
         echo ""
 		usage
@@ -401,7 +426,7 @@ if [[ $Mirror == "Yes" ]]; then
     echo
     echo -e  $blue"===>$reset Updating mirrorlist..."
 	{ $SUDO /usr/bin/cp -f /etc/pacman.d/mirrorlist /etc/pacman.d/mirrorlist.bak ; } || { echo -e $red"Error:$reset Cannot backup mirrorlist" ; exit 1; }
-	{ $SUDO reflector --save /etc/pacman.d/mirrorlist --country 'United States' --country Canada --country 'United Kingdom' --country Denmark --country Greece --country 'South Korea' --country Japan --country India --country Qatar --country Turkey --country Iran --sort rate --latest 10 --protocol https --protocol ftp --age 6 ; } || { echo -e $red"Error:$reset Cannot update mirrors"; }
+	{ eval "${UpdateMirrorCMD}" ; } || { echo -e $red"Error:$reset Cannot update mirrors"; }
 fi
 if [[ $Install == "Yes" ]] || [[ $Build == "Yes" ]]; then
     if [[ $Build == "Yes" ]]; then
@@ -481,5 +506,28 @@ if [[ $RSSOff == "No" ]]; then
   echo
   [ -f $RSSFILE ] && cat "${RSSFILE}" 2> /dev/null
   echo
-fi  
-exit
+fi
+if [[ $Sleep == "Yes" ]]; then
+  echo
+  x=15
+  while [ $x -gt 0 ]
+    do
+     sleep 1s
+     clear
+     echo -e $red"Suspend$reset in$blue $x$reset seconds..."
+     x=$(( $x - 1 ))
+  done
+  eval "${SuspendCMD}"
+elif [[ $Shutdown == "Yes" ]]; then
+  echo
+  x=15
+  while [ $x -gt 0 ]
+    do
+     sleep 1s
+     clear
+     echo -e $red"Shutdown$reset in$blue $x$reset seconds..."
+     x=$(( $x - 1 ))
+  done
+  eval "${ShutdownCMD}"
+fi
+exit 0
