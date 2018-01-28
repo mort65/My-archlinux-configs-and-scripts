@@ -1,0 +1,319 @@
+#!/usr/bin/env python3
+import sys
+import os
+import re
+main_dir = ''
+text = ''
+pattern = ''
+result=[]
+unique_result=[]
+recursive = False
+ignorecase = False
+searchdir = False
+searchfile = False
+onlyname = False
+searchlink = False
+mark = False
+usage = False
+def show_usage():
+    print("""Usage: pysearch [OPTION]... [PATH] [TEXT]
+search for TEXT in the given PATH.
+  -h, --help                 display this help 
+  -r, --recursive            search recursively  
+  -f, --file                 search for files
+  -l, --link                 search for links
+  -d, --dir                  search for directories 
+  -i, --ignore-case          ignore case in the search result    
+  -s, --short-name           don't show fullpath in the result
+  -m, --mark                 mark files,dirs and links with f,d and l""")
+
+if len(sys.argv) > 1:
+    for i in range(1,len(sys.argv)):
+        if sys.argv[i][0] == '-':
+            if (main_dir != '') or (text != ''):
+                show_usage()
+                exit(1)
+            elif sys.argv[i][1] == '-':
+                if sys.argv[i] == '--help':
+                    usage = True
+                elif sys.argv[i] == '--recursive':
+                    recursive = True
+                elif sys.argv[i] == '--ignore-case':
+                    ignorecase = True
+                elif sys.argv[i] == '--link':
+                    searchlink = True                   
+                elif sys.argv[i] == '--dir':
+                    searchdir = True
+                elif sys.argv[i] == '--short-name':
+                    onlyname = True
+                elif sys.argv[i] == '--file':
+                    searchfile = True
+                elif sys.argv[i] == '--mark':
+                    mark = True                    
+                else:
+                    show_usage()
+                    exit(1)
+            else:
+                for c in range(1,len(sys.argv[i])):
+                    if sys.argv[i][c] == 'h':
+                        usage = True
+                    elif sys.argv[i][c] == 'r':
+                        recursive = True
+                    elif sys.argv[i][c] == 'i':
+                        ignorecase = True
+                    elif sys.argv[i][c] == 'l':
+                        searchlink = True                                              
+                    elif sys.argv[i][c] == 'd':
+                        searchdir = True
+                    elif sys.argv[i][c] == 's':
+                        onlyname = True
+                    elif sys.argv[i][c] == 'f':
+                        searchfile = True
+                    elif sys.argv[i][c] == 'm':
+                        mark = True                        
+                    else:
+                        show_usage()
+                        exit(1)
+        elif i == ( len(sys.argv) - 2 ):
+            main_dir = sys.argv[i]
+        elif i == ( len(sys.argv) - 1 ):
+            text = sys.argv[i]
+            if ignorecase:
+                pattern = text.lower()
+            else:
+                pattern = text
+        else:
+            show_usage()
+            exit(1)
+if usage:
+    show_usage()
+    exit(0)
+if searchdir is False and searchlink is False and searchfile is False:
+    searchdir,searchfile,searchlink = True,True,True
+if main_dir == '':
+    main_dir =os.path.realpath('.')
+if pattern == '':
+    pattern ='.*'
+try:
+    if recursive:
+        if searchdir or searchlink:
+            for root, directories, filenames in os.walk(main_dir):
+                for dirname in directories:
+                    if ignorecase:
+                        if re.search(pattern,dirname.lower()):
+                            if os.path.islink(os.path.join(root,dirname)):
+                                if searchlink:
+                                    if onlyname:
+                                        if mark:
+                                            result.append('\''+dirname+'\' --> \''+ os.path.realpath(os.path.join(root,dirname)) +'\'l')
+                                        else:    
+                                            result.append('\''+dirname+'\' --> \''+ os.path.realpath(os.path.join(root,dirname)) +'\'')
+                                    else:
+                                        if mark:
+                                            result.append('\'' + os.path.join(root,dirname) + '\' --> \''+os.path.realpath(os.path.join(root,dirname))+'\'l')
+                                        else:    
+                                            result.append('\'' + os.path.join(root,dirname) + '\' --> \''+os.path.realpath(os.path.join(root,dirname))+'\'')
+                            elif searchdir:  
+                                if onlyname:
+                                    if mark:
+                                        result.append('\''+dirname+'\'d')
+                                    else:
+                                        result.append('\''+dirname+'\'')
+                                else:
+                                    if mark:
+                                        result.append('\''+os.path.realpath(os.path.join(root,dirname))+'\'d')
+                                    else:
+                                        result.append('\''+os.path.realpath(os.path.join(root,dirname))+'\'')
+                    else:
+                        if re.search(pattern,dirname):
+                            if os.path.islink(os.path.join(root,dirname)):
+                                if searchlink:
+                                    if onlyname:
+                                        if mark:
+                                            result.append('\''+dirname+'\' --> \''+ os.path.realpath(os.path.join(root,dirname)) +'\'l')
+                                        else:    
+                                            result.append('\''+dirname+'\' --> \''+ os.path.realpath(os.path.join(root,dirname)) +'\'')
+                                    else:
+                                        if mark:
+                                            result.append('\'' + os.path.join(root,dirname) + '\' --> \''+os.path.realpath(os.path.join(root,dirname))+'\'l')
+                                        else:
+                                            result.append('\'' + os.path.join(root,dirname) + '\' --> \''+os.path.realpath(os.path.join(root,dirname))+'\'')
+                            elif searchdir:                        
+                                if onlyname:
+                                    if mark:
+                                        result.append('\''+dirname+'\'d')
+                                    else:    
+                                        result.append('\''+dirname+'\'')
+                                else:
+                                    if mark:
+                                        result.append('\''+os.path.realpath(os.path.join(root,dirname))+'\'d')
+                                    else:
+                                        result.append('\''+os.path.realpath(os.path.join(root,dirname))+'\'')
+        if searchfile or searchlink:
+            for root, directories, filenames in os.walk(main_dir):
+                for filename in filenames:
+                    if ignorecase:
+                        if re.search(pattern,filename.lower()):
+                            if os.path.islink(os.path.join(root,filename)):
+                                if searchlink:
+                                    if onlyname:
+                                        if mark:
+                                            result.append('\''+filename+'\' --> \''+ os.path.realpath(os.path.join(root,filename)) +'\'l')
+                                        else:    
+                                            result.append('\''+filename+'\' --> \''+ os.path.realpath(os.path.join(root,filename)) +'\'')
+                                    else:
+                                        if mark:
+                                            result.append('\'' + os.path.join(root,filename) + '\' --> \''+os.path.realpath(os.path.join(root,filename))+'\'l')
+                                        else:
+                                            result.append('\'' + os.path.join(root,filename) + '\' --> \''+os.path.realpath(os.path.join(root,filename))+'\'')
+                            elif searchfile:                                
+                                if onlyname:
+                                    if mark:
+                                        result.append('\''+filename+'\'f')
+                                    else:
+                                        result.append('\''+filename+'\'')
+                                else:
+                                    if mark:
+                                        result.append('\''+os.path.realpath(os.path.join(root,filename))+'\'f')
+                                    else:    
+                                        result.append('\''+os.path.realpath(os.path.join(root,filename))+'\'')
+                    else:
+                        if re.search(pattern,filename):
+                            if os.path.islink(os.path.join(root,filename)):
+                                if searchlink:
+                                    if onlyname:
+                                        if mark:
+                                            result.append('\''+filename+'\' --> \''+ os.path.realpath(os.path.join(root,filename)) +'\'l')
+                                        else:
+                                            result.append('\''+filename+'\' --> \''+ os.path.realpath(os.path.join(root,filename)) +'\'')
+                                    else:
+                                        if mark:
+                                            result.append('\'' + os.path.join(root,filename) + '\' --> \''+os.path.realpath(os.path.join(root,filename))+'\'l')
+                                        else:
+                                            result.append('\'' + os.path.join(root,filename) + '\' --> \''+os.path.realpath(os.path.join(root,filename))+'\'')
+                            elif searchfile:                     
+                                if onlyname:
+                                    if mark:
+                                        result.append('\''+filename+'\'f')
+                                    else:
+                                        result.append('\''+filename+'\'')
+                                else:
+                                    if mark:
+                                        result.append('\''+os.path.realpath(os.path.join(root,filename))+'\'f')
+                                    else:    
+                                        result.append('\''+os.path.realpath(os.path.join(root,filename))+'\'')
+    else:
+        if searchdir or searchlink:
+            for name in os.listdir(main_dir):
+                if ignorecase:
+                    if re.search(pattern,os.path.basename(name).lower()):
+                        if os.path.isdir(os.path.join(main_dir,name)):
+                            if os.path.islink(os.path.join(main_dir,name)):
+                                if searchlink:
+                                    if onlyname:
+                                        if mark:
+                                            result.append('\''+name+'\' --> \''+ os.path.realpath(os.path.join(main_dir,name)) +'\'l')
+                                        else:
+                                            result.append('\''+name+'\' --> \''+ os.path.realpath(os.path.join(main_dir,name)) +'\'')
+                                    else:
+                                        if mark:
+                                            result.append('\'' + os.path.join(main_dir,name) + '\' --> \''+ os.path.realpath(os.path.join(main_dir,name)) +'\'l')
+                                        else:
+                                            result.append('\'' + os.path.join(main_dir,name) + '\' --> \''+ os.path.realpath(os.path.join(main_dir,name)) +'\'')
+                            elif searchdir:
+                                if onlyname:
+                                    if mark:
+                                        result.append('\''+name+'\'d')
+                                    else:
+                                        result.append('\''+name+'\'')
+                                else:
+                                    if mark:
+                                        result.append('\''+os.path.realpath(os.path.join(main_dir,name))+'\'d')
+                                    else:
+                                        result.append('\''+os.path.realpath(os.path.join(main_dir,name))+'\'')
+                else:
+                    if re.search(pattern,os.path.basename(name)):
+                        if os.path.isdir(os.path.join(main_dir,name)):
+                             if os.path.islink(os.path.join(main_dir,name)):
+                                 if searchlink:
+                                     if onlyname:
+                                         if mark:
+                                             result.append('\''+name+'\' --> \''+ os.path.realpath(os.path.join(main_dir,name)) +'\'l')
+                                         else:
+                                             result.append('\''+name+'\' --> \''+ os.path.realpath(os.path.join(main_dir,name)) +'\'')
+                                     else:
+                                         if mark:
+                                             result.append('\'' + os.path.join(main_dir,name) + '\' --> \''+ os.path.realpath(os.path.join(main_dir,name)) +'\'l')
+                                         else:
+                                             result.append('\'' + os.path.join(main_dir,name) + '\' --> \''+ os.path.realpath(os.path.join(main_dir,name)) +'\'')
+                             elif searchdir:
+                                if onlyname:
+                                    if mark:
+                                        result.append('\''+name+'\'d')
+                                    else:
+                                        result.append('\''+name+'\'')
+                                else:
+                                    if mark:
+                                        result.append('\''+os.path.realpath(os.path.join(main_dir,name))+'\'d')
+                                    else:
+                                        result.append('\''+os.path.realpath(os.path.join(main_dir,name))+'\'')
+        if searchfile or searchlink:
+            for name in os.listdir(main_dir):
+                if ignorecase:
+                    if re.search(pattern,os.path.basename(name).lower()):
+                        if not os.path.isdir(os.path.join(main_dir,name)):
+                            if os.path.islink(os.path.join(main_dir,name)):
+                                if searchlink:
+                                    if onlyname:
+                                        if mark:
+                                            result.append('\''+name+'\' --> \''+ os.path.realpath(os.path.join(main_dir,name)) +'\'l')
+                                        else:
+                                            result.append('\''+name+'\' --> \''+ os.path.realpath(os.path.join(main_dir,name)) +'\'')
+                                    else:
+                                        if mark:
+                                            result.append('\'' + os.path.join(main_dir,name) + '\' --> \''+ os.path.realpath(os.path.join(main_dir,name)) +'\'l')
+                                        else:
+                                            result.append('\'' + os.path.join(main_dir,name) + '\' --> \''+ os.path.realpath(os.path.join(main_dir,name)) +'\'')                       
+                            elif searchdir:
+                                if onlyname:
+                                    if mark:
+                                        result.append('\''+name+'\'d')
+                                    else:
+                                        result.append('\''+name+'\'')
+                                else:
+                                    if mark:
+                                        result.append('\''+os.path.realpath(os.path.join(main_dir,name))+'\'d')
+                                    else:
+                                        result.append('\''+os.path.realpath(os.path.join(main_dir,name))+'\'')
+                else:
+                    if re.search(pattern,os.path.basename(name)):
+                        if not os.path.isdir(os.path.join(main_dir,name)):
+                            if os.path.islink(os.path.join(main_dir,name)):
+                                if searchlink:
+                                    if onlyname:
+                                        if mark:
+                                            result.append('\''+name+'\' --> \''+ os.path.realpath(os.path.join(main_dir,name)) +'\'l')
+                                        else:
+                                            result.append('\''+name+'\' --> \''+ os.path.realpath(os.path.join(main_dir,name)) +'\'')
+                                    else:
+                                        if mark:
+                                            result.append('\'' + os.path.join(main_dir,name) + '\' --> \''+ os.path.realpath(os.path.join(main_dir,name)) +'\'l')
+                                        else:
+                                            result.append('\'' + os.path.join(main_dir,name) + '\' --> \''+ os.path.realpath(os.path.join(main_dir,name)) +'\'')
+                            elif searchfile:                  
+                                if onlyname:
+                                    if mark:
+                                        result.append('\''+name+'\'f')
+                                    else:
+                                        result.append('\''+name+'\'')
+                                else:
+                                    if mark:
+                                        result.append('\''+os.path.realpath(os.path.join(main_dir,name))+'\'f')
+                                    else:
+                                        result.append('\''+os.path.realpath(os.path.join(main_dir,name))+'\'')
+except:
+    pass
+for i in result:
+    if i not in unique_result:
+      unique_result.append(i)
+      print(i)  
