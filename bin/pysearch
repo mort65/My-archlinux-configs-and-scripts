@@ -28,12 +28,13 @@ Text can be a regular expression but doesn't work if -i is used.
   -m, --mark                 mark files,dirs and links with f,d and l
   
 Examples:
-  pysearch -if /bin vim    "Find files in /bin dir that have 
+  pysearch -if /usr/bin vim    "Find files in bin dir that have 
   'vim' in their names and ignore case sensitivity."
-  pysearch -lr /bin 'vim$' "Find recursively all links in 
-  /bin dir that have 'vim' at the end of their names.
-  pysearch -rs /bin '^im'  "Find recursively everything 
-  in /bin that starts with 'im' and only write short names."
+  pysearch -lr /usr/bin 'vim$' "Recursively find all links in 
+  bin dir that have 'vim' at the end of their names.
+  pysearch -rs /usr/bin '^im'  "Find recursively everything 
+  in bin that starts with 'im' and only write short names."
+  pysearch -dr /usr/bin '.*'   "Recursively find all dirs in bin"
   """)
 
 if len(sys.argv) > 1:
