@@ -60,7 +60,7 @@ function usage {
 }
 
 #testing number of args:
-if [ "${#}" -gt 9 ]; then
+if [ "${#}" -gt 10 ]; then
     echo -e $red"Error:$reset Invalid number of parameters"
     echo ""
     usage
