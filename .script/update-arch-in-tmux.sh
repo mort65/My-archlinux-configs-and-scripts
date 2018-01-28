@@ -477,6 +477,7 @@ if [[ $Sleep == "Yes" ]]; then
      x=$(( $x - 1 ))
   done
   eval "${SuspendCMD}"
+  exit 0
 elif [[ $Shutdown == "Yes" ]]; then
   echo
   x=15
@@ -488,7 +489,9 @@ elif [[ $Shutdown == "Yes" ]]; then
      x=$(( $x - 1 ))
   done
   eval "${ShutdownCMD}"
+  exit 0
+else
+    echo
+    read -p "Press enter to exit..."
+    exit 0
 fi
-echo
-read -p "Press enter to exit..."
-exit 0
