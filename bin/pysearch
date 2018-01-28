@@ -16,16 +16,15 @@ mark = False
 usage = False
 def show_usage():
     print("""Usage: pysearch [OPTION]... [PATH] [TEXT]
-search for TEXT in the given PATH.
-Text can be a regular expression but doesn't work if -i is used.
+search for TEXT in the given PATH.Text can be a regular expression.
   -h, --help                 display this help 
   -r, --recursive            search recursively  
   -f, --file                 search for files
   -l, --link                 search for links
-  -d, --dir                  search for directories 
-  -i, --ignore-case          ignore case in the search result.    
+  -d, --dir                  search for directories
+  -m, --mark                 mark files and dirs with f and d
+  -i, --ignore-case          ignore case in the search result    
   -s, --short-name           don't show fullpath in the result
-  -m, --mark                 mark files,dirs and links with f,d and l
   
 Examples:
   pysearch -if /usr/bin vim    "Find files in bin dir that have 
@@ -36,6 +35,80 @@ Examples:
   in bin that starts with 'im' and only write short names."
   pysearch -dr /usr/bin '.*'   "Recursively find all dirs in bin"
   """)
+
+def add_result(parent_dir,new_result,is_dir):
+    if recursive:
+        if is_dir:
+            if os.path.islink(os.path.join(parent_dir,new_result)):
+                if searchlink:
+                    if onlyname:
+                        add_link(new_result,os.path.realpath(os.path.join(parent_dir,new_result)),is_dir)
+                    else:
+                        add_link(os.path.join(parent_dir,new_result),os.path.realpath(os.path.join(parent_dir,new_result)),is_dir)
+            elif searchdir:  
+                if onlyname:
+                    add_dir(new_result)
+                else:
+                    add_dir(os.path.realpath(os.path.join(parent_dir,new_result)))
+        else:
+            if os.path.islink(os.path.join(parent_dir,new_result)):
+                if searchlink:
+                    if onlyname:
+                        add_link(new_result,os.path.realpath(os.path.join(parent_dir,new_result)),is_dir)
+                    else:
+                        add_link(os.path.join(parent_dir,new_result),os.path.realpath(os.path.join(parent_dir,new_result)),is_dir)
+            elif searchfile: 
+                if onlyname:
+                    add_file(new_result)
+                else:
+                    add_file(os.path.realpath(os.path.join(parent_dir,new_result)))
+    else:
+        if is_dir:
+            if os.path.islink(os.path.join(parent_dir,new_result)):
+                if searchlink:
+                    if onlyname:
+                        add_link(new_result,os.path.realpath(os.path.join(parent_dir,new_result)),is_dir)
+                    else:
+                        add_link(os.path.join(parent_dir,new_result),os.path.realpath(os.path.join(parent_dir,new_result)),is_dir)
+            elif searchdir:
+                if onlyname:
+                    add_dir(new_result)
+                else:
+                    add_dir(os.path.realpath(os.path.join(parent_dir,new_result)))
+        else:
+            if os.path.islink(os.path.join(parent_dir,new_result)):
+                if searchlink:
+                    if onlyname:
+                        add_link(new_result,os.path.realpath(os.path.join(parent_dir,new_result)),is_dir)
+                    else:
+                        add_link(os.path.join(parent_dir,new_result),os.path.realpath(os.path.join(parent_dir,new_result)),is_dir)                      
+            elif searchfile:
+                if onlyname:
+                    add_file(new_result)
+                else:
+                    add_file(os.path.realpath(os.path.join(parent_dir,new_result)))
+
+def add_link(new_link,target,is_target_dir):
+    result_link = '\'' + new_link + '\' --> \''+ target +'\''
+    if mark:
+        if is_target_dir:
+            result_link += 'd'
+        else:
+            result_link += 'f'
+    result.append(result_link)
+
+def add_dir(new_dir):
+    if mark:
+        result.append('\''+new_dir+'\'d')
+    else:
+        result.append('\''+new_dir+'\'')
+
+def add_file(new_file):
+    if mark:
+        result.append('\''+new_file+'\'f')
+    else:
+        result.append('\''+new_file+'\'')
+        
 
 if len(sys.argv) > 1:
     for i in range(1,len(sys.argv)):
@@ -104,6 +177,7 @@ if main_dir == '':
     main_dir =os.path.realpath('.')
 if pattern == '':
     pattern ='.*'
+
 try:
     if recursive:
         if searchdir or searchlink:
@@ -111,219 +185,42 @@ try:
                 for dirname in directories:
                     if ignorecase:
                         if re.search(pattern,dirname.lower()):
-                            if os.path.islink(os.path.join(root,dirname)):
-                                if searchlink:
-                                    if onlyname:
-                                        if mark:
-                                            result.append('\''+dirname+'\' --> \''+ os.path.realpath(os.path.join(root,dirname)) +'\'l')
-                                        else:    
-                                            result.append('\''+dirname+'\' --> \''+ os.path.realpath(os.path.join(root,dirname)) +'\'')
-                                    else:
-                                        if mark:
-                                            result.append('\'' + os.path.join(root,dirname) + '\' --> \''+os.path.realpath(os.path.join(root,dirname))+'\'l')
-                                        else:    
-                                            result.append('\'' + os.path.join(root,dirname) + '\' --> \''+os.path.realpath(os.path.join(root,dirname))+'\'')
-                            elif searchdir:  
-                                if onlyname:
-                                    if mark:
-                                        result.append('\''+dirname+'\'d')
-                                    else:
-                                        result.append('\''+dirname+'\'')
-                                else:
-                                    if mark:
-                                        result.append('\''+os.path.realpath(os.path.join(root,dirname))+'\'d')
-                                    else:
-                                        result.append('\''+os.path.realpath(os.path.join(root,dirname))+'\'')
+                            add_result(root,dirname,True)
                     else:
                         if re.search(pattern,dirname):
-                            if os.path.islink(os.path.join(root,dirname)):
-                                if searchlink:
-                                    if onlyname:
-                                        if mark:
-                                            result.append('\''+dirname+'\' --> \''+ os.path.realpath(os.path.join(root,dirname)) +'\'l')
-                                        else:    
-                                            result.append('\''+dirname+'\' --> \''+ os.path.realpath(os.path.join(root,dirname)) +'\'')
-                                    else:
-                                        if mark:
-                                            result.append('\'' + os.path.join(root,dirname) + '\' --> \''+os.path.realpath(os.path.join(root,dirname))+'\'l')
-                                        else:
-                                            result.append('\'' + os.path.join(root,dirname) + '\' --> \''+os.path.realpath(os.path.join(root,dirname))+'\'')
-                            elif searchdir:                        
-                                if onlyname:
-                                    if mark:
-                                        result.append('\''+dirname+'\'d')
-                                    else:    
-                                        result.append('\''+dirname+'\'')
-                                else:
-                                    if mark:
-                                        result.append('\''+os.path.realpath(os.path.join(root,dirname))+'\'d')
-                                    else:
-                                        result.append('\''+os.path.realpath(os.path.join(root,dirname))+'\'')
+                            add_result(root,dirname,True)
         if searchfile or searchlink:
             for root, directories, filenames in os.walk(main_dir):
                 for filename in filenames:
                     if ignorecase:
                         if re.search(pattern,filename.lower()):
-                            if os.path.islink(os.path.join(root,filename)):
-                                if searchlink:
-                                    if onlyname:
-                                        if mark:
-                                            result.append('\''+filename+'\' --> \''+ os.path.realpath(os.path.join(root,filename)) +'\'l')
-                                        else:    
-                                            result.append('\''+filename+'\' --> \''+ os.path.realpath(os.path.join(root,filename)) +'\'')
-                                    else:
-                                        if mark:
-                                            result.append('\'' + os.path.join(root,filename) + '\' --> \''+os.path.realpath(os.path.join(root,filename))+'\'l')
-                                        else:
-                                            result.append('\'' + os.path.join(root,filename) + '\' --> \''+os.path.realpath(os.path.join(root,filename))+'\'')
-                            elif searchfile:                                
-                                if onlyname:
-                                    if mark:
-                                        result.append('\''+filename+'\'f')
-                                    else:
-                                        result.append('\''+filename+'\'')
-                                else:
-                                    if mark:
-                                        result.append('\''+os.path.realpath(os.path.join(root,filename))+'\'f')
-                                    else:    
-                                        result.append('\''+os.path.realpath(os.path.join(root,filename))+'\'')
+                            add_result(root,filename,False)
                     else:
                         if re.search(pattern,filename):
-                            if os.path.islink(os.path.join(root,filename)):
-                                if searchlink:
-                                    if onlyname:
-                                        if mark:
-                                            result.append('\''+filename+'\' --> \''+ os.path.realpath(os.path.join(root,filename)) +'\'l')
-                                        else:
-                                            result.append('\''+filename+'\' --> \''+ os.path.realpath(os.path.join(root,filename)) +'\'')
-                                    else:
-                                        if mark:
-                                            result.append('\'' + os.path.join(root,filename) + '\' --> \''+os.path.realpath(os.path.join(root,filename))+'\'l')
-                                        else:
-                                            result.append('\'' + os.path.join(root,filename) + '\' --> \''+os.path.realpath(os.path.join(root,filename))+'\'')
-                            elif searchfile:                     
-                                if onlyname:
-                                    if mark:
-                                        result.append('\''+filename+'\'f')
-                                    else:
-                                        result.append('\''+filename+'\'')
-                                else:
-                                    if mark:
-                                        result.append('\''+os.path.realpath(os.path.join(root,filename))+'\'f')
-                                    else:    
-                                        result.append('\''+os.path.realpath(os.path.join(root,filename))+'\'')
+                            add_result(root,filename,False)
     else:
         if searchdir or searchlink:
             for name in os.listdir(main_dir):
                 if ignorecase:
                     if re.search(pattern,os.path.basename(name).lower()):
-                        if os.path.isdir(os.path.join(main_dir,name)):
-                            if os.path.islink(os.path.join(main_dir,name)):
-                                if searchlink:
-                                    if onlyname:
-                                        if mark:
-                                            result.append('\''+name+'\' --> \''+ os.path.realpath(os.path.join(main_dir,name)) +'\'l')
-                                        else:
-                                            result.append('\''+name+'\' --> \''+ os.path.realpath(os.path.join(main_dir,name)) +'\'')
-                                    else:
-                                        if mark:
-                                            result.append('\'' + os.path.join(main_dir,name) + '\' --> \''+ os.path.realpath(os.path.join(main_dir,name)) +'\'l')
-                                        else:
-                                            result.append('\'' + os.path.join(main_dir,name) + '\' --> \''+ os.path.realpath(os.path.join(main_dir,name)) +'\'')
-                            elif searchdir:
-                                if onlyname:
-                                    if mark:
-                                        result.append('\''+name+'\'d')
-                                    else:
-                                        result.append('\''+name+'\'')
-                                else:
-                                    if mark:
-                                        result.append('\''+os.path.realpath(os.path.join(main_dir,name))+'\'d')
-                                    else:
-                                        result.append('\''+os.path.realpath(os.path.join(main_dir,name))+'\'')
+                         if os.path.isdir(os.path.join(main_dir,name)):
+                             add_result(main_dir,name,True)
                 else:
                     if re.search(pattern,os.path.basename(name)):
-                        if os.path.isdir(os.path.join(main_dir,name)):
-                             if os.path.islink(os.path.join(main_dir,name)):
-                                 if searchlink:
-                                     if onlyname:
-                                         if mark:
-                                             result.append('\''+name+'\' --> \''+ os.path.realpath(os.path.join(main_dir,name)) +'\'l')
-                                         else:
-                                             result.append('\''+name+'\' --> \''+ os.path.realpath(os.path.join(main_dir,name)) +'\'')
-                                     else:
-                                         if mark:
-                                             result.append('\'' + os.path.join(main_dir,name) + '\' --> \''+ os.path.realpath(os.path.join(main_dir,name)) +'\'l')
-                                         else:
-                                             result.append('\'' + os.path.join(main_dir,name) + '\' --> \''+ os.path.realpath(os.path.join(main_dir,name)) +'\'')
-                             elif searchdir:
-                                if onlyname:
-                                    if mark:
-                                        result.append('\''+name+'\'d')
-                                    else:
-                                        result.append('\''+name+'\'')
-                                else:
-                                    if mark:
-                                        result.append('\''+os.path.realpath(os.path.join(main_dir,name))+'\'d')
-                                    else:
-                                        result.append('\''+os.path.realpath(os.path.join(main_dir,name))+'\'')
+                         if os.path.isdir(os.path.join(main_dir,name)):
+                             add_result(main_dir,name,True)
         if searchfile or searchlink:
             for name in os.listdir(main_dir):
                 if ignorecase:
                     if re.search(pattern,os.path.basename(name).lower()):
                         if not os.path.isdir(os.path.join(main_dir,name)):
-                            if os.path.islink(os.path.join(main_dir,name)):
-                                if searchlink:
-                                    if onlyname:
-                                        if mark:
-                                            result.append('\''+name+'\' --> \''+ os.path.realpath(os.path.join(main_dir,name)) +'\'l')
-                                        else:
-                                            result.append('\''+name+'\' --> \''+ os.path.realpath(os.path.join(main_dir,name)) +'\'')
-                                    else:
-                                        if mark:
-                                            result.append('\'' + os.path.join(main_dir,name) + '\' --> \''+ os.path.realpath(os.path.join(main_dir,name)) +'\'l')
-                                        else:
-                                            result.append('\'' + os.path.join(main_dir,name) + '\' --> \''+ os.path.realpath(os.path.join(main_dir,name)) +'\'')                       
-                            elif searchdir:
-                                if onlyname:
-                                    if mark:
-                                        result.append('\''+name+'\'d')
-                                    else:
-                                        result.append('\''+name+'\'')
-                                else:
-                                    if mark:
-                                        result.append('\''+os.path.realpath(os.path.join(main_dir,name))+'\'d')
-                                    else:
-                                        result.append('\''+os.path.realpath(os.path.join(main_dir,name))+'\'')
+                            add_result(main_dir,name,False)
                 else:
                     if re.search(pattern,os.path.basename(name)):
                         if not os.path.isdir(os.path.join(main_dir,name)):
-                            if os.path.islink(os.path.join(main_dir,name)):
-                                if searchlink:
-                                    if onlyname:
-                                        if mark:
-                                            result.append('\''+name+'\' --> \''+ os.path.realpath(os.path.join(main_dir,name)) +'\'l')
-                                        else:
-                                            result.append('\''+name+'\' --> \''+ os.path.realpath(os.path.join(main_dir,name)) +'\'')
-                                    else:
-                                        if mark:
-                                            result.append('\'' + os.path.join(main_dir,name) + '\' --> \''+ os.path.realpath(os.path.join(main_dir,name)) +'\'l')
-                                        else:
-                                            result.append('\'' + os.path.join(main_dir,name) + '\' --> \''+ os.path.realpath(os.path.join(main_dir,name)) +'\'')
-                            elif searchfile:                  
-                                if onlyname:
-                                    if mark:
-                                        result.append('\''+name+'\'f')
-                                    else:
-                                        result.append('\''+name+'\'')
-                                else:
-                                    if mark:
-                                        result.append('\''+os.path.realpath(os.path.join(main_dir,name))+'\'f')
-                                    else:
-                                        result.append('\''+os.path.realpath(os.path.join(main_dir,name))+'\'')
+                            add_result(main_dir,name,False)
 except:
     pass
 
 for i in result: 
         print(i)  
-
