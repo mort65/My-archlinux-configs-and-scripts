@@ -6,7 +6,6 @@ main_dir = ''
 text = ''
 pattern = ''
 result=[]
-unique_result=[]
 recursive = False
 ignorecase = False
 searchdir = False
@@ -323,8 +322,7 @@ try:
                                         result.append('\''+os.path.realpath(os.path.join(main_dir,name))+'\'')
 except:
     pass
-for i in result:
-    if i not in unique_result:
-      unique_result.append(i)
-      print(i)  
+
+for i in result: 
+        print(i)  
 
