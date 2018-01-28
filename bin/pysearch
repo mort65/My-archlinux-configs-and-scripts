@@ -30,9 +30,11 @@ Text can be a regular expression but doesn't work if -i is used.
   
 Examples:
   pysearch -if /bin vim    "Find files in /bin dir that have 
-  vim in their names, without case sensitivity."
-  pysearch -lr /bin 'vim$' "Find links in /bin dir 
-  that have vim at the end of their names, recursively.
+  'vim' in their names and ignore case sensitivity."
+  pysearch -lr /bin 'vim$' "Find recursively all links in 
+  /bin dir that have 'vim' at the end of their names.
+  pysearch -rs /bin '^im'  "Find recursively everything 
+  in /bin that starts with 'im' and only write short names."
   """)
 
 if len(sys.argv) > 1:
