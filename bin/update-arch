@@ -61,7 +61,7 @@ function usage {
 }
 
 #testing number of args:
-if [ "${#}" -gt 10 ]; then
+if [ "${#}" -gt 11 ]; then
     echo -e $red"Error:$reset Invalid number of parameters"
     echo ""
     usage
