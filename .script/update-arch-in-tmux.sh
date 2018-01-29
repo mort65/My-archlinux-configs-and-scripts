@@ -17,7 +17,7 @@ red="\033[1;31m"
 bold="\033[1;37m"
 reset="\033[0m"
 
-programname="tupdatesystem"
+programname="update-arch-in-tmux"
 RSSFILE="$HOMEDIR/.archnews"
 TMPFILE="$HOMEDIR/.archnewstmp"
 Build=""
@@ -32,21 +32,25 @@ RSSOff=""
 PacOff=""
 Shutdown=""
 Sleep=""
-UpdateMirrorCMD="${SUDO} reflector --country 'United States' --country Canada --country 'United Kingdom' --country Denmark --country Greece --country 'South Korea' --country Japan --country India --country Qatar --country Turkey --country Iran --sort rate --latest 10 --protocol https --protocol ftp --age 6 --save /etc/pacman.d/mirrorlist"
+Reboot=""
+UpdateMirrorCMD="${SUDO} /usr/bin/reflector --country 'United States' --country Canada --country 'United Kingdom' --country Denmark --country Greece --country 'South Korea' --country Japan --country India --country Qatar --country Turkey --country Iran --sort rate --latest 10 --protocol https --protocol ftp --age 6 --save /etc/pacman.d/mirrorlist"
 SuspendCMD="/usr/bin/systemctl -i suspend"
 ShutdownCMD="/usr/bin/systemctl -i poweroff"
+RebootCMD="/usr/bin/systemctl -i reboot"
 
 function usage {
     echo "Usage: $programname [OPTION]"
     echo "A script for updating archlinux"
     echo ""
     echo "  -a, --aur      Refresh and synchronize all normal and aur package databases"
-    echo "  -o  --poweroff Shutdown computer if the script finished without error" 
-    echo "  -u  --suspend  suspend computer if the script finished without error" 
-    echo "  --shutdown     Shutdown computer if the script finished without error" 
-    echo "  --sleep        suspend computer if the script finished without error"     
+    echo "  -o  --poweroff Shutdown computer if the script finished without error"         
+    echo "  -e  --reboot   Restart computer if the script finished without error"  
+    echo "  -u  --suspend  Suspend computer if the script finished without error"
+    echo "  --shutdown     Shutdown computer if the script finished without error"     
+    echo "  --restart      Restart computer if the script finished without error"     
+    echo "  --sleep        Suspend computer if the script finished without error"     
     echo "  -s, --sync     Refresh and synchronize normal package databases"
-    echo "  -y, --refresh  Force the refresh of all package databases" 
+    echo "  -y, --refresh  Force the refresh of package databases" 
     echo "  -r  --norss    Disable checking for archlinux news" 
     echo "  -p, --nopac    Disable checking for pacnew files" 
     echo "  -i, --install  Install a package"
@@ -153,7 +157,7 @@ if [ -n "$1" ]; then #non-empty
 		usage
 	  fi 
     elif [[ $PARAM =~ ^--[Pp][Oo][Ww][Ee][Rr][Oo][Ff][Ff]$ ]] || [[ $PARAM =~ ^--[Ss][Hh][Uu][Tt][Dd][Oo][Ww][Nn]$ ]] || [[ $PARAM =~ ^-[Oo]$ ]]; then
-      if [[ $Shutdown == "" ]] && [[ $Sleep == "" ]]; then
+      if [[ $Sleep == "" ]] && [[ $Shutdown == "" ]] && [[ $Reboot == "" ]]; then
         Shutdown="Yes"
       else
         echo -e $red"Error:$reset Invalid arguments '${Args}'"
@@ -161,14 +165,22 @@ if [ -n "$1" ]; then #non-empty
 		usage
 	  fi  
     elif [[ $PARAM =~ ^--[Ss][Uu][Ss][Pp][Ee][Nn][Dd]$ ]] || [[ $PARAM =~ ^--[Ss][Ll][Ee][Ee][Pp]$ ]] || [[ $PARAM =~ ^-[Uu]$ ]]; then
-      if [[ $Sleep == "" ]] && [[ $Shutdown == "" ]]; then
+      if [[ $Sleep == "" ]] && [[ $Shutdown == "" ]] && [[ $Reboot == "" ]]; then
         Sleep="Yes"
       else
         echo -e $red"Error:$reset Invalid arguments '${Args}'"
         echo ""
 		usage
-	  fi         
-    elif [[ $PARAM =~ ^-[AaBbIiLlMmPpRrSsTtYyOoUu][AaBbIiLlMmPpRrSsTtYyOoUu][AaBbIiLlMmPpRrSsTtYyOoUu]?[AaBbIiLlMmPpRrSsTtYyOoUu]?[AaBbIiLlMmPpRrSsTtYyOoUu]?[AaBbIiLlMmPpRrSsTtYyOoUu]?[AaBbIiLlMmPpRrSsTtYyOoUu]?[AaBbIiLlMmPpRrSsTtYyOoUu]?[AaBbIiLlMmPpRrSsTtYyOoUu]?[AaBbIiLlMmPpRrSsTtYyOoUu]?[AaBbIiLlMmPpRrSsTtYyOoUu]?[AaBbIiLlMmPpRrSsTtYyOoUu]?$ ]]; then
+	  fi
+    elif [[ $PARAM =~ ^--[Rr][Ee][Ss][Tt][Aa][Rr][Tt]$ ]] || [[ $PARAM =~ ^--[Rr][Ee][Bb][Oo][Oo][Tt]$ ]] || [[ $PARAM =~ ^-[Ee]$ ]]; then
+      if [[ $Sleep == "" ]] && [[ $Shutdown == "" ]] && [[ $Reboot == "" ]]; then
+        Reboot="Yes"
+      else
+        echo -e $red"Error:$reset Invalid arguments '${Args}'"
+        echo ""
+		usage
+	  fi                 
+    elif [[ $PARAM =~ ^-[AaBbEeIiLlMmOoPpRrSsTtUuYy][AaBbEeIiLlMmOoPpRrSsTtUuYy][AaBbEeIiLlMmOoPpRrSsTtUuYy]?[AaBbEeIiLlMmOoPpRrSsTtUuYy]?[AaBbEeIiLlMmOoPpRrSsTtUuYy]?[AaBbEeIiLlMmOoPpRrSsTtUuYy]?[AaBbEeIiLlMmOoPpRrSsTtUuYy]?[AaBbEeIiLlMmOoPpRrSsTtUuYy]?[AaBbEeIiLlMmOoPpRrSsTtUuYy]?[AaBbEeIiLlMmOoPpRrSsTtUuYy]?[AaBbEeIiLlMmOoPpRrSsTtUuYy]?[AaBbEeIiLlMmOoPpRrSsTtUuYy]?[AaBbEeIiLlMmOoPpRrSsTtUuYy]?$ ]]; then
 	  i=1
 	  while (( i++ < ${#PARAM} ))
 	  do
@@ -246,7 +258,7 @@ if [ -n "$1" ]; then #non-empty
 				usage
 			fi
         elif [[ $char =~ [Uu] ]]; then
-            if [[ $Sleep == "" ]] && [[ $Shutdown == "" ]]; then
+            if [[ $Sleep == "" ]] && [[ $Shutdown == "" ]] && [[ $Reboot == "" ]]; then
                 Sleep="Yes"
             else
                 echo -e $red"Error:$reset Invalid arguments '${Args}'"
@@ -254,13 +266,21 @@ if [ -n "$1" ]; then #non-empty
                 usage
             fi  
         elif [[ $char =~ [Oo] ]]; then
-            if [[ $Shutdown == "" ]] && [[ $Sleep == "" ]]; then
+            if [[ $Sleep == "" ]] && [[ $Shutdown == "" ]] && [[ $Reboot == "" ]]; then
                 Shutdown="Yes"
             else
                 echo -e $red"Error:$reset Invalid arguments '${Args}'"
                 echo ""
                 usage
-            fi  
+            fi 
+        elif [[ $char =~ [Ee] ]]; then
+            if [[ $Sleep == "" ]] && [[ $Shutdown == "" ]] && [[ $Reboot == "" ]]; then
+                Reboot="Yes"
+            else
+                echo -e $red"Error:$reset Invalid arguments '${Args}'"
+                echo ""
+                usage
+            fi               
 		else
 			echo -e $red"Error:$reset Invalid argument '$PARAM'"
             echo ""
@@ -489,6 +509,18 @@ elif [[ $Shutdown == "Yes" ]]; then
      x=$(( $x - 1 ))
   done
   eval "${ShutdownCMD}"
+  exit 0
+elif [[ $Reboot == "Yes" ]]; then
+  echo
+  x=15
+  while [ $x -gt 0 ]
+    do
+     sleep 1s
+     clear
+     echo -e $red"Restart$reset in$green $x$reset seconds..."
+     x=$(( $x - 1 ))
+  done
+  eval "${RebootCMD}"
   exit 0
 else
     echo
