@@ -89,25 +89,25 @@ def add_result(parent_dir,new_result,is_dir):
                     add_file(os.path.realpath(os.path.join(parent_dir,new_result)))
 
 def add_link(new_link,target,is_target_dir):
-    result_link = '\'' + new_link + '\' --> \''+ target +'\''
+    result_link = "\"" + new_link + "\" -> \""+ target +"\""
     if mark:
         if is_target_dir:
-            result_link += 'd'
+            result_link += "d"
         else:
-            result_link += 'f'
+            result_link += "f"
     result.append(result_link)
 
 def add_dir(new_dir):
     if mark:
-        result.append('\''+new_dir+'\'d')
+        result.append("\""+new_dir+"\"d")
     else:
-        result.append('\''+new_dir+'\'')
+        result.append("\""+new_dir+"\"")
 
 def add_file(new_file):
     if mark:
-        result.append('\''+new_file+'\'f')
+        result.append("\""+new_file+"\"f")
     else:
-        result.append('\''+new_file+'\'')
+        result.append("\""+new_file+"\"")
         
 
 if len(sys.argv) > 1:
@@ -224,3 +224,4 @@ except:
 
 for i in result: 
         print(i)  
+
