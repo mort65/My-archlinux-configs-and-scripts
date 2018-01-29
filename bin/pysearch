@@ -14,6 +14,7 @@ onlyname = False
 searchlink = False
 mark = False
 usage = False
+sort = False
 def show_usage():
     print("""Usage: pysearch [OPTION]... [PATH] [TEXT]
 search for TEXT in the given PATH.Text can be a regular expression.
@@ -24,7 +25,8 @@ search for TEXT in the given PATH.Text can be a regular expression.
   -d, --dir                  search for directories
   -m, --mark                 mark files and dirs with f and d
   -i, --ignore-case          ignore case in the search result    
-  -s, --short-name           don't show fullpath in the result
+  -n, --name                 don't show fullpath in the result
+  -s, --sort                 sort the search result alphabetically 
   
 Examples:
   pysearch -if /usr/bin vim    "Find files in bin dir that have 
@@ -33,8 +35,7 @@ Examples:
   bin dir that have 'vim' at the end of their names.
   pysearch -rs /usr/bin '^im'  "Find recursively everything 
   in bin that starts with 'im' and only write short names."
-  pysearch -dr /usr/bin '.*'   "Recursively find all dirs in bin"
-  """)
+  pysearch -dr /usr/bin '.*'   "Recursively find all dirs in bin" """)
 
 def add_result(parent_dir,new_result,is_dir):
     if recursive:
@@ -127,12 +128,14 @@ if len(sys.argv) > 1:
                     searchlink = True                   
                 elif sys.argv[i] == '--dir':
                     searchdir = True
-                elif sys.argv[i] == '--short-name':
+                elif sys.argv[i] == '--name':
                     onlyname = True
                 elif sys.argv[i] == '--file':
                     searchfile = True
                 elif sys.argv[i] == '--mark':
-                    mark = True                    
+                    mark = True
+                elif sys.argv[i] == '--sort':
+                    sort = True
                 else:
                     show_usage()
                     exit(1)
@@ -148,12 +151,14 @@ if len(sys.argv) > 1:
                         searchlink = True                                              
                     elif sys.argv[i][c] == 'd':
                         searchdir = True
-                    elif sys.argv[i][c] == 's':
+                    elif sys.argv[i][c] == 'n':
                         onlyname = True
                     elif sys.argv[i][c] == 'f':
                         searchfile = True
                     elif sys.argv[i][c] == 'm':
-                        mark = True                        
+                        mark = True 
+                    elif sys.argv[i][c] == 's':
+                        sort = True
                     else:
                         show_usage()
                         exit(1)
@@ -222,6 +227,9 @@ try:
 except:
     pass
 
-for i in result: 
+if sort:
+    for i in sorted(result): 
         print(i)  
-
+else:
+    for i in result: 
+        print(i)  
