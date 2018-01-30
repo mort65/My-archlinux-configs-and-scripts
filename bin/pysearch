@@ -240,5 +240,3 @@ if sort:
 else:
     for i in result: 
         print(i)  
-    
-    
