@@ -5,7 +5,7 @@ import re
 main_dir = ''
 text = ''
 pattern = ''
-result=[]
+result = []
 recursive = False
 ignorecase = False
 searchdir = False
@@ -17,7 +17,10 @@ usage = False
 sort = False
 def show_usage():
     print("""Usage: pysearch [OPTION]... [PATH] [TEXT]
-search for TEXT in the given PATH.Text can be a regular expression.
+search for TEXT in the given PATH.
+Text can be a regular expression but it may not work if 
+case sensitivity is disabled by using '-i, --ignore-case' option.
+
   -h, --help                 display this help 
   -r, --recursive            search recursively  
   -f, --file                 search for files
@@ -181,7 +184,7 @@ if searchdir is False and searchlink is False and searchfile is False:
 if main_dir == '':
     main_dir =os.path.realpath('.')
 if pattern == '':
-    pattern ='.*'
+    pattern = '.*'
 
 try:
     if recursive:
@@ -228,8 +231,14 @@ except:
     pass
 
 if sort:
-    for i in sorted(result): 
-        print(i)  
+	if ignorecase:
+		for i in sorted(result,key=str.lower): 
+		 print(i)
+	else:
+		for i in sorted(result): 
+			print(i)
 else:
     for i in result: 
         print(i)  
+    
+    
