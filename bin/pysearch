@@ -18,9 +18,7 @@ sort = False
 def show_usage():
     print("""Usage: pysearch [OPTION]... [PATH] [TEXT]
 search for TEXT in the given PATH.
-Text can be a regular expression but it may not work if 
-case sensitivity is disabled by using '-i, --ignore-case' option.
-
+Text can be a regular expression.
   -h, --help                 display this help 
   -r, --recursive            search recursively  
   -f, --file                 search for files
@@ -211,12 +209,12 @@ try:
             for name in os.listdir(main_dir):
                 if ignorecase:
                     if re.search(pattern,os.path.basename(name).lower()):
-                         if os.path.isdir(os.path.join(main_dir,name)):
-                             add_result(main_dir,name,True)
+                        if os.path.isdir(os.path.join(main_dir,name)):
+                            add_result(main_dir,name,True)
                 else:
                     if re.search(pattern,os.path.basename(name)):
-                         if os.path.isdir(os.path.join(main_dir,name)):
-                             add_result(main_dir,name,True)
+                        if os.path.isdir(os.path.join(main_dir,name)):
+                            add_result(main_dir,name,True)
         if searchfile or searchlink:
             for name in os.listdir(main_dir):
                 if ignorecase:
@@ -231,12 +229,12 @@ except:
     pass
 
 if sort:
-	if ignorecase:
-		for i in sorted(result,key=str.lower): 
-		 print(i)
-	else:
-		for i in sorted(result): 
-			print(i)
+    if ignorecase:
+        for i in sorted(result,key=str.lower): 
+         print(i)
+    else:
+        for i in sorted(result): 
+            print(i)
 else:
     for i in result: 
         print(i)  
