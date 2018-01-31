@@ -493,6 +493,12 @@
         <command>dmenu_run</command>
       </action>
     </keybind>
+    <keybind key="W-r">
+      <action name="Execute">
+        <name>rofi</name>
+        <command>rofi -show combi</command>
+      </action>
+    </keybind>
     <!-- Launch Task Manager with Ctrl+Alt+Del -->
     <keybind key="A-C-Delete">
       <action name="Execute">
