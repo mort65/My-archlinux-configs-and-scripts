@@ -135,6 +135,7 @@ bindsym $mod+d exec /usr/bin/dmenu_run
 # shipping a .desktop file. It is a wrapper around dmenu, so you need that
 # installed.
 bindsym $mod+Shift+d exec --no-startup-id /usr/bin/i3-dmenu-desktop
+bindsym $mod+Shift+r exec --no-startup-id /usr/bin/rofi -show combi
 
 # change focus
 #bindsym $mod+j focus left
