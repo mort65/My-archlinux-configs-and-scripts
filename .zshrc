@@ -2,9 +2,7 @@
 HISTFILE=~/.histfile
 HISTSIZE=1000
 SAVEHIST=2000
-setopt appendhistory autocd no_beep extendedglob nomatch notify
 
-bindkey -v
 # End of lines configured by zsh-newuser-install
 # The following lines were added by compinstall
 zstyle :compinstall filename "/home/$(id -u -n)/.zshrc"
@@ -12,6 +10,9 @@ zstyle :compinstall filename "/home/$(id -u -n)/.zshrc"
 autoload -Uz compinit
 compinit
 # End of lines added by compinstall
+
+setopt appendhistory autocd no_beep extendedglob nomatch notify hist_ignore_space hist_ignore_all_dups correctall
+bindkey -v
 
 # If you come from bash you might have to change your $PATH.
 # export PATH=$HOME/bin:/usr/local/bin:$PATH
@@ -313,6 +314,7 @@ alias py="/usr/bin/python"
 alias py3="/usr/bin/python3"
 alias py2="/usr/bin/python2"
 alias ver="/usr/bin/uname -r"
+alias mpv="/usr/bin/mpv --sub-scale=0.75 --volume-max=200"
  
 # When using sudo, use alias expansion (otherwise sudo ignores your aliases)
 alias sudo='/usr/bin/sudo '
@@ -329,3 +331,4 @@ archey3
 #neofetch
 echo "${Cyan} $(/usr/bin/jdate '+%h %d %B %Y %H:%M %p')"
 echo '\n'
+
