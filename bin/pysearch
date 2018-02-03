@@ -2,6 +2,115 @@
 import sys
 from pysearch import Py_Search
 
+Main_Dir = ''
+Text = ''
+Pattern = ''
+Recursive = False
+Ignorecase = False
+Searchdir = False
+Searchfile = False
+Onlyname = False
+Searchlink = False
+Mark = False
+Usage = False
+Sort = False
+
+def show_usage():
+    print("""Usage: pysearch [OPTION]... [PATH] [TEXT]
+search for TEXT in the given PATH.
+Text can be a regular expression.
+
+  -h, --help                 display this help 
+  -r, --recursive            search recursively  
+  -f, --file                 search for files
+  -l, --link                 search for links
+  -d, --dir                  search for directories
+  -m, --mark                 mark files and dirs with f and d
+  -i, --ignore-case          ignore case in the search result    
+  -n, --name                 don't show fullpath in the result
+  -s, --sort                 sort the search result alphabetically 
+  
+Examples:
+  pysearch -if /usr/bin vim    "Find files in bin dir that have 
+  'vim' in their names and ignore case sensitivity."
+  pysearch -lr /usr/bin 'vim$' "Recursively find all links in 
+  bin dir that have 'vim' at the end of their names.
+  pysearch -rs /usr/bin '^im'  "Find recursively everything 
+  in bin that starts with 'im' and only write short names."
+  pysearch -dr /usr/bin '.*'   "Recursively find all dirs in bin" """)
+
 if __name__ == "__main__":
-    pys = Py_Search(sys.argv)
+    if len(sys.argv) > 1:
+        for i in range(1,len(sys.argv)):
+            if len(sys.argv[i]) > 0:
+                if sys.argv[i][0] == '-':
+                    if (Main_Dir != '') or (Text != ''):
+                        show_usage()
+                        exit(1)
+                    elif sys.argv[i][1] == '-':
+                        if sys.argv[i] == '--help':
+                            Usage = True
+                        elif sys.argv[i] == '--Recursive':
+                            Recursive = True
+                        elif sys.argv[i] == '--ignore-case':
+                            Ignorecase = True
+                        elif sys.argv[i] == '--link':
+                            Searchlink = True                   
+                        elif sys.argv[i] == '--dir':
+                            Searchdir = True
+                        elif sys.argv[i] == '--name':
+                            Onlyname = True
+                        elif sys.argv[i] == '--file':
+                            Searchfile = True
+                        elif sys.argv[i] == '--Mark':
+                            Mark = True
+                        elif sys.argv[i] == '--Sort':
+                            Sort = True
+                        else:
+                            show_usage()
+                            exit(1)
+                    else:
+                        for c in range(1,len(sys.argv[i])):
+                            if sys.argv[i][c] == 'h':
+                                Usage = True
+                            elif sys.argv[i][c] == 'r':
+                                Recursive = True
+                            elif sys.argv[i][c] == 'i':
+                                Ignorecase = True
+                            elif sys.argv[i][c] == 'l':
+                                Searchlink = True                                              
+                            elif sys.argv[i][c] == 'd':
+                                Searchdir = True
+                            elif sys.argv[i][c] == 'n':
+                                Onlyname = True
+                            elif sys.argv[i][c] == 'f':
+                                Searchfile = True
+                            elif sys.argv[i][c] == 'm':
+                                Mark = True 
+                            elif sys.argv[i][c] == 's':
+                                Sort = True
+                            else:
+                                show_usage()
+                                exit(1)
+                elif i == ( len(sys.argv) - 2 ):
+                    Main_Dir = sys.argv[i]
+                elif i == ( len(sys.argv) - 1 ):
+                    Text = sys.argv[i]
+                    if Ignorecase:
+                        Pattern = Text.lower()
+                    else:
+                        Pattern = Text
+                else:
+                    show_usage()
+                    exit(1)
+    if Usage:
+        show_usage()
+        exit(0)
+    if Searchdir is False and Searchlink is False and Searchfile is False:
+        Searchdir,Searchfile,Searchlink = True,True,True
+    if Main_Dir == '':
+        Main_Dir ='.'
+    if Pattern == '':
+        Pattern = '.*'
+    pys = Py_Search(Main_Dir,Pattern,Recursive,Ignorecase,Searchdir,Searchfile,Searchlink,Onlyname,Mark,Sort,Silent=False)
     pys.main()
