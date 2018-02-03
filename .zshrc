@@ -11,7 +11,7 @@ autoload -Uz compinit
 compinit
 # End of lines added by compinstall
 
-setopt appendhistory autocd no_beep extendedglob nomatch notify hist_ignore_space hist_ignore_all_dups correctall
+setopt appendhistory autocd no_beep extendedglob nomatch notify hist_ignore_space hist_ignore_all_dups
 bindkey -v
 
 # If you come from bash you might have to change your $PATH.
@@ -314,7 +314,7 @@ alias py="/usr/bin/python"
 alias py3="/usr/bin/python3"
 alias py2="/usr/bin/python2"
 alias ver="/usr/bin/uname -r"
-alias mpv="/usr/bin/mpv --sub-scale=0.75 --volume-max=200"
+#alias mpv="/usr/bin/mpv --sub-scale=0.75 --volume-max=200"
  
 # When using sudo, use alias expansion (otherwise sudo ignores your aliases)
 alias sudo='/usr/bin/sudo '
@@ -331,4 +331,3 @@ archey3
 #neofetch
 echo "${Cyan} $(/usr/bin/jdate '+%h %d %B %Y %H:%M %p')"
 echo '\n'
-
