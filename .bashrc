@@ -295,6 +295,7 @@ alias upta="$HOME/bin/update-arch-in-tmux -sya"
 alias upm="$HOME/bin/update-mirrors"
 alias tf="$HOME/bin/totalfiles"
 alias ver="/usr/bin/uname -r"
+#alias mpv="/usr/bin/mpv --sub-scale=0.75 --volume-max=200"
  
 # When using sudo, use alias expansion (otherwise sudo ignores your aliases)
 alias sudo='/usr/bin/sudo '
