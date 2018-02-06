@@ -331,3 +331,4 @@ archey3
 #neofetch
 echo "${Cyan} $(/usr/bin/jdate '+%h %d %B %Y %H:%M %p')"
 echo '\n'
+
