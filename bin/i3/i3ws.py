@@ -3,7 +3,7 @@ import os
 import random
 ImagesArray=[]
 home_Dir=os.path.expanduser('~')
-Wallpapers_Dir=home_Dir+'/.i3wm-Wallpapers_Dir'
+Wallpapers_Dir=home_Dir+'/.i3wm-wallpapers'
 clrCommand = '/usr/bin/rm -rf \'{}\'/*'.format(Wallpapers_Dir)
 pictures_Dir=home_Dir+'/Pictures/Desktop/'
 for root, directories, filenames in os.walk(pictures_Dir):
