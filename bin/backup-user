@@ -38,15 +38,31 @@ fi
 
 /usr/bin/mkdir -p $HOMEDIR/Apps/Usefull\ Commands/Arch/Scripts/.script/ && /usr/bin/rsync -aAXv --bwlimit=10000 "$HOMEDIR/.script/" "$_" 2>&1 | /usr/bin/tee -a "${opath}/Backups/Linux/log.txt"
 
-/usr/bin/mkdir -p $HOMEDIR/Apps/Usefull\ Commands/Arch/note/ && /usr/bin/rsync -aAXv --bwlimit=10000 "$HOMEDIR/.note/" "$_" 2>&1 | /usr/bin/tee -a "${opath}/Backups/Linux/log.txt"
+/usr/bin/mkdir -p $HOMEDIR/Apps/Usefull\ Commands/Arch/Notes/ && /usr/bin/rsync -aAXv --bwlimit=10000 "$HOMEDIR/.note/" "$_" 2>&1 | /usr/bin/tee -a "${opath}/Backups/Linux/log.txt"
 
-/usr/bin/mkdir -p $HOMEDIR/Apps/Usefull\ Commands/Gentoo/note/ && /usr/bin/rsync -aAXv --bwlimit=10000 "$HOMEDIR/VirtualBox\ VMs/share/Gentoo/Notes/" "$_" 2>&1 | /usr/bin/tee -a "${opath}/Backups/Linux/log.txt"
+/usr/bin/mkdir -p $HOMEDIR/Apps/Usefull\ Commands/Gentoo/Notes/ && /usr/bin/rsync -aAXv --bwlimit=10000 "$HOMEDIR/VirtualBox VMs/share/Gentoo/notes/" "$_" 2>&1 | /usr/bin/tee -a "${opath}/Backups/Linux/log.txt"
 
-/usr/bin/mkdir -p $HOMEDIR/Dropbox/Configs/ && /usr/bin/rsync -aAXv --bwlimit=10000 "$HOMEDIR/Apps/Usefull Commands/Arch/Configs/" "$_" 2>&1 | /usr/bin/tee -a "${opath}/Backups/Linux/log.txt"
+/usr/bin/mkdir -p $HOMEDIR/Apps/Usefull\ Commands/Gentoo/Scripts/ && /usr/bin/rsync -aAXv --bwlimit=10000 "$HOMEDIR/VirtualBox VMs/share/Gentoo/scripts/" "$_" 2>&1 | /usr/bin/tee -a "${opath}/Backups/Linux/log.txt"
 
-/usr/bin/mkdir -p $HOMEDIR/Dropbox/Scripts/ && /usr/bin/rsync -aAXv --bwlimit=10000 "$HOMEDIR/Apps/Usefull Commands/Arch/Scripts/" "$_" 2>&1 | /usr/bin/tee -a "${opath}/Backups/Linux/log.txt"
+/usr/bin/mkdir -p $HOMEDIR/Apps/Usefull\ Commands/Gentoo/Configs/ && /usr/bin/rsync -aAXv --bwlimit=10000 "$HOMEDIR/VirtualBox VMs/share/Gentoo/configs/" "$_" 2>&1 | /usr/bin/tee -a "${opath}/Backups/Linux/log.txt"
 
-/usr/bin/mkdir -p $HOMEDIR/Dropbox/Notes/Linux/Arch/ && /usr/bin/rsync -aAXv --bwlimit=10000 "$HOMEDIR/Apps/Usefull Commands/Arch/" "$_" 2>&1 | /usr/bin/tee -a "${opath}/Backups/Linux/log.txt"
+/usr/bin/mkdir -p $HOMEDIR/Apps/Usefull\ Commands/Gentoo/Web/ && /usr/bin/rsync -aAXv --bwlimit=10000 "$HOMEDIR/VirtualBox VMs/share/Gentoo/web/" "$_" 2>&1 | /usr/bin/tee -a "${opath}/Backups/Linux/log.txt"
+
+/usr/bin/mkdir -p $HOMEDIR/Dropbox/Configs/Arch/ && /usr/bin/rsync -aAXv --bwlimit=10000 "$HOMEDIR/Apps/Usefull Commands/Arch/Configs/" "$_" 2>&1 | /usr/bin/tee -a "${opath}/Backups/Linux/log.txt"
+
+/usr/bin/mkdir -p $HOMEDIR/Dropbox/Scripts/Arch/ && /usr/bin/rsync -aAXv --bwlimit=10000 "$HOMEDIR/Apps/Usefull Commands/Arch/Scripts/" "$_" 2>&1 | /usr/bin/tee -a "${opath}/Backups/Linux/log.txt"
+
+/usr/bin/mkdir -p $HOMEDIR/Dropbox/Notes/Linux/Arch/ && /usr/bin/rsync -aAXv --bwlimit=10000 "$HOMEDIR/Apps/Usefull Commands/Arch/Notes/" "$_" 2>&1 | /usr/bin/tee -a "${opath}/Backups/Linux/log.txt"
+
+/usr/bin/mkdir -p $HOMEDIR/Dropbox/Backups/Linux/Arch/ && /usr/bin/rsync -aAXv --bwlimit=10000 "$HOMEDIR/Apps/Usefull Commands/Arch/" "$_" 2>&1 | /usr/bin/tee -a "${opath}/Backups/Linux/log.txt"
+
+/usr/bin/mkdir -p $HOMEDIR/Dropbox/Backups/Linux/Gentoo/ && /usr/bin/rsync -aAXv --bwlimit=10000 "$HOMEDIR/Apps/Usefull Commands/Gentoo/" "$_" 2>&1 | /usr/bin/tee -a "${opath}/Backups/Linux/log.txt"
+
+/usr/bin/mkdir -p $HOMEDIR/Dropbox/Configs/Gentoo/ && /usr/bin/rsync -aAXv --bwlimit=10000 "$HOMEDIR/Apps/Usefull Commands/Gentoo/Configs/" "$_" 2>&1 | /usr/bin/tee -a "${opath}/Backups/Linux/log.txt"
+
+/usr/bin/mkdir -p $HOMEDIR/Dropbox/Scripts/Gentoo/ && /usr/bin/rsync -aAXv --bwlimit=10000 "$HOMEDIR/Apps/Usefull Commands/Gentoo/Scripts/" "$_" 2>&1 | /usr/bin/tee -a "${opath}/Backups/Linux/log.txt"
+
+/usr/bin/mkdir -p $HOMEDIR/Dropbox/Notes/Linux/Gentoo/ && /usr/bin/rsync -aAXv --bwlimit=10000 "$HOMEDIR/Apps/Usefull Commands/Gentoo/Notes/" "$_" 2>&1 | /usr/bin/tee -a "${opath}/Backups/Linux/log.txt"
 
 /usr/bin/mkdir -p $HOMEDIR/Dropbox/Notes/Programming/Javascript/ && /usr/bin/cp -f "$HOMEDIR/Apps/Programming/Javascript/Javascript Notes.txt"  "$_" 2>&1 | /usr/bin/tee -a "${opath}/Backups/Linux/log.txt"
 
