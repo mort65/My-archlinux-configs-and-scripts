@@ -5,7 +5,7 @@ import re
 from operator import itemgetter
 
 class PySearch:
-    '''Searches for a text in the given path.'''
+    '''This class searches for a text in the given path.'''
     main_dir = ''
     text = ''
     pattern = ''
