@@ -131,20 +131,6 @@ our $SCHEMA = [
 
     {sep => undef},
 
-    ## The xscreensaver lock command
-    #{item => ['xscreensaver-command -lock', 'Lock', 'system-lock-screen']},
-
-    ## This option uses the default Openbox's action "Exit"
-    ##{exit => ['Exit', 'application-exit']},
-      # Exit category
-      #{begin_cat => ['Exit', 'application-exit']},
-      #  {item      => ['openbox --exit', 'Logout', 'text-x-generic']},
-      #  {item      => ['systemctl poweroff', 'Shutdown', 'text-x-generic']},
-      #  {item      => ['systemctl reboot', 'Restart', 'text-x-generic']},
-      #  {item      => ['systemctl suspend', 'Suspend', 'text-x-generic']},
-      #  {item      => ['systemctl hibernate', 'Hibernate', 'text-x-generic']},
-      #{end_cat => undef},
-
     ## This uses the 'oblogout' menu
     {item => ['oblogout', 'Exit', 'exit']},
 ]
