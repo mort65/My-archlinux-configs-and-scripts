@@ -34,6 +34,7 @@ our $SCHEMA = [
     {item => ['lxterminal',            'Terminal',     'utilities-terminal']},
     {item => ['xdg-open https://www.archlinux.org/', 'Web Browser',  'web-browser']},
     {item => ['gmrun',            'Run Program',  'system-run']},
+    {pipe => ['~/bin/openbox/obrecent.sh',              'Recent Files',  'document-open-recent']},
 
     #{sep => 'Categories'},
     {sep  => undef},
@@ -68,28 +69,28 @@ our $SCHEMA = [
     {sep       => undef},
     {begin_cat => ['Advanced Settings', 'applications-engineering']},
 	#Appearance
-        {item      => ["/usr/bin/lxappearance", 'Look and Feel',   'text-x-generic']},
+        {item      => ["/usr/bin/lxappearance", 'Look and Feel',   'cs-cat-appearance']},
       #Wallpaper
-      {item => ["/usr/bin/nitrogen",              'Wallpaper Setter',    'text-x-generic']},
+      {item => ["/usr/bin/nitrogen",              'Wallpaper Setter',    'preferences-desktop-wallpaper']},
 
-     {begin_cat => ['Fbpanel']},
+     {begin_cat => ['Fbpanel',  'system-settings']},
      
       # Configuration editor
-      {item => ['fbpanel -C',              'Fbpanel Config',    'text-x-generic']},
+      {item => ['fbpanel -C',              'Fbpanel Config',    'system-settings']},
      
       # Configuration files
       {item => ["$editor ~/.config/fbpanel/default", 'Fbpanel Panel Top', 'text-x-generic']},
       {item => ["$editor ~/.config/fbpanel/tasks", 'Fbpanel Panel Bottom',    'text-x-generic']},
       
      {end_cat => undef},
-     {begin_cat => ['Tint2']},
+     {begin_cat => ['Tint2', 'tint2']},
      
       # Configuration editor
-      {item => ['tint2conf',              'Tint2 Config',    'text-x-generic']},
+      {item => ['tint2conf',              'Tint2 Config',    'tint2conf']},
      
       # Configuration files
-      {item => ["$editor ~/.config/tint2/tint2rc", 'Fbpanel Panel Top', 'text-x-generic']},
-      {item => ["$editor ~/.config/tint2/tint2tasks", 'Fbpanel Panel Bottom',    'text-x-generic']},
+      {item => ["$editor ~/.config/tint2/tint2rc", 'Tint2 Panel Top', 'text-x-generic']},
+      {item => ["$editor ~/.config/tint2/tint2tasks", 'Tint2 Panel Bottom',    'text-x-generic']},
       
      {end_cat => undef},
      
@@ -111,7 +112,7 @@ our $SCHEMA = [
 
       # Openbox category
       {begin_cat => ['Openbox', 'openbox']},
-        {item      => ["/usr/bin/obconf", 'Openbox Config',   'text-x-generic']},
+        {item      => ["/usr/bin/obconf", 'Openbox Config',   'obconf']},
         {item      => ["$editor ~/.config/openbox/autostart", 'Openbox Autostart',   'text-x-generic']},
         {item      => ["$editor ~/.config/openbox/rc.xml",    'Openbox RC',          'text-x-generic']},
         {item      => ["$editor ~/.config/openbox/menu.xml",  'Openbox Menu',        'text-x-generic']},
@@ -120,11 +121,11 @@ our $SCHEMA = [
      {sep => undef},
       # Exit category
       {begin_cat => ['Exit', 'application-exit']},
-        {item      => ['openbox --exit', 'Logout', 'text-x-generic']},
-        {item      => ['systemctl -i reboot', 'Restart', 'text-x-generic']},
-	{item      => ['systemctl -i suspend', 'Suspend', 'text-x-generic']},
-        {item      => ['systemctl -i hibernate', 'Hibernate', 'text-x-generic']},
-        {item      => ['systemctl -i poweroff', 'Shutdown', 'text-x-generic']},
+        {item      => ['openbox --exit', 'Logout', 'system-log-out']},
+        {item      => ['systemctl -i reboot', 'Restart', 'system-reboot']},
+	{item      => ['systemctl -i suspend', 'Suspend', 'system-suspend']},
+        {item      => ['systemctl -i hibernate', 'Hibernate', 'system-hibernate']},
+        {item      => ['systemctl -i poweroff', 'Shutdown', 'system-shutdown']},
       {end_cat => undef},
     {end_cat => undef},
 
