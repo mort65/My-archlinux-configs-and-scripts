@@ -1,6 +1,6 @@
 #!/bin/bash
 
-#this script check for archlinux news, update archlinux, refresh mirrors...
+#This script checks for Arch Linux news, update Arch Linux, refresh mirrors and etc. (Requires: pacman, reflector, yaourt, rsstail)
 
 # Colors
 blue="\033[1;34m"
