@@ -38,6 +38,6 @@
 /usr/bin/plank -n dock1 &
 #/usr/bin/synapse &
 #replace current notification daemon with xfce notification daemon:
-/usr/bin/setxkbmap us,ir -option 'grp:alt_shift_toggle'
 killall notification-daemon &> /dev/null
 /usr/lib/xfce4/notifyd/xfce4-notifyd &
+/usr/bin/setxkbmap us,ir -option 'grp:alt_shift_toggle'
