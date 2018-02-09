@@ -74,6 +74,7 @@ ${color3}${hr 3}
 ${color1}Super+⇧+q$alignr Close a window
 Super+d$alignr App launcher1
 Super+⇧+d$alignr App launcher2
+Super+x$alignr App launcher3
 ${color3}${hr}
 ${color1}Super+⇧+0-9$alignr Switch win workspace
 Super+0-9$alignr Switch workspace
@@ -93,10 +94,9 @@ ${color1}Super+delete$alignr Task Manager
 Super+home$alignr File Manager
 ${color3}${hr}
 ${color1}Super+g$alignr Geany
-Super+p$alignr Pluma
+Super+l$alignr Leafpad
 ${color3}${hr}
 ${color1}Super+b$alignr Tor
-Super+o$alignr Opera
 Super+v$alignr Vivaldi
 Super+f$alignr Waterfox
 Super+c$alignr Chromium
