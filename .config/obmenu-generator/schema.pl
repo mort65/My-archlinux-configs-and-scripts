@@ -34,7 +34,8 @@ our $SCHEMA = [
     {item => ['lxterminal',            'Terminal',     'utilities-terminal']},
     {item => ['xdg-open https://www.archlinux.org/', 'Web Browser',  'web-browser']},
     {item => ['gmrun',            'Run Program',  'system-run']},
-    {pipe => ['~/bin/openbox/obrecent.sh',              'Recent Files',  'document-open-recent']},
+    {sep  => undef},
+    {pipe => ['~/bin/openbox/obrecent.sh',              'Recent Documents',  'document-open-recent']},
 
     #{sep => 'Categories'},
     {sep  => undef},
@@ -82,7 +83,7 @@ our $SCHEMA = [
       #{item => ["$editor ~/.config/fbpanel/default", 'Fbpanel Panel Top', 'text-x-generic']},
       #{item => ["$editor ~/.config/fbpanel/tasks", 'Fbpanel Panel Bottom',    'text-x-generic']},
       
-    # {end_cat => undef},
+     #{end_cat => undef},
      {begin_cat => ['Tint2', 'tint2']},
      
       # Configuration editor
@@ -90,7 +91,7 @@ our $SCHEMA = [
      
       # Configuration files
       {item => ["$editor ~/.config/tint2/tint2rc", 'Tint2 Panel', 'text-x-generic']},
-     # {item => ["$editor ~/.config/tint2/tint2tasks", 'Tint2 Panel',    'text-x-generic']},
+      #{item => ["$editor ~/.config/tint2/tint2tasks", 'Tint2 Panel Bottom',    'text-x-generic']},
       
      {end_cat => undef},
      
@@ -122,10 +123,10 @@ our $SCHEMA = [
       # Exit category
       {begin_cat => ['Exit', 'application-exit']},
         {item      => ['openbox --exit', 'Logout', 'system-log-out']},
-        {item      => ['systemctl -i reboot', 'Restart', 'system-reboot']},
-	{item      => ['systemctl -i suspend', 'Suspend', 'system-suspend']},
-        {item      => ['systemctl -i hibernate', 'Hibernate', 'system-hibernate']},
-        {item      => ['systemctl -i poweroff', 'Shutdown', 'system-shutdown']},
+        {item      => ['systemctl reboot', 'Restart', 'system-reboot']},
+	{item      => ['systemctl suspend', 'Suspend', 'system-suspend']},
+        {item      => ['systemctl hibernate', 'Hibernate', 'system-hibernate']},
+        {item      => ['systemctl poweroff', 'Shutdown', 'system-shutdown']},
       {end_cat => undef},
     {end_cat => undef},
 
