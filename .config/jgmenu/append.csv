@@ -1,6 +1,6 @@
 ^sep()
 Logout,openbox --exit,system-log-out
-Restart,systemctl -i reboot,system-reboot
-Suspend,systemctl -i suspend,system-suspend
-#Hibernate,systemctl -i hibernate,system-hibernate
-Poweroff,systemctl -i poweroff,system-shutdown
+Restart,systemctl reboot,system-reboot
+Suspend,systemctl suspend,system-suspend
+#Hibernate,systemctl hibernate,system-hibernate
+Poweroff,systemctl poweroff,system-shutdown
