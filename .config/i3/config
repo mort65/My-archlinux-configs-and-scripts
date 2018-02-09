@@ -613,8 +613,7 @@ exec --no-startup-id /usr/bin/sudo bash -c "echo 100000 > /proc/sys/fs/inotify/m
 #exec --no-startup-id /usr/bin/synapse &
 #exec --no-startup-id /usr/bin/startupsound &
 exec --no-startup-id $HOME/bin/redshift-kerman.sh &
-exec --no-startup-id /usr/bin/indicator-kdeconnect &
-exec --no-startup-id $HOME/bin/brush-teeth-reminder &
+#exec --no-startup-id /usr/bin/indicator-kdeconnect &
 exec --no-startup-id /usr/bin/psensor &
 #exec --no-startup-id /usr/bin/caffeine &
 #exec --no-startup-id /usr/bin/goldendict &
