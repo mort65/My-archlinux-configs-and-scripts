@@ -496,7 +496,7 @@
     <keybind key="W-r">
       <action name="Execute">
         <name>rofi</name>
-        <command>rofi -show combi</command>
+        <command>rofi -modi combi,window,run,drun -show combi -combi-modi window,run,drun</command>
       </action>
     </keybind>
     <!-- Launch Task Manager with Ctrl+Alt+Del -->
@@ -529,6 +529,11 @@
     <keybind key="W-S-f">
       <action name="Execute">
         <command>pcmanfm --find-files</command>
+      </action>
+    </keybind>
+    <keybind key="W-s">
+      <action name="Execute">
+        <command>catfish</command>
       </action>
     </keybind>
     <keybind key="Menu">
