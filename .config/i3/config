@@ -86,42 +86,32 @@ bindsym $mod+shift+Home exec --no-startup-id /usr/bin/gksu /usr/bin/pcmanfm
 #Home=0xff50=110
 
 
-
-#start pluma
-bindsym $mod+p exec --no-startup-id "pgrep -c pluma || /usr/bin/pluma"; workspace $workspace5
-
 #start geany
 bindsym $mod+Shift+g exec --no-startup-id "pgrep -c geany || /usr/bin/geany"; workspace $workspace5
 
 #start lxtask and switch to it's workspace
 bindsym $mod+Delete exec --no-startup-id "pgrep -c lxtask || /usr/bin/lxtask"; workspace $workspace9
 
-#start opera and switch to it's workspace
-bindsym $mod+o exec --no-startup-id "pgrep -c opera || /bin/opera"; workspace $workspace2
-
 #start waterfox and switch to it's workspace
 bindsym $mod+f exec --no-startup-id "pgrep -c waterfox || /usr/bin/waterfox"; workspace $workspace2
+
+#start catfish and switch to it's workspace
+bindsym $mod+Shift+s exec --no-startup-id "pgrep -c catfish || /usr/bin/catfish"; workspace $workspace4
 
 #start chromium and switch to it's workspace
 bindsym $mod+c exec --no-startup-id "pgrep -c chromium || /usr/bin/chromium"; workspace $workspace2
 
-#start clementine and switch to it's workspace
+#start pragha and switch to it's workspace
 bindsym $mod+m exec --no-startup-id "pgrep -c pragha || /usr/bin/pragha"; workspace $workspace7
-
-#start qupzilla and switch to it's workspace
-bindsym $mod+u exec --no-startup-id "pgrep -c qupzilla || /usr/bin/qupzilla"; workspace $workspace2
 
 #start Vivaldi and switch to it's workspace
 bindsym $mod+v exec --no-startup-id "pgrep -c vivaldi || /usr/bin/vivaldi-stable"; workspace $workspace2
-
-#start gedit and switch to it's workspace
-bindsym $mod+g exec --no-startup-id "pgrep -c gedit || /usr/bin/gedit"; workspace $workspace5
 
 #start leafpad and switch to it's workspace
 bindsym $mod+l exec --no-startup-id "pgrep -c leafpad || /usr/bin/leafpad"; workspace $workspace5
 
 #start Tor
-bindsym $mod+b exec --no-startup-id "pgrep -c firefox || /usr/bin/tor-browser-en"; workspace $workspace2
+bindsym $mod+b exec --no-startup-id "pgrep -c firefox || ~/Apps/Internet/tor-browser_en-US/Browser/start-tor-browser --detach"; workspace $workspace2
 
 #start Pamac
 bindsym $mod+i exec --no-startup-id "pgrep -c Pamac-manager || /usr/bin/pamac-manager"; workspace $workspace9
@@ -135,7 +125,7 @@ bindsym $mod+d exec /usr/bin/dmenu_run
 # shipping a .desktop file. It is a wrapper around dmenu, so you need that
 # installed.
 bindsym $mod+Shift+d exec --no-startup-id /usr/bin/i3-dmenu-desktop
-bindsym $mod+Shift+r exec --no-startup-id /usr/bin/rofi -show combi
+bindsym $mod+x exec --no-startup-id /usr/bin/rofi -modi combi#window#run#drun -show combi -combi-modi window#run#drun
 
 # change focus
 #bindsym $mod+j focus left
@@ -388,6 +378,7 @@ for_window [class="Waterfox"] floating disable
 for_window [class="Chromium"] floating disable
 for_window [class="Tor Browser"] floating enable
 for_window [class="Gufw.py"] floating enable
+for_window [class="Catfish"] floating enable
 #for_window [class="LilyTerm"] floating enable
 #for_window[class="Plank"] floating enable,move absolute center
 #for_window [instance ="Plank"] floating enable
@@ -469,6 +460,7 @@ assign [class="Filezilla"] → $workspace9
 assign [class="Gnome-mpv"] → $workspace7
 assign [class="Rhythmbox"] → $workspace7
 assign [class="Pragha"] → $workspace7
+assign [class="Catfish"] → $workspace4
 
 
 
@@ -539,6 +531,7 @@ for_window [class=(?i)Atom] focus
 for_window [class=(?i)Gnome-mpv] focus
 for_window [class=(?i)Rhythmbox] focus
 for_window [class=(?i)Pragha] focus
+for_window [class=(?i)Catfish] focus
 
 # focus wrapping
 force_focus_wrapping yes
@@ -608,8 +601,8 @@ exec --no-startup-id /usr/bin/nm-applet &
 exec --no-startup-id /usr/bin/compton -b &
 #exec --no-startup-id /usr/bin/pasystray &
 exec --no-startup-id /usr/bin/volumeicon &
-exec --no-startup-id /usr/bin/tilda &
-#exec --no-startup-id /usr/bin/guake &
+#exec --no-startup-id /usr/bin/tilda &
+exec --no-startup-id /usr/bin/guake &
 #exec --no-startup-id /usr/bin/quiterss &
 exec --no-startup-id /usr/bin/conky -c ~/bin/i3/conky/.conkyrc &
 #exec --no-startup-id /usr/bin/parcellite &
