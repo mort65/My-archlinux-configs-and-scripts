@@ -73,24 +73,24 @@ our $SCHEMA = [
       #Wallpaper
       {item => ["/usr/bin/nitrogen",              'Wallpaper Setter',    'preferences-desktop-wallpaper']},
 
-     {begin_cat => ['Fbpanel',  'system-settings']},
+     #{begin_cat => ['Fbpanel',  'system-settings']},
      
       # Configuration editor
-      {item => ['fbpanel -C',              'Fbpanel Config',    'system-settings']},
+      #{item => ['fbpanel -C',              'Fbpanel Config',    'system-settings']},
      
       # Configuration files
-      {item => ["$editor ~/.config/fbpanel/default", 'Fbpanel Panel Top', 'text-x-generic']},
-      {item => ["$editor ~/.config/fbpanel/tasks", 'Fbpanel Panel Bottom',    'text-x-generic']},
+      #{item => ["$editor ~/.config/fbpanel/default", 'Fbpanel Panel Top', 'text-x-generic']},
+      #{item => ["$editor ~/.config/fbpanel/tasks", 'Fbpanel Panel Bottom',    'text-x-generic']},
       
-     {end_cat => undef},
+    # {end_cat => undef},
      {begin_cat => ['Tint2', 'tint2']},
      
       # Configuration editor
       {item => ['tint2conf',              'Tint2 Config',    'tint2conf']},
      
       # Configuration files
-      {item => ["$editor ~/.config/tint2/tint2rc", 'Tint2 Panel Top', 'text-x-generic']},
-      {item => ["$editor ~/.config/tint2/tint2tasks", 'Tint2 Panel Bottom',    'text-x-generic']},
+      {item => ["$editor ~/.config/tint2/tint2rc", 'Tint2 Panel', 'text-x-generic']},
+     # {item => ["$editor ~/.config/tint2/tint2tasks", 'Tint2 Panel',    'text-x-generic']},
       
      {end_cat => undef},
      
