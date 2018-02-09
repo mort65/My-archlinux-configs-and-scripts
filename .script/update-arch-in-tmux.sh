@@ -34,9 +34,9 @@ Shutdown=""
 Sleep=""
 Reboot=""
 UpdateMirrorCMD="${SUDO} /usr/bin/reflector --country 'United States' --country Canada --country 'United Kingdom' --country Denmark --country Greece --country 'South Korea' --country Japan --country India --country Qatar --country Turkey --country Iran --sort rate --latest 10 --protocol https --protocol ftp --age 6 --save /etc/pacman.d/mirrorlist"
-SuspendCMD="/usr/bin/systemctl -i suspend"
-ShutdownCMD="/usr/bin/systemctl -i poweroff"
-RebootCMD="/usr/bin/systemctl -i reboot"
+SuspendCMD="/usr/bin/systemctl suspend"
+ShutdownCMD="/usr/bin/systemctl poweroff"
+RebootCMD="/usr/bin/systemctl reboot"
 
 function usage {
     echo "Usage: $programname [OPTION]"
