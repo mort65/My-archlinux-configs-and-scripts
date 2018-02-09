@@ -84,6 +84,19 @@ our $SCHEMA = [
       #{item => ["$editor ~/.config/fbpanel/tasks", 'Fbpanel Panel Bottom',    'text-x-generic']},
       
      #{end_cat => undef},
+     
+     {begin_cat => ['jgmenu', 'start-here']},
+     
+      # Configuration editor
+      {item => ['killall jgmenu', 'Restart jgmenu', 'start-here']},
+     
+      # Configuration files
+      {item => ["$editor ~/.config/jgmenu/prepend.csv", 'Jgmenu prepend',    'text-x-generic']},
+      {item => ["$editor ~/.config/jgmenu/jgmenurc", 'Jgmenu Config', 'text-x-generic']},
+      {item => ["$editor ~/.config/jgmenu/append.csv", 'Jgmenu append',    'text-x-generic']},
+      
+     {end_cat => undef},
+     
      {begin_cat => ['Tint2', 'tint2']},
      
       # Configuration editor
