@@ -119,10 +119,7 @@ class PySearch:
             del self._resultDict[result]
             for i in self._resultList:
                 if i[0] == result:
-                    try:
-                        self._resultList.remove(i)
-                    except:
-                        pass
+                    self._resultList.remove(i)
                     
     def __init__(self,Main_Dir='.',Pattern='.*',Recursive=False,Ignorecase=False,Searchdir=False,Searchfile=False,Searchlink=False,Onlyname=False,Mark=False,Sort=False,Silent=False):
         self.main_dir = Main_Dir
