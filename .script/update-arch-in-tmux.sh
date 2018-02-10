@@ -32,34 +32,46 @@ RSSOff=""
 PacOff=""
 Shutdown=""
 Sleep=""
+Logout=""
+Hibernate=""
 Reboot=""
 UpdateMirrorCMD="${SUDO} /usr/bin/reflector --country 'United States' --country Canada --country 'United Kingdom' --country Denmark --country Greece --country 'South Korea' --country Japan --country India --country Qatar --country Turkey --country Iran --sort rate --latest 10 --protocol https --protocol ftp --age 6 --save /etc/pacman.d/mirrorlist"
 SuspendCMD="/usr/bin/systemctl suspend"
 ShutdownCMD="/usr/bin/systemctl poweroff"
 RebootCMD="/usr/bin/systemctl reboot"
+LogoutCMD="/usr/bin/loginctl terminate-user $USERNAME"
+HibernateCMD="/usr/bin/systemctl hibernate"
 
-function usage {
+function help {
     echo "Usage: $programname [OPTION]"
     echo "A script for updating archlinux"
     echo ""
-    echo "  -a, --aur      Refresh and synchronize all normal and aur package databases"
-    echo "  -o  --poweroff Shutdown computer if the script finished without error"         
-    echo "  -e  --reboot   Restart computer if the script finished without error"  
-    echo "  -u  --suspend  Suspend computer if the script finished without error"
-    echo "  --shutdown     Shutdown computer if the script finished without error"     
-    echo "  --restart      Restart computer if the script finished without error"     
-    echo "  --sleep        Suspend computer if the script finished without error"     
-    echo "  -s, --sync     Refresh and synchronize normal package databases"
-    echo "  -y, --refresh  Force the refresh of package databases" 
-    echo "  -r  --norss    Disable checking for archlinux news" 
-    echo "  -p, --nopac    Disable checking for pacnew files" 
-    echo "  -i, --install  Install a package"
-    echo "  -b, --build    Build a package"
-    echo "  -l  --nolog    Disable logging"
-    echo "  -m, --mirror   Update mirrors"
-    echo "  -h, --help     Display help"
+    echo "  -a, --aur       Refresh and synchronize all normal and aur package databases"
+    echo "  -o  --poweroff  Shutdown computer if the script finished without error"         
+    echo "  -e  --reboot    Restart computer if the script finished without error"
+    echo "  -f  --freeze    Hibernate computer if the script finished without error"
+    echo "  -u  --suspend   Suspend computer if the script finished without error"
+    echo "  -g  --logout    Logout if the script finished without error"
+    echo "  --shutdown      Shutdown computer if the script finished without error"     
+    echo "  --restart       Restart computer if the script finished without error"
+    echo "  --hibernate     Hibernate computer if the script finished without error"
+    echo "  --sleep         Suspend computer if the script finished without error"
+    echo "  --logoff        Logout if the script finished without error"
+    echo "  -s, --sync      Refresh and synchronize normal package databases"
+    echo "  -y, --refresh   Force the refresh of package databases" 
+    echo "  -r  --norss     Disable checking for archlinux news" 
+    echo "  -p, --nopac     Disable checking for pacnew files" 
+    echo "  -i, --install   Install a package"
+    echo "  -b, --build     Build a package"
+    echo "  -l  --nolog     Disable logging"
+    echo "  -m, --mirror    Update mirrors"
+    echo "  -h, --help      Display help"
     echo ""
     read -p "Press enter to exit..."
+}
+
+function usage {
+    help
     exit 1
 }
 
@@ -157,7 +169,7 @@ if [ -n "$1" ]; then #non-empty
 		usage
 	  fi 
     elif [[ $PARAM =~ ^--[Pp][Oo][Ww][Ee][Rr][Oo][Ff][Ff]$ ]] || [[ $PARAM =~ ^--[Ss][Hh][Uu][Tt][Dd][Oo][Ww][Nn]$ ]] || [[ $PARAM =~ ^-[Oo]$ ]]; then
-      if [[ $Sleep == "" ]] && [[ $Shutdown == "" ]] && [[ $Reboot == "" ]]; then
+      if [[ $Sleep == "" ]] && [[ $Shutdown == "" ]] && [[ $Reboot == "" ]] && [[ $Hibernate == "" ]] && [[ $Logout == "" ]]; then
         Shutdown="Yes"
       else
         echo -e $red"Error:$reset Invalid arguments '${Args}'"
@@ -165,7 +177,7 @@ if [ -n "$1" ]; then #non-empty
 		usage
 	  fi  
     elif [[ $PARAM =~ ^--[Ss][Uu][Ss][Pp][Ee][Nn][Dd]$ ]] || [[ $PARAM =~ ^--[Ss][Ll][Ee][Ee][Pp]$ ]] || [[ $PARAM =~ ^-[Uu]$ ]]; then
-      if [[ $Sleep == "" ]] && [[ $Shutdown == "" ]] && [[ $Reboot == "" ]]; then
+      if [[ $Sleep == "" ]] && [[ $Shutdown == "" ]] && [[ $Reboot == "" ]] && [[ $Hibernate == "" ]] && [[ $Logout == "" ]]; then
         Sleep="Yes"
       else
         echo -e $red"Error:$reset Invalid arguments '${Args}'"
@@ -173,14 +185,30 @@ if [ -n "$1" ]; then #non-empty
 		usage
 	  fi
     elif [[ $PARAM =~ ^--[Rr][Ee][Ss][Tt][Aa][Rr][Tt]$ ]] || [[ $PARAM =~ ^--[Rr][Ee][Bb][Oo][Oo][Tt]$ ]] || [[ $PARAM =~ ^-[Ee]$ ]]; then
-      if [[ $Sleep == "" ]] && [[ $Shutdown == "" ]] && [[ $Reboot == "" ]]; then
+      if [[ $Sleep == "" ]] && [[ $Shutdown == "" ]] && [[ $Reboot == "" ]] && [[ $Hibernate == "" ]] && [[ $Logout == "" ]]; then
         Reboot="Yes"
       else
         echo -e $red"Error:$reset Invalid arguments '${Args}'"
         echo ""
 		usage
-	  fi                 
-    elif [[ $PARAM =~ ^-[AaBbEeIiLlMmOoPpRrSsTtUuYy][AaBbEeIiLlMmOoPpRrSsTtUuYy][AaBbEeIiLlMmOoPpRrSsTtUuYy]?[AaBbEeIiLlMmOoPpRrSsTtUuYy]?[AaBbEeIiLlMmOoPpRrSsTtUuYy]?[AaBbEeIiLlMmOoPpRrSsTtUuYy]?[AaBbEeIiLlMmOoPpRrSsTtUuYy]?[AaBbEeIiLlMmOoPpRrSsTtUuYy]?[AaBbEeIiLlMmOoPpRrSsTtUuYy]?[AaBbEeIiLlMmOoPpRrSsTtUuYy]?[AaBbEeIiLlMmOoPpRrSsTtUuYy]?[AaBbEeIiLlMmOoPpRrSsTtUuYy]?[AaBbEeIiLlMmOoPpRrSsTtUuYy]?$ ]]; then
+	  fi 
+    elif [[ $PARAM =~ ^--[Ll][Oo][Gg][Oo][Ff][Ff]$ ]] || [[ $PARAM =~ ^--[Ll][Oo][Gg][Oo][Uu][Tt]$ ]] || [[ $PARAM =~ ^-[Gg]$ ]]; then
+      if [[ $Sleep == "" ]] && [[ $Shutdown == "" ]] && [[ $Reboot == "" ]] && [[ $Hibernate == "" ]] && [[ $Logout == "" ]]; then
+        Logout="Yes"
+      else
+        echo -e $red"Error:$reset Invalid arguments '${Args}'"
+        echo ""
+		usage
+	  fi
+    elif [[ $PARAM =~ ^--[Hh][Ii][Bb][Ee][Rr][Nn][Aa][Tt][Ee]$ ]] || [[ ^--[Ff][Rr][Ee][Ee][Zz][Ee]$ ]] || [[ $PARAM =~ ^-[Ff]$ ]]; then
+      if [[ $Sleep == "" ]] && [[ $Shutdown == "" ]] && [[ $Reboot == "" ]] && [[ $Hibernate == "" ]] && [[ $Logout == "" ]]; then
+        Hibernate="Yes"
+      else
+        echo -e $red"Error:$reset Invalid arguments '${Args}'"
+        echo ""
+		usage
+	  fi
+    elif [[ $PARAM =~ ^-[AaBbEeFfGgIiLlMmOoPpRrSsTtUuYy][AaBbEeFfGgIiLlMmOoPpRrSsTtUuYy][AaBbEeFfGgIiLlMmOoPpRrSsTtUuYy]?[AaBbEeFfGgIiLlMmOoPpRrSsTtUuYy]?[AaBbEeFfGgIiLlMmOoPpRrSsTtUuYy]?[AaBbEeFfGgIiLlMmOoPpRrSsTtUuYy]?[AaBbEeFfGgIiLlMmOoPpRrSsTtUuYy]?[AaBbEeFfGgIiLlMmOoPpRrSsTtUuYy]?[AaBbEeFfGgIiLlMmOoPpRrSsTtUuYy]?[AaBbEeFfGgIiLlMmOoPpRrSsTtUuYy]?[AaBbEeFfGgIiLlMmOoPpRrSsTtUuYy]?[AaBbEeFfGgIiLlMmOoPpRrSsTtUuYy]?[AaBbEeFfGgIiLlMmOoPpRrSsTtUuYy]?[AaBbEeFfGgIiLlMmOoPpRrSsTtUuYy]?[AaBbEeFfGgIiLlMmOoPpRrSsTtUuYy]?$ ]]; then
 	  i=1
 	  while (( i++ < ${#PARAM} ))
 	  do
@@ -258,7 +286,7 @@ if [ -n "$1" ]; then #non-empty
 				usage
 			fi
         elif [[ $char =~ [Uu] ]]; then
-            if [[ $Sleep == "" ]] && [[ $Shutdown == "" ]] && [[ $Reboot == "" ]]; then
+            if [[ $Sleep == "" ]] && [[ $Shutdown == "" ]] && [[ $Reboot == "" ]] && [[ $Hibernate == "" ]] && [[ $Logout == "" ]]; then
                 Sleep="Yes"
             else
                 echo -e $red"Error:$reset Invalid arguments '${Args}'"
@@ -266,7 +294,7 @@ if [ -n "$1" ]; then #non-empty
                 usage
             fi  
         elif [[ $char =~ [Oo] ]]; then
-            if [[ $Sleep == "" ]] && [[ $Shutdown == "" ]] && [[ $Reboot == "" ]]; then
+            if [[ $Sleep == "" ]] && [[ $Shutdown == "" ]] && [[ $Reboot == "" ]] && [[ $Hibernate == "" ]] && [[ $Logout == "" ]]; then
                 Shutdown="Yes"
             else
                 echo -e $red"Error:$reset Invalid arguments '${Args}'"
@@ -274,13 +302,29 @@ if [ -n "$1" ]; then #non-empty
                 usage
             fi 
         elif [[ $char =~ [Ee] ]]; then
-            if [[ $Sleep == "" ]] && [[ $Shutdown == "" ]] && [[ $Reboot == "" ]]; then
+            if [[ $Sleep == "" ]] && [[ $Shutdown == "" ]] && [[ $Reboot == "" ]] && [[ $Hibernate == "" ]] && [[ $Logout == "" ]]; then
                 Reboot="Yes"
             else
                 echo -e $red"Error:$reset Invalid arguments '${Args}'"
                 echo ""
                 usage
-            fi               
+            fi
+        elif [[ $char =~ [Gg] ]]; then
+            if [[ $Sleep == "" ]] && [[ $Shutdown == "" ]] && [[ $Reboot == "" ]] && [[ $Hibernate == "" ]] && [[ $Logout == "" ]]; then
+                Logout="Yes"
+            else
+                echo -e $red"Error:$reset Invalid arguments '${Args}'"
+                echo ""
+                usage
+            fi 
+        elif [[ $char =~ [Ff] ]]; then
+            if [[ $Sleep == "" ]] && [[ $Shutdown == "" ]] && [[ $Reboot == "" ]] && [[ $Hibernate == "" ]] && [[ $Logout == "" ]]; then
+                Hibernate="Yes"
+            else
+                echo -e $red"Error:$reset Invalid arguments '${Args}'"
+                echo ""
+                usage
+            fi
 		else
 			echo -e $red"Error:$reset Invalid argument '$PARAM'"
             echo ""
@@ -297,7 +341,8 @@ if [ -n "$1" ]; then #non-empty
 fi
 
 if [[ $Help == "Yes" ]]; then
-	usage
+	help
+    exit 0
 fi
 
 if [[ $AUR == "Yes" ]]; then
@@ -521,6 +566,30 @@ elif [[ $Reboot == "Yes" ]]; then
      x=$(( $x - 1 ))
   done
   eval "${RebootCMD}"
+  exit 0
+elif [[ $Logout == "Yes" ]]; then
+  echo
+  x=15
+  while [ $x -gt 0 ]
+    do
+     sleep 1s
+     clear
+     echo -e $red"Logout$reset in$green $x$reset seconds..."
+     x=$(( $x - 1 ))
+  done
+  eval "${LogoutCMD}"
+  exit 0
+elif [[ $Hibernate == "Yes" ]]; then
+  echo
+  x=15
+  while [ $x -gt 0 ]
+    do
+     sleep 1s
+     clear
+     echo -e $red"Hibernate$reset in$green $x$reset seconds..."
+     x=$(( $x - 1 ))
+  done
+  eval "${HibernateCMD}"
   exit 0
 else
     echo
