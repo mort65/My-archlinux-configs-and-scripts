@@ -1,6 +1,6 @@
 #!/bin/bash
 
-#this script check for archlinux news and if no news found update the system.
+#this script check for archlinux news and if no news found update archlinux.
 
 Args=$@
 USERNAME=${SUDO_USER:-$(id -u -n)}
@@ -200,7 +200,7 @@ if [ -n "$1" ]; then #non-empty
         echo ""
 		usage
 	  fi
-    elif [[ $PARAM =~ ^--[Hh][Ii][Bb][Ee][Rr][Nn][Aa][Tt][Ee]$ ]] || [[ ^--[Ff][Rr][Ee][Ee][Zz][Ee]$ ]] || [[ $PARAM =~ ^-[Ff]$ ]]; then
+    elif [[ $PARAM =~ ^--[Hh][Ii][Bb][Ee][Rr][Nn][Aa][Tt][Ee]$ ]] || [[ $PARAM =~ ^--[Ff][Rr][Ee][Ee][Zz][Ee]$ ]] || [[ $PARAM =~ ^-[Ff]$ ]]; then
       if [[ $Sleep == "" ]] && [[ $Shutdown == "" ]] && [[ $Reboot == "" ]] && [[ $Hibernate == "" ]] && [[ $Logout == "" ]]; then
         Hibernate="Yes"
       else
@@ -208,7 +208,7 @@ if [ -n "$1" ]; then #non-empty
         echo ""
 		usage
 	  fi
-    elif [[ $PARAM =~ ^-[AaBbEeFfGgIiLlMmOoPpRrSsTtUuYy][AaBbEeFfGgIiLlMmOoPpRrSsTtUuYy][AaBbEeFfGgIiLlMmOoPpRrSsTtUuYy]?[AaBbEeFfGgIiLlMmOoPpRrSsTtUuYy]?[AaBbEeFfGgIiLlMmOoPpRrSsTtUuYy]?[AaBbEeFfGgIiLlMmOoPpRrSsTtUuYy]?[AaBbEeFfGgIiLlMmOoPpRrSsTtUuYy]?[AaBbEeFfGgIiLlMmOoPpRrSsTtUuYy]?[AaBbEeFfGgIiLlMmOoPpRrSsTtUuYy]?[AaBbEeFfGgIiLlMmOoPpRrSsTtUuYy]?[AaBbEeFfGgIiLlMmOoPpRrSsTtUuYy]?[AaBbEeFfGgIiLlMmOoPpRrSsTtUuYy]?[AaBbEeFfGgIiLlMmOoPpRrSsTtUuYy]?[AaBbEeFfGgIiLlMmOoPpRrSsTtUuYy]?[AaBbEeFfGgIiLlMmOoPpRrSsTtUuYy]?$ ]]; then
+    elif [[ $PARAM =~ ^-[AaBbEeFfGgIiLlMmOoPpRrSsTtUuYy][AaBbEeFfGgIiLlMmOoPpRrSsTtUuYy][AaBbEeFfGgIiLlMmOoPpRrSsTtUuYy]?[AaBbEeFfGgIiLlMmOoPpRrSsTtUuYy]?[AaBbEeFfGgIiLlMmOoPpRrSsTtUuYy]?[AaBbEeFfGgIiLlMmOoPpRrSsTtUuYy]?[AaBbEeFfGgIiLlMmOoPpRrSsTtUuYy]?[AaBbEeFfGgIiLlMmOoPpRrSsTtUuYy]?[AaBbEeFfGgIiLlMmOoPpRrSsTtUuYy]?[AaBbEeFfGgIiLlMmOoPpRrSsTtUuYy]?[AaBbEeFfGgIiLlMmOoPpRrSsTtUuYy]?$ ]]; then
 	  i=1
 	  while (( i++ < ${#PARAM} ))
 	  do
