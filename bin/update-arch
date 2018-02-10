@@ -204,13 +204,14 @@ if [ -n "$1" ]; then #non-empty
 	  fi
     elif [[ $PARAM =~ ^--[Ll][Oo][Gg][Oo][Ff][Ff]$ ]] || [[ $PARAM =~ ^--[Ll][Oo][Gg][Oo][Uu][Tt]$ ]] || [[ $PARAM =~ ^-[Gg]$ ]]; then
       if [[ $Sleep == "" ]] && [[ $Shutdown == "" ]] && [[ $Reboot == "" ]] && [[ $Hibernate == "" ]] && [[ $Logout == "" ]]; then
+        echo "Hi"
         Logout="Yes"
       else
         echo -e $red"Error:$reset Invalid arguments '${Args}'"
         echo ""
 		usage
 	  fi
-    elif [[ $PARAM =~ ^--[Hh][Ii][Bb][Ee][Rr][Nn][Aa][Tt][Ee]$ ]] || [[ ^--[Ff][Rr][Ee][Ee][Zz][Ee]$ ]] || [[ $PARAM =~ ^-[Ff]$ ]]; then
+    elif [[ $PARAM =~ ^--[Hh][Ii][Bb][Ee][Rr][Nn][Aa][Tt][Ee]$ ]] || [[ $PARAM =~ ^--[Ff][Rr][Ee][Ee][Zz][Ee]$ ]] || [[ $PARAM =~ ^-[Ff]$ ]]; then
       if [[ $Sleep == "" ]] && [[ $Shutdown == "" ]] && [[ $Reboot == "" ]] && [[ $Hibernate == "" ]] && [[ $Logout == "" ]]; then
         Hibernate="Yes"
       else
@@ -218,8 +219,8 @@ if [ -n "$1" ]; then #non-empty
         echo ""
 		usage
 	  fi
-    elif [[ $PARAM =~ ^-[AaBbEeFfGgIiLlMmOoPpRrSsTtUuYy][AaBbEeFfGgIiLlMmOoPpRrSsTtUuYy][AaBbEeFfGgIiLlMmOoPpRrSsTtUuYy]?[AaBbEeFfGgIiLlMmOoPpRrSsTtUuYy]?[AaBbEeFfGgIiLlMmOoPpRrSsTtUuYy]?[AaBbEeFfGgIiLlMmOoPpRrSsTtUuYy]?[AaBbEeFfGgIiLlMmOoPpRrSsTtUuYy]?[AaBbEeFfGgIiLlMmOoPpRrSsTtUuYy]?[AaBbEeFfGgIiLlMmOoPpRrSsTtUuYy]?[AaBbEeFfGgIiLlMmOoPpRrSsTtUuYy]?[AaBbEeFfGgIiLlMmOoPpRrSsTtUuYy]?[AaBbEeFfGgIiLlMmOoPpRrSsTtUuYy]?[AaBbEeFfGgIiLlMmOoPpRrSsTtUuYy]?[AaBbEeFfGgIiLlMmOoPpRrSsTtUuYy]?[AaBbEeFfGgIiLlMmOoPpRrSsTtUuYy]?$ ]]; then
-	  i=1
+    elif [[ $PARAM =~ ^-[AaBbEeFfGgIiLlMmOoPpRrSsTtUuYy][AaBbEeFfGgIiLlMmOoPpRrSsTtUuYy][AaBbEeFfGgIiLlMmOoPpRrSsTtUuYy]?[AaBbEeFfGgIiLlMmOoPpRrSsTtUuYy]?[AaBbEeFfGgIiLlMmOoPpRrSsTtUuYy]?[AaBbEeFfGgIiLlMmOoPpRrSsTtUuYy]?[AaBbEeFfGgIiLlMmOoPpRrSsTtUuYy]?[AaBbEeFfGgIiLlMmOoPpRrSsTtUuYy]?[AaBbEeFfGgIiLlMmOoPpRrSsTtUuYy]?[AaBbEeFfGgIiLlMmOoPpRrSsTtUuYy]?[AaBbEeFfGgIiLlMmOoPpRrSsTtUuYy]?$ ]]; then
+      i=1
 	  while (( i++ < ${#PARAM} ))
 	  do
    		char=$(expr substr "$PARAM" $i 1)
@@ -231,7 +232,7 @@ if [ -n "$1" ]; then #non-empty
 				echo ""
 				usage
 			fi
-        	elif [[ $char =~ [Aa] ]]; then
+        elif [[ $char =~ [Aa] ]]; then
 			if [[ $AUR == "" ]]; then
 				AUR="Yes"
 			else
@@ -255,7 +256,7 @@ if [ -n "$1" ]; then #non-empty
 				echo ""
 				usage
 			fi
-        	elif [[ $char =~ [Yy] ]]; then
+        elif [[ $char =~ [Yy] ]]; then
 			if [[ $Refresh == "" ]]; then
 				Refresh="Yes"
 			else
