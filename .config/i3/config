@@ -543,9 +543,6 @@ focus_on_window_activation urgent
 #set monitor as primary to fix showing tray icons 
 exec_always --no-startup-id /usr/bin/xrandr --output DisplayPort-0 --off --output DVI-1 --off --output DVI-0 --primary --mode 1600x900 --pos 0x0 --rotate normal --output HDMI-0 --off
 
-#fix for dark theme on kde apps
-exec --no-startup-id ~/bin/bflogin.sh
-
 # Pulse Audio controls
 # run pactl list sinks
 bindsym $mod+KP_Add exec --no-startup-id /usr/bin/pactl set-sink-volume alsa_output.pci-0000_00_1b.0.analog-stereo +5% #increase sound volume
@@ -568,8 +565,6 @@ mode "$mode_system" {
     bindsym Escape mode "default"
 }
 bindsym $mod+Pause mode "$mode_system"
-
-exec --no-startup-id /bin/bash ~/bin/keep_notif_log.sh ~/bin/tmp/log.txt &
 
 #set a random wallpaper for wokspace1
 #exec --no-startup-id $feh -recursive --randomize --bg-fill ~/Pictures/Pics/*
