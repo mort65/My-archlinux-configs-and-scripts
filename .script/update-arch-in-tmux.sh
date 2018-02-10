@@ -1,6 +1,6 @@
 #!/bin/bash
 
-#this script check for archlinux news and if no news found update the system
+#this script check for archlinux news and if no news found update the system.
 
 Args=$@
 USERNAME=${SUDO_USER:-$(id -u -n)}
@@ -44,7 +44,7 @@ HibernateCMD="/usr/bin/systemctl hibernate"
 
 function help {
     echo "Usage: $programname [OPTION]"
-    echo "A script for updating archlinux"
+    echo "A script for updating archlinux."
     echo ""
     echo "  -a, --aur       Refresh and synchronize all normal and aur package databases"
     echo "  -o  --poweroff  Shutdown computer if the script finished without error"         
