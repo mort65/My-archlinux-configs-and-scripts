@@ -5,7 +5,7 @@ import re
 from operator import itemgetter
 
 class PySearch:
-    '''This class searches for a text in the given path.'''
+    '''This class searches for files and directories by name.'''
     main_dir = ''
     text = ''
     pattern = ''
@@ -208,19 +208,19 @@ class PySearch:
             self._resultList = [(k,v) for k,v in self._resultDict.items()]
 
 def show_usage():
-    print("""Usage: pysearch [OPTION]... [PATH] [TEXT]
-search for a TEXT in the given PATH.
-Text can be a regular expression.
+    print("""Usage: pysearch [OPTION]... [PATH] [NAME]
 
-  -h, --help                 display this help 
-  -r, --recursive            search recursively  
+Search for files and directories by name.
+ 
+  -r, --recursive            search recursively 
   -f, --file                 search for files
   -l, --link                 search for links
   -d, --dir                  search for directories
   -m, --mark                 mark files and dirs with f and d
   -i, --ignore-case          ignore case in the search result    
   -n, --name                 don't show fullpath in the result
-  -s, --sort                 sort the search result alphabetically 
+  -s, --sort                 sort the search result alphabetically
+  -h, --help                 display this help and exit
   
 Examples:
   pysearch -if /usr/bin vim    "Find files in bin dir that have 
