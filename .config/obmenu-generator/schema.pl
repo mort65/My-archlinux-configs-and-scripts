@@ -91,9 +91,9 @@ our $SCHEMA = [
       {item => ['killall jgmenu', 'Restart jgmenu', 'start-here']},
      
       # Configuration files
-      {item => ["$editor ~/.config/jgmenu/prepend.csv", 'Jgmenu prepend',    'text-x-generic']},
+      {item => ["$editor ~/.config/jgmenu/prepend.csv", 'Jgmenu Prepend',    'text-x-generic']},
       {item => ["$editor ~/.config/jgmenu/jgmenurc", 'Jgmenu Config', 'text-x-generic']},
-      {item => ["$editor ~/.config/jgmenu/append.csv", 'Jgmenu append',    'text-x-generic']},
+      {item => ["$editor ~/.config/jgmenu/append.csv", 'Jgmenu Append',    'text-x-generic']},
       
      {end_cat => undef},
      
