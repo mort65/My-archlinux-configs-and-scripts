@@ -1,7 +1,6 @@
 #!/bin/bash
 # this script runs update-arch-in-tmux.sh in a tmux session.
 # Requires: pacman, reflector, yaourt, rsstail
-
 # Colors
 blue="\033[1;34m"
 green="\033[1;32m"
@@ -20,26 +19,34 @@ programname="update-arch-in-tmux"
 USERNAME=${SUDO_USER:-$(id -u -n)}
 HOMEDIR="/home/$USERNAME"
 
-function usage {
+function help {
     echo "Usage: $programname [OPTION]"
     echo "A script for updating archlinux"
     echo ""
-    echo "  -a, --aur      Refresh and synchronize all normal and aur package databases"
-    echo "  -o  --poweroff Shutdown computer if the script finished without error"         
-    echo "  -e  --reboot   Restart computer if the script finished without error"  
-    echo "  -u  --suspend  Suspend computer if the script finished without error"
-    echo "  --shutdown     Shutdown computer if the script finished without error"     
-    echo "  --restart      Restart computer if the script finished without error"     
-    echo "  --sleep        Suspend computer if the script finished without error"    
-    echo "  -s, --sync     Refresh and synchronize normal package databases"
-    echo "  -y, --refresh  Force the refresh of package databases" 
-    echo "  -r  --norss    Disable checking for archlinux news" 
-    echo "  -p, --nopac    Disable checking for pacnew files" 
-    echo "  -i, --install  Install a package"
-    echo "  -b, --build    Build a package"
-    echo "  -l  --nolog    Disable logging"
-    echo "  -m, --mirror   Update mirrors"
-    echo "  -h, --help     Display help"
+    echo "  -a, --aur       Refresh and synchronize all normal and aur package databases"
+    echo "  -o  --poweroff  Shutdown computer if the script finished without error"         
+    echo "  -e  --reboot    Restart computer if the script finished without error"
+    echo "  -f  --freeze    Hibernate computer if the script finished without error"
+    echo "  -u  --suspend   Suspend computer if the script finished without error"
+    echo "  -g  --logout    Logout if the script finished without error"
+    echo "  --shutdown      Shutdown computer if the script finished without error"     
+    echo "  --restart       Restart computer if the script finished without error"
+    echo "  --hibernate     Hibernate computer if the script finished without error"
+    echo "  --sleep         Suspend computer if the script finished without error"
+    echo "  --logoff        Logout if the script finished without error"
+    echo "  -s, --sync      Refresh and synchronize normal package databases"
+    echo "  -y, --refresh   Force the refresh of package databases" 
+    echo "  -r  --norss     Disable checking for archlinux news" 
+    echo "  -p, --nopac     Disable checking for pacnew files" 
+    echo "  -i, --install   Install a package"
+    echo "  -b, --build     Build a package"
+    echo "  -l  --nolog     Disable logging"
+    echo "  -m, --mirror    Update mirrors"
+    echo "  -h, --help      Display help"
+}
+
+function usage {
+    help
     exit 1
 }
 
@@ -52,7 +59,8 @@ elif [ "${#}" -eq 0 ]; then
 fi
 
 if [[ $1 =~ ^--[Hh][Ee][Ll][Pp]$ ]] || [[ $1 =~ ^-[Hh]$ ]]; then
-  usage
+  help
+  exit 0
 fi
 
 if [ "$TERM" = "screen" ] && [ -n "$TMUX" ]; then #checking if script is running from a tmux session
