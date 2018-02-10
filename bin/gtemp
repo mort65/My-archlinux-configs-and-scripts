@@ -1,6 +1,0 @@
-#!/bin/bash
-#this script show gpu temperature
-
-echo $(sensors | grep 'temp1' | awk 'NR==2' | cut -c 16-22)
-
-exit 0
