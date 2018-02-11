@@ -541,7 +541,7 @@ focus_follows_mouse yes
 focus_on_window_activation urgent
 
 #set monitor as primary to fix showing tray icons 
-exec_always --no-startup-id /usr/bin/xrandr --output DisplayPort-0 --off --output DVI-1 --off --output DVI-0 --primary --mode 1600x900 --pos 0x0 --rotate normal --output HDMI-0 --off
+#exec_always --no-startup-id /usr/bin/xrandr --output DisplayPort-0 --off --output DVI-1 --off --output DVI-0 --primary --mode 1600x900 --pos 0x0 --rotate normal --output HDMI-0 --off
 
 # Pulse Audio controls
 # run pactl list sinks
