@@ -1,9 +1,12 @@
 #!/bin/bash
 
-#This script returns a string which shows number of available updates for Tint2
+#This script returns a string which shows number of available updates
 
-if [[ -s "/home/mohsen/.number_of_updates.txt" ]]; then
-    NUM=$(cat "/home/mohsen/.number_of_updates.txt")
+USERNAME=${SUDO_USER:-$(id -u -n)}
+HOMEDIR="/home/$USERNAME"
+
+if [[ -s "${HOMEDIR}/.number_of_updates.txt" ]]; then
+    NUM=$(cat "${HOMEDIR}/.number_of_updates.txt")
     string="🔔"
     if [[ $NUM =~ ^[0-9]+$ ]]; then
         if [[ NUM -le 1000 ]]; then
