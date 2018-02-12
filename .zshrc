@@ -306,8 +306,8 @@ alias tus="$HOME/bin/totalusedswap"
 alias tau="$HOME/bin/totalavailupdates"
 alias up="$HOME/bin/update-arch"
 alias upa="$HOME/bin/update-arch -sya"
-alias upt="$HOME/bin/update-arch-in-tmux"
-alias upta="$HOME/bin/update-arch-in-tmux -sya"
+alias upt="$HOME/bin/update-arch -t"
+alias upta="$HOME/bin/update-arch -tsya"
 alias upm="$HOME/bin/update-mirrors"
 alias tf="$HOME/bin/totalfiles"
 alias py="/usr/bin/python"
@@ -331,4 +331,3 @@ archey3
 #neofetch
 echo "${Cyan} $(/usr/bin/jdate '+%h %d %B %Y %H:%M %p')"
 echo '\n'
-
