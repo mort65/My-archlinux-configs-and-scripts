@@ -17,8 +17,9 @@ Ignorecase=""
 Recursive=""
 Arg1="ifa"
 Arg2="x"
+
 function help {
-    echo "Usage: tsearch [OPTION]... [PATH] [NAME]"
+    echo "Usage: search [OPTION]... [PATH] [NAME]"
     echo ""
     echo "Search for files and directories by name."
     echo ""
