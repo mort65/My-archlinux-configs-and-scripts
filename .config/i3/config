@@ -579,9 +579,6 @@ exec --no-startup-id /usr/bin/i3-msg workspace $workspace1 &
 exec_always --no-startup-id $feh --bg-scale $HOME/.i3wm-wallpapers/1.jpg &
 exec --no-startup-id /usr/bin/python ~/bin/i3/wsp.py &
 
-#change keyboard layout with ctrl+shift:
-exec --no-startup-id /usr/bin/setxkbmap us,ir -option 'grp:alt_shift_toggle'
-
 exec --no-startup-id /usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1
 exec --no-startup-id /usr/bin/pamac-tray &
 exec --no-startup-id /usr/bin/nm-applet &
@@ -593,6 +590,7 @@ exec --no-startup-id /usr/bin/conky -c ~/bin/i3/conky/.conkyrc &
 #start dropbox
 exec --no-startup-id ~/.dropbox-dist/dropboxd &
 exec --no-startup-id /usr/bin/sudo bash -c "echo 100000 > /proc/sys/fs/inotify/max_user_watches" &
+
 exec --no-startup-id /usr/bin/psensor &
 exec --no-startup-id /usr/bin/udiskie -2 -s &
 exec --no-startup-id /usr/bin/clipit &
