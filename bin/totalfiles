@@ -1,5 +1,5 @@
 #!/bin/bash
-#Counts number of files and dirs in current directory or a path
+#Counts number of files and dirs in current directory or a path.
 
 PT=$(pwd)
 
