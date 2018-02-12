@@ -19,7 +19,7 @@ programname="update-arch-in-tmux"
 USERNAME=${SUDO_USER:-$(id -u -n)}
 HOMEDIR="/home/$USERNAME"
 Args=$@ 
-Arguments="-"
+Arguments=""
 Build=""
 Install=""
 Mirror=""
@@ -396,6 +396,6 @@ elif /usr/bin/tmux has-session -t $session 2>/dev/null; then  #checking if tmux 
 	exit 0
 fi
 
-tmux new-session -d -s $session "/usr/bin/sudo $HOMEDIR/.script/update-arch-in-tmux.sh ${Arguments}"
+tmux new-session -d -s $session "/usr/bin/sudo $HOMEDIR/.script/update-arch-in-tmux.sh -${Arguments}"
 
 /usr/bin/tmux attach-session -t $session
