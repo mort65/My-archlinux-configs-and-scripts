@@ -430,7 +430,7 @@ if [[ $Tmux == "Yes" ]]; then
         exit 0
     fi
 
-    { tmux new-session -d -s $session "/usr/bin/sudo $HOMEDIR/.script/update-arch-in-tmux.sh -${Arguments}" ; } || { exit 1 ; }
+    { tmux new-session -d -s $session "/usr/bin/sudo $HOMEDIR/.script/.update-arch-in-tmux.sh -${Arguments}" ; } || { exit 1 ; }
 
     { /usr/bin/tmux attach-session -t $session ; } || { exit 1 ; }
 
