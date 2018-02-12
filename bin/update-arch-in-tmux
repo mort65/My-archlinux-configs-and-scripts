@@ -18,6 +18,23 @@ session="update"
 programname="update-arch-in-tmux"
 USERNAME=${SUDO_USER:-$(id -u -n)}
 HOMEDIR="/home/$USERNAME"
+Args=$@ 
+Arguments="-"
+Build=""
+Install=""
+Mirror=""
+Refresh=""
+AUR=""
+Help=""
+Sync=""
+LoggingOff=""
+RSSOff=""
+PacOff=""
+Shutdown=""
+Logout=""
+Hibernate=""
+Sleep=""
+Reboot=""
 
 function help {
     echo "Usage: $programname [OPTION]"
@@ -50,17 +67,324 @@ function usage {
     exit 1
 }
 
-if [ "${#}" -gt 1 ]; then
-    echo -e $red"Error:$reset Invalid number of parameters"
-    echo ""
-    usage
-elif [ "${#}" -eq 0 ]; then
-    usage
-fi
+if [ "${#}" -gt 0 ]; then
+    if [ -n "$1" ]; then #non-empty
+      while [ "$1" != "" ]; do
+        PARAM="$1"
+        if [[  $PARAM =~ ^--[Ii][Nn][Ss][Tt][Aa][Ll][Ll]$ ]] || [[ $PARAM =~ ^-[Ii]$ ]]; then
+          if [[ $Install == "" ]]; then
+            Install="Yes"
+          else
+            echo -e $red"Error:$reset Invalid arguments '${Args}'"
+            echo ""
+            usage
+          fi
+        elif [[ $PARAM =~ ^--[Bb][Uu][Ii][Ll][Dd]$ ]] || [[ $PARAM =~ ^-[Bb]$ ]]; then
+          if [[ $Build == "" ]]; then
+            Build="Yes"
+          else
+            echo -e $red"Error:$reset Invalid arguments '${Args}'"
+            echo ""
+            usage
+          fi 
+        elif [[ $PARAM =~ ^--[Mm][Ii][Rr][Rr][Oo][Rr]$ ]] || [[ $PARAM =~ ^-[Mm]$ ]]; then
+          if [[ $Mirror == "" ]]; then
+            Mirror="Yes"
+          else
+            echo -e $red"Error:$reset Invalid arguments '${Args}'"
+            echo ""
+            usage
+          fi
+        elif [[ $PARAM =~ ^--[Rr][Ee][Ff][Rr][Ee][Ss][Hh]$ ]] || [[ $PARAM =~ ^-[Yy]$ ]]; then
+          if [[ $Refresh == "" ]]; then
+            Refresh="Yes"
+          else
+            echo -e $red"Error:$reset Invalid arguments '${Args}'"
+            echo ""
+            usage
+          fi
+        elif [[ $PARAM =~ ^--[Aa][Uu][Rr]$ ]] || [[ $PARAM =~ ^-[Aa]$ ]]; then
+          if [[ $AUR == "" ]]; then
+            AUR="Yes"
+          else
+            echo -e $red"Error:$reset Invalid arguments '${Args}'"
+            echo ""
+            usage
+          fi
+        elif [[ $PARAM =~ ^--[Hh][Ee][Ll][Pp]$ ]] || [[ $PARAM =~ ^-[Hh]$ ]]; then
+          if [[ $Help == "" ]]; then
+            Help="Yes"
+          else
+            echo -e $red"Error:$reset Invalid arguments '${Args}'"
+            echo ""
+            usage
+          fi
+        elif [[ $PARAM =~ ^--[Ss][Yy][Nn][Cc]$ ]] || [[ $PARAM =~ ^-[Ss]$ ]]; then
+          if [[ $Sync == "" ]]; then
+            Sync="Yes"
+          else
+            echo -e $red"Error:$reset Invalid arguments '${Args}'"
+            echo ""
+            usage
+          fi
+        elif [[ $PARAM =~ ^--[Nn][Oo][Ll][Oo][Gg]$ ]] || [[ $PARAM =~ ^-[Ll]$ ]]; then
+          if [[ $LoggingOff == "" ]]; then
+            LoggingOff="Yes"
+          else
+            echo -e $red"Error:$reset Invalid arguments '${Args}'"
+            echo ""
+            usage
+          fi
+        elif [[ $PARAM =~ ^--[Nn][Oo][Rr][Ss][Ss]$ ]] || [[ $PARAM =~ ^-[Rr]$ ]]; then
+          if [[ $RSSOff == "" ]]; then
+            RSSOff="Yes"
+          else
+            echo -e $red"Error:$reset Invalid arguments '${Args}'"
+            echo ""
+            usage
+          fi
+        elif [[ $PARAM =~ ^--[Nn][Oo][Pp][Aa][Cc]$ ]] || [[ $PARAM =~ ^-[Pp]$ ]]; then
+          if [[ $PacOff == "" ]]; then
+            PacOff="Yes"
+          else
+            echo -e $red"Error:$reset Invalid arguments '${Args}'"
+            echo ""
+            usage
+          fi 
+        elif [[ $PARAM =~ ^--[Pp][Oo][Ww][Ee][Rr][Oo][Ff][Ff]$ ]] || [[ $PARAM =~ ^--[Ss][Hh][Uu][Tt][Dd][Oo][Ww][Nn]$ ]] || [[ $PARAM =~ ^-[Oo]$ ]]; then
+          if [[ $Sleep == "" ]] && [[ $Shutdown == "" ]] && [[ $Reboot == "" ]] && [[ $Hibernate == "" ]] && [[ $Logout == "" ]]; then
+            Shutdown="Yes"
+          else
+            echo -e $red"Error:$reset Invalid arguments '${Args}'"
+            echo ""
+            usage
+          fi  
+        elif [[ $PARAM =~ ^--[Ss][Uu][Ss][Pp][Ee][Nn][Dd]$ ]] || [[ $PARAM =~ ^--[Ss][Ll][Ee][Ee][Pp]$ ]] || [[ $PARAM =~ ^-[Uu]$ ]]; then
+          if [[ $Sleep == "" ]] && [[ $Shutdown == "" ]] && [[ $Reboot == "" ]] && [[ $Hibernate == "" ]] && [[ $Logout == "" ]]; then
+            Sleep="Yes"
+          else
+            echo -e $red"Error:$reset Invalid arguments '${Args}'"
+            echo ""
+            usage
+          fi
+        elif [[ $PARAM =~ ^--[Rr][Ee][Ss][Tt][Aa][Rr][Tt]$ ]] || [[ $PARAM =~ ^--[Rr][Ee][Bb][Oo][Oo][Tt]$ ]] || [[ $PARAM =~ ^-[Ee]$ ]]; then
+          if [[ $Sleep == "" ]] && [[ $Shutdown == "" ]] && [[ $Reboot == "" ]] && [[ $Hibernate == "" ]] && [[ $Logout == "" ]]; then
+            Reboot="Yes"
+          else
+            echo -e $red"Error:$reset Invalid arguments '${Args}'"
+            echo ""
+            usage
+          fi 
+        elif [[ $PARAM =~ ^--[Ll][Oo][Gg][Oo][Ff][Ff]$ ]] || [[ $PARAM =~ ^--[Ll][Oo][Gg][Oo][Uu][Tt]$ ]] || [[ $PARAM =~ ^-[Gg]$ ]]; then
+          if [[ $Sleep == "" ]] && [[ $Shutdown == "" ]] && [[ $Reboot == "" ]] && [[ $Hibernate == "" ]] && [[ $Logout == "" ]]; then
+            Logout="Yes"
+          else
+            echo -e $red"Error:$reset Invalid arguments '${Args}'"
+            echo ""
+            usage
+          fi
+        elif [[ $PARAM =~ ^--[Hh][Ii][Bb][Ee][Rr][Nn][Aa][Tt][Ee]$ ]] || [[ $PARAM =~ ^--[Ff][Rr][Ee][Ee][Zz][Ee]$ ]] || [[ $PARAM =~ ^-[Ff]$ ]]; then
+          if [[ $Sleep == "" ]] && [[ $Shutdown == "" ]] && [[ $Reboot == "" ]] && [[ $Hibernate == "" ]] && [[ $Logout == "" ]]; then
+            Hibernate="Yes"
+          else
+            echo -e $red"Error:$reset Invalid arguments '${Args}'"
+            echo ""
+            usage
+          fi
+        elif [[ $PARAM =~ ^-[AaBbEeFfGgIiLlMmOoPpRrSsTtUuYy][AaBbEeFfGgIiLlMmOoPpRrSsTtUuYy][AaBbEeFfGgIiLlMmOoPpRrSsTtUuYy]?[AaBbEeFfGgIiLlMmOoPpRrSsTtUuYy]?[AaBbEeFfGgIiLlMmOoPpRrSsTtUuYy]?[AaBbEeFfGgIiLlMmOoPpRrSsTtUuYy]?[AaBbEeFfGgIiLlMmOoPpRrSsTtUuYy]?[AaBbEeFfGgIiLlMmOoPpRrSsTtUuYy]?[AaBbEeFfGgIiLlMmOoPpRrSsTtUuYy]?[AaBbEeFfGgIiLlMmOoPpRrSsTtUuYy]?[AaBbEeFfGgIiLlMmOoPpRrSsTtUuYy]?$ ]]; then
+          i=1
+          while (( i++ < ${#PARAM} ))
+          do
+            char=$(expr substr "$PARAM" $i 1)
+            if [[ $char =~ [Mm] ]]; then
+                if [[ $Mirror == "" ]]; then
+                    Mirror="Yes"
+                else
+                    echo -e $red"Error:$reset Invalid arguments '${Args}'"
+                    echo ""
+                    usage
+                fi
+            elif [[ $char =~ [Ii] ]]; then
+                if [[ $Install == "" ]]; then
+                    Install="Yes"
+                else
+                    echo -e $red"Error:$reset Invalid arguments '${Args}'"
+                    echo ""
+                    usage
+                fi
+            elif [[ $char =~ [Bb] ]]; then
+                if [[ $Build == "" ]]; then
+                    Build="Yes"
+                else
+                    echo -e $red"Error:$reset Invalid arguments '${Args}'"
+                    echo ""
+                    usage
+                fi		
+            elif [[ $char =~ [Yy] ]]; then
+                if [[ $Refresh == "" ]]; then
+                    Refresh="Yes"
+                else
+                    echo -e $red"Error:$reset Invalid arguments '${Args}'"
+                    echo ""
+                    usage
+                fi
+            elif [[ $char =~ [Aa] ]]; then
+                if [[ $AUR == "" ]]; then
+                    AUR="Yes"
+                else
+                    echo -e $red"Error:$reset Invalid arguments '${Args}'"
+                    echo ""
+                    usage
+                fi
+            elif [[ $char =~ [Ss] ]]; then
+                if [[ $Sync == "" ]]; then
+                    Sync="Yes"
+                else
+                    echo -e $red"Error:$reset Invalid arguments '${Args}'"
+                    echo ""
+                    usage
+                fi
+            elif [[ $char =~ [Ll] ]]; then
+                if [[ $LoggingOff == "" ]]; then
+                    LoggingOff="Yes"
+                else
+                    echo -e $red"Error:$reset Invalid arguments '${Args}'"
+                    echo ""
+                    usage
+                fi
+            elif [[ $char =~ [Rr] ]]; then
+                if [[ $RSSOff == "" ]]; then
+                    RSSOff="Yes"
+                else
+                    echo -e $red"Error:$reset Invalid arguments '${Args}'"
+                    echo ""
+                    usage
+                fi
+            elif [[ $char =~ [Pp] ]]; then
+                if [[ $PacOff == "" ]]; then
+                    PacOff="Yes"
+                else
+                    echo -e $red"Error:$reset Invalid arguments '${Args}'"
+                    echo ""
+                    usage
+                fi
+            elif [[ $char =~ [Uu] ]]; then
+                if [[ $Sleep == "" ]] && [[ $Shutdown == "" ]] && [[ $Reboot == "" ]] && [[ $Hibernate == "" ]] && [[ $Logout == "" ]]; then
+                    Sleep="Yes"
+                else
+                    echo -e $red"Error:$reset Invalid arguments '${Args}'"
+                    echo ""
+                    usage
+                fi  
+            elif [[ $char =~ [Oo] ]]; then
+                if [[ $Sleep == "" ]] && [[ $Shutdown == "" ]] && [[ $Reboot == "" ]] && [[ $Hibernate == "" ]] && [[ $Logout == "" ]]; then
+                    Shutdown="Yes"
+                else
+                    echo -e $red"Error:$reset Invalid arguments '${Args}'"
+                    echo ""
+                    usage
+                fi 
+            elif [[ $char =~ [Ee] ]]; then
+                if [[ $Sleep == "" ]] && [[ $Shutdown == "" ]] && [[ $Reboot == "" ]] && [[ $Hibernate == "" ]] && [[ $Logout == "" ]]; then
+                    Reboot="Yes"
+                else
+                    echo -e $red"Error:$reset Invalid arguments '${Args}'"
+                    echo ""
+                    usage
+                fi
+            elif [[ $char =~ [Gg] ]]; then
+                if [[ $Sleep == "" ]] && [[ $Shutdown == "" ]] && [[ $Reboot == "" ]] && [[ $Hibernate == "" ]] && [[ $Logout == "" ]]; then
+                    Logout="Yes"
+                else
+                    echo -e $red"Error:$reset Invalid arguments '${Args}'"
+                    echo ""
+                    usage
+                fi 
+            elif [[ $char =~ [Ff] ]]; then
+                if [[ $Sleep == "" ]] && [[ $Shutdown == "" ]] && [[ $Reboot == "" ]] && [[ $Hibernate == "" ]] && [[ $Logout == "" ]]; then
+                    Hibernate="Yes"
+                else
+                    echo -e $red"Error:$reset Invalid arguments '${Args}'"
+                    echo ""
+                    usage
+                fi
+            else
+                echo -e $red"Error:$reset Invalid argument '$PARAM'"
+                echo ""
+                usage
+            fi
+          done
+        else
+          echo -e $red"Error:$reset Invalid argument '$PARAM'"
+          echo ""
+          usage
+        fi
+        shift
+      done
+    fi
+    
+    if [[ $Help == "Yes" ]]; then
+        help
+        exit 0
+    fi
+    
+    if [[ $Sync == "Yes" ]]; then
+        Arguments="${Arguments}s"
+    fi
+    
+    if [[ $AUR == "Yes" ]]; then
+        Arguments="${Arguments}a"
+    fi
+    
+    if [[ $Install == "Yes" ]]; then
+        Arguments="${Arguments}i"
+    fi
 
-if [[ $1 =~ ^--[Hh][Ee][Ll][Pp]$ ]] || [[ $1 =~ ^-[Hh]$ ]]; then
-  help
-  exit 0
+    if [[ $Build == "Yes" ]]; then
+        Arguments="${Arguments}b"
+    fi
+
+    if [[ $Mirror == "Yes" ]]; then
+        Arguments="${Arguments}m"
+    fi
+
+    if [[ $Refresh == "Yes" ]]; then
+        Arguments="${Arguments}y"
+    fi
+
+    if [[ $LoggingOff == "Yes" ]]; then
+        Arguments = "${Arguments}l"
+    fi
+
+    if [[ $RSSOff == "Yes" ]]; then
+        Arguments="${Arguments}r"
+    fi
+
+    if [[ $PacOff == "Yes" ]]; then
+        Arguments="${Arguments}p"
+    fi
+    
+    if [[ $Sleep == "Yes" ]]; then
+        Arguments="${Arguments}u"
+    fi
+    
+    if [[ $Logout == "Yes" ]]; then
+        Arguments="${Arguments}g"
+    fi
+    
+    if [[ $Hibernate == "Yes" ]]; then
+        Arguments="${Arguments}f"
+    fi
+    
+    if [[ $Shutdown == "Yes" ]]; then
+        Arguments="${Arguments}o"
+    fi
+    
+    if [[ $Reboot == "Yes" ]]; then
+        Arguments="${Arguments}e"
+    fi
+else
+    usage
 fi
 
 if [ "$TERM" = "screen" ] && [ -n "$TMUX" ]; then #checking if script is running from a tmux session
@@ -72,6 +396,6 @@ elif /usr/bin/tmux has-session -t $session 2>/dev/null; then  #checking if tmux 
 	exit 0
 fi
 
-tmux new-session -d -s $session "/usr/bin/sudo $HOMEDIR/.script/update-arch-in-tmux.sh ${1}"
+tmux new-session -d -s $session "/usr/bin/sudo $HOMEDIR/.script/update-arch-in-tmux.sh ${Arguments}"
 
 /usr/bin/tmux attach-session -t $session
