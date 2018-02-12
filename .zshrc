@@ -327,7 +327,9 @@ export VISUAL="vim"
 export EDITOR=vim
 
 ####################################
-archey3
+#archey3
 #neofetch
+echo '\n'
 echo "${Cyan} $(/usr/bin/jdate '+%h %d %B %Y %H:%M %p')"
+fortune | cowsay
 echo '\n'
