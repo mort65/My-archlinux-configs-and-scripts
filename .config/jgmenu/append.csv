@@ -2,5 +2,5 @@
 Logout,openbox --exit,system-log-out
 Restart,systemctl reboot,system-reboot
 Suspend,systemctl suspend,system-suspend
-#Hibernate,systemctl hibernate,system-hibernate
+Hibernate,systemctl hibernate,system-hibernate
 Poweroff,systemctl poweroff,system-shutdown
