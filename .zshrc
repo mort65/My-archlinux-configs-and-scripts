@@ -112,15 +112,17 @@ source /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zs
 ##Colors:
 #####################################
 
-Black=`tput setaf 0`
-Red=`tput setaf 1`
-Green=`tput setaf 2`
-Yellow=`tput setaf 3`
-Blue=`tput setaf 4`
-Magenta=`tput setaf 5`
-Cyan=`tput setaf 6`
-White=`tput setaf 7`
-Reset=`tput sgr0`
+Black=`/usr/bin/tput setaf 0`
+Red=`/usr/bin/tput setaf 1`
+Green=`/usr/bin/tput setaf 2`
+Yellow=`/usr/bin/tput setaf 3`
+Blue=`/usr/bin/tput setaf 4`
+Magenta=`/usr/bin/tput setaf 5`
+Cyan=`/usr/bin/tput setaf 6`
+White=`/usr/bin/tput setaf 7`
+Random=`/usr/bin/tput setaf $(/usr/bin/tr -cd '1-6' < /dev/urandom | /usr/bin/head -c 1; echo)`
+Bold=`/usr/bin/tput bold 1`
+Reset=`/usr/bin/tput sgr0`
 
 
 
@@ -328,8 +330,11 @@ export EDITOR=vim
 
 ####################################
 #archey3
-#neofetch
+#echo "${Bold}${Random}\n"
+#~/bin/randcowsay
+#~/bin/randsay.py
+~/bin/randponysay
 echo '\n'
-echo "${Cyan} $(/usr/bin/jdate '+%h %d %B %Y %H:%M %p')"
-fortune | cowsay
+echo "\t${Bold}${Random} $(/usr/bin/jdate '+%h %d %B %Y %H:%M %p')"
 echo '\n'
+neofetch
