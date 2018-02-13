@@ -1,0 +1,3 @@
+#!/bin/bash
+
+fortune -a | ponysay --colour "1;3$(/usr/bin/tr -cd '1-6' < /dev/urandom | /usr/bin/head -c 1; echo)"
