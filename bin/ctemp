@@ -5,22 +5,22 @@ if [ "${#}" -gt 1 ]; then
   exit 1
 fi
 
-TEMP1=$(sensors | grep "Core 0" | cut -c 18-21)
-TEMP2=$(sensors | grep "Core 1" | cut -c 18-21)
-TEMP3=$(sensors | grep "Core 2" | cut -c 18-21)
-TEMP4=$(sensors | grep "Core 3" | cut -c 18-21)
+for (( i=1; i<=$(nproc); i++ ))
+do  
+   TEMP[i]=$(sensors | sed -n -e "s/^Core $((${i} - 1)):[^0-9]*//p" | sed -n -e "s/°C.*$//p")
+done
 
 if [ -n "$1" ]; then
   if [[ $1 =~ ^-?[1234]$ ]]; then
-    VAL="TEMP${1#"-"}"
+    VAL=TEMP[${1#"-"}]
     printf "${!VAL}°C\n"
     exit 0
   elif [[ $1 =~ ^-?-?[Mm][Ii][Nn]$ ]]; then
-    MIN=$TEMP1
+    MIN="${TEMP[1]}"
     VAL=""
-    for i in 2 3 4
+    for (( i=2; i<=$(nproc); i++ ))
       do
-        VAL="TEMP$i"
+        VAL=TEMP[i]
         if (( $(echo "$MIN > ${!VAL}" | bc -l) )); then
           MIN=${!VAL}
         fi
@@ -28,11 +28,11 @@ if [ -n "$1" ]; then
     printf "$MIN°C\n"
     exit 0
   elif [[ $1 =~ ^-?-?[Mm][Aa][Xx]$ ]]; then
-    MAX=$TEMP1
+    MAX="${TEMP[1]}"
     VAL=""
-    for i in 2 3 4
+    for (( i=2; i<=$(nproc); i++ ))
       do
-        VAL="TEMP$i"
+        VAL=TEMP[i]
         if (( $(echo "$MAX < ${!VAL}" | bc -l) )); then
           MAX=${!VAL}
         fi
@@ -40,12 +40,12 @@ if [ -n "$1" ]; then
     printf "$MAX°C\n"
     exit 0
   elif [[ $1 =~ ^-?-?[Aa][Vv][Gg]$ ]]; then
-    SUM=$TEMP1
+    SUM="${TEMP[1]}"
     AVG=""
     VAL=""
-    for i in 2 3 4
+    for (( i=2; i<=$(nproc); i++ ))
       do
-        VAL="TEMP$i"
+        VAL=TEMP[i]
         SUM=$(echo "$SUM + ${!VAL}" | bc -l)
     done
     AVG=$(echo "$SUM/4" | bc -l)
@@ -57,9 +57,9 @@ else
   fi
 fi
 
-printf "$TEMP1°C\n"
-printf "$TEMP2°C\n"
-printf "$TEMP3°C\n"
-printf "$TEMP4°C\n"
+for (( i=1; i<=$(nproc); i++ ))
+  do
+    printf "${TEMP[i]}°C\n"
+done
 
 exit 0
