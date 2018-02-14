@@ -277,7 +277,7 @@ Plugin {
     expand = false
     padding = 0
     config {
-        Command = /usr/bin/jdate  '+%h %d %b'
+        Command = /bin/sh ~/.script/openbox-jdate
         PollingTime = 60
         TextSize = large
         TextColor = #ff9ae3
