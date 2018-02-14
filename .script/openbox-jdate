@@ -1,0 +1,7 @@
+#!/bin/bash
+
+if [ -s /usr/bin/jdate ]; then
+  /usr/bin/jdate '+%h %d %b'
+else
+  /usr/bin/date '+%h %d %b'
+fi
