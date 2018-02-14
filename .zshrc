@@ -151,24 +151,12 @@ sshin() {
 	return
 }
 
-#export -f sshin
-
-#Update the system
-#sysupd() {
-#	if [ -f /usr/bin/yaourt ]; then
-#		/usr/bin/yaourt -Syyua
-#	else
-#		/usr/bin/sudo /usr/bin/pacman -Syyu
-#	fi
-#	return
-#}
-
-#export -f update
-
 jdatestatus()
 {
- if [ -f /usr/bin/jdate ]; then
-	echo "$(/usr/bin/jdate '+%d %B')"
+ if [ -s /usr/bin/jdate ]; then
+	echo "$(/usr/bin/jdate '+%h %d %B %Y %H:%M %p')"
+ else
+    echo "$(/usr/bin/date '+%h %d %B %Y %H:%M %p')"
  fi
  return	
 }
@@ -335,6 +323,7 @@ export EDITOR=vim
 #~/bin/randsay.py
 ~/bin/randponysay
 echo '\n'
-echo "\t${Bold}${Random} $(/usr/bin/jdate '+%h %d %B %Y %H:%M %p')"
+echo "\t${Bold}${Random} $(jdatestatus)"
 echo '\n'
 neofetch
+
