@@ -1,23 +1,52 @@
 #!/bin/bash
 
-if [ "${#}" -gt 1 ]; then
-  printf "Too many arguments\n"
-  exit 1
-fi
-
+programname="ctemp"
 NUM=$(/usr/bin/nproc)
+
+# Colors
+blue="\033[1;34m"
+green="\033[1;32m"
+red="\033[1;31m"
+bold="\033[1;37m"
+reset="\033[0m"
+
+function help {
+    echo "Usage: $programname [OPTION]"
+    echo "Display temperature of CPU"
+    echo ""
+    echo " -number              Display temperature of this processing unit"
+    echo " -h, --max, --highest Display highest temperature"
+    echo " -a, --avg, --medium  Display average temperature"
+    echo " -l, --min, --lowest  Display lowest temperature"
+    echo " --help               Display help"
+    echo ""
+    echo "Examples: ctemp ; ctemp -3 ; ctemp -h ; ctemp --avg ; ctemp --lowest"
+}
+
+function usage {
+    help
+    exit 1
+}
+
+if [ "${#}" -gt 1 ]; then
+  printf $red"Error:${reset}Too many arguments\n\n"
+  usage
+fi
 
 for (( i=1; i<="${NUM}"; i++ ))
 do  
-   TEMP[i]=$(/usr/bin/sensors | /usr/bin/sed -n -e "s/^Core $((${i} - 1)):[^0-9]*//p" | /usr/bin/sed -n -e "s/°C.*$//p")
+   TEMP[i]=$(/usr/bin/sensors | /usr/bin/sed -n -e "s/^Core *$((${i} - 1)):[^0-9]*//p" | /usr/bin/sed -n -e "s/°C.*$//p")
 done
 
 if [ -n "$1" ]; then
-  if [[ $1 =~ ^-?[1-${#TEMP[@]}]$ ]]; then
+  if [[ $1 =~ ^--[Hh][Ee][Ll][Pp]$ ]]; then
+    help
+    exit 0
+  elif [[ $1 =~ ^-[1-9][0-9]*$ ]] && [[ $(echo "${1}" | /usr/bin/sed -e "s/[^0-9]//g") -le  "${#TEMP[@]}" ]]; then
     VAL=TEMP[${1#"-"}]
     printf "${!VAL}°C\n"
     exit 0
-  elif [[ $1 =~ ^-?-?[Mm][Ii][Nn]$ ]]; then
+  elif [[ $1 =~ ^--[Mm][Ii][Nn]$ ]] || [[ $1 =~ ^--[Ll][Oo][Ww][Ee][Ss][Tt]$ ]] || [[ $1 =~ ^-[Ll]$ ]]; then
     MIN="${TEMP[1]}"
     VAL=""
     for (( i=2; i<="${NUM}"; i++ ))
@@ -29,7 +58,7 @@ if [ -n "$1" ]; then
     done
     printf "$MIN°C\n"
     exit 0
-  elif [[ $1 =~ ^-?-?[Mm][Aa][Xx]$ ]]; then
+  elif [[ $1 =~ ^--[Mm][Aa][Xx]$ ]] || [[ $1 =~ ^--[Hh][Ii][Gg][Hh][Ee][Ss][Tt]$ ]] || [[ $1 =~ ^-[Hh]$ ]]; then
     MAX="${TEMP[1]}"
     VAL=""
     for (( i=2; i<="${NUM}"; i++ ))
@@ -41,7 +70,7 @@ if [ -n "$1" ]; then
     done
     printf "$MAX°C\n"
     exit 0
-  elif [[ $1 =~ ^-?-?[Aa][Vv][Gg]$ ]]; then
+  elif [[ $1 =~ ^--[Aa][Vv][Gg]$ ]] || [[ $1 =~ ^--[Mm][Ee][Dd][Ii][Uu][Mm]$ ]] || [[ $1 =~ ^-[Aa]$ ]]; then
     SUM="${TEMP[1]}"
     AVG=""
     VAL=""
@@ -53,9 +82,9 @@ if [ -n "$1" ]; then
     AVG=$(echo "$SUM/4" | /usr/bin/bc -l)
     printf "%.1f°C\n" $AVG
     exit 0
-else
-  printf "Invalid argument '$1'\n"
-  exit 1
+  else
+    printf $red"Error:${reset}Invalid argument '$1'\n\n"
+    usage
   fi
 fi
 
