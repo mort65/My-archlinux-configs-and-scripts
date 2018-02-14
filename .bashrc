@@ -328,8 +328,6 @@ export EDITOR=vim
 
 ####################################
 
-
-#bflogin.sh
 #archey3
 ~/bin/randponysay
 echo -e '\n'
