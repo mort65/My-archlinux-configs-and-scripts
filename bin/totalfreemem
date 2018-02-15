@@ -1,5 +1,5 @@
 #!/bin/bash
-this script show total amount of free ram
+#this script show total amount of free ram
 
 #Total used memory = MemTotal - MemFree
 #Non cache/buffer memory (green) = Total used memory - (Buffers + Cached memory)
