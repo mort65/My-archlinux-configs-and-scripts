@@ -321,9 +321,9 @@ export EDITOR=vim
 #echo "${Bold}${Random}\n"
 #~/bin/randcowsay
 #~/bin/randsay.py
-~/bin/randponysay
-echo '\n'
-echo "\t${Bold}${Random} $(jdatestatus)"
-echo '\n'
+#~/bin/randponysay
+#echo '\n'
+#echo "\t${Bold}${Random} $(jdatestatus)"
+#echo '\n'
 neofetch
 
