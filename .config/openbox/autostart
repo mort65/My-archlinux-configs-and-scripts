@@ -15,23 +15,21 @@
 # If you want to use XFCE config tools...
 #
 #xfce-mcs-manager &
-#~/bin/openbox/openbox_workspace_monitor &
-
+/usr/bin/python ~/bin/openbox/obwc.py &
+/usr/bin/compton &
 /usr/bin/tint2 &
 #/usr/bin/tint2 -c ~/.config/tint2/tint2launcher &
 #/usr/bin/tint2 -c ~/.config/tint2/tint2tasks &
 #/usr/bin/fbpanel &
 #/usr/bin/fbpanel -p tasks & 
-/usr/bin/compton &
+/usr/bin/plank -n dock1 &
 /usr/bin/nm-applet &
 /usr/bin/volumeicon &
-/usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1 &
-#/usr/bin/nitrogen --restore &
-/usr/bin/python ~/bin/openbox/obwc.py &q
 /usr/bin/tilda &
 /usr/bin/clipit &
-/usr/bin/plank -n dock1 &
-#/usr/bin/synapse &
+/usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1 &
+#/usr/bin/nitrogen --restore &
+
 #replace current notification daemon with xfce notification daemon:
 killall notification-daemon &> /dev/null
 /usr/lib/xfce4/notifyd/xfce4-notifyd &
