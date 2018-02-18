@@ -329,8 +329,8 @@ export EDITOR=vim
 ####################################
 
 #archey3
-~/bin/randponysay
-echo -e '\n'
-echo -e "\t${Bold}${Random} $(jdatestatus)"
-echo -e '\n'
+#~/bin/randponysay
+#echo -e '\n'
+#echo -e "\t${Bold}${Random} $(jdatestatus)"
+#echo -e '\n'
 neofetch
