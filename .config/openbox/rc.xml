@@ -452,11 +452,6 @@
         <command>xkill</command>
       </action>
     </keybind>
-    <keybind key="W-e">
-      <action name="Execute">
-        <command>gedit</command>
-      </action>
-    </keybind>
     <keybind key="W-Delete">
       <action name="Execute">
         <command>mate-system-monitor</command>
