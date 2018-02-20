@@ -1,5 +1,4 @@
 #!/bin/bash
-
 #Set a random picture as desktop wallpaper
 sleep 15s
 /usr/bin/feh -zq --bg-scale ~/Pictures/Desktop
