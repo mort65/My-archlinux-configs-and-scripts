@@ -214,8 +214,8 @@ Search for files and directories by name.
  
   -r, --recursive            search recursively 
   -f, --file                 search for files
-  -l, --link                 search for symbolic links
   -d, --dir                  search for directories
+  -l, --link                 search for symbolic links
   -m, --mark                 mark files and dirs with f and d
   -i, --ignore-case          ignore case in the search result    
   -n, --name                 don't show fullpath in the result
