@@ -1,0 +1,3 @@
+#!/bin/bash
+#Set a random picture as desktop wallpaper
+/usr/bin/feh -zq --bg-scale ~/Pictures/Desktop
