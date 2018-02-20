@@ -324,6 +324,6 @@ export EDITOR=vim
 #~/bin/randponysay
 #echo '\n'
 #echo "\t${Bold}${Random} $(jdatestatus)"
-#echo '\n'
+echo '\n'
 neofetch
 
