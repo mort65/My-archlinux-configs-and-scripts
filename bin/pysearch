@@ -214,7 +214,7 @@ Search for files and directories by name.
  
   -r, --recursive            search recursively 
   -f, --file                 search for files
-  -l, --link                 search for links
+  -l, --link                 search for symbolic links
   -d, --dir                  search for directories
   -m, --mark                 mark files and dirs with f and d
   -i, --ignore-case          ignore case in the search result    
@@ -225,7 +225,7 @@ Search for files and directories by name.
 Examples:
   pysearch -if /usr/bin vim    "Find files in bin dir that have 
   'vim' in their names and ignore case sensitivity."
-  pysearch -lr /usr/bin 'vim$' "Recursively find all links in 
+  pysearch -lr /usr/bin 'vim$' "Recursively find all symbolic links in 
   bin dir that have 'vim' at the end of their names.
   pysearch -dr /usr/bin '.*'   "Recursively find all dirs in bin"
   pysearch -rns /usr/bin '^im' "Find recursively everything in bin 
