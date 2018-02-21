@@ -44,18 +44,16 @@ if os.path.isfile(logfilename):
     with open(logfilename , 'r+') as logfile:
         trim(logfile)
         previousimages = logfile.read().split('\n')
-        if len(previousimages) < min(len(images),1001):
-            if len(previousimages) > 0: 
+        if len(previousimages) > 0: 
+            if len(previousimages) < min(len(images),1001):
                 for image in previousimages:
                     if image in images:
                         images.remove(image)
                 logfile.write('\n')
-            else:
+            elif previousimages[len(previousimages)-1] in images:
+                images.remove(previousimages[len(previousimages)-1])
                 logfile.seek(0)
         else:
-            if len(previousimages) > 0:
-                if previousimages[len(previousimages)-1] in images:
-                    Images.remove(previousimages[len(previousimages)-1])
             logfile.seek(0)
         image=images[random.randint(0,len(images)-1)]
         logfile.write(image)
