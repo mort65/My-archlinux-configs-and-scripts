@@ -6,7 +6,8 @@ import re
 import time
 import random
 
-#time.sleep(15)
+time.sleep(15)
+
 homedir=os.path.expanduser('~')
 logfilename =''.join([homedir,'/bin/openbox/tmp/.prev_wallpapers.log'])
 patterns=[r'^.*\.[Jj][Pp][Ee]?[Gg]$',r'^.*\.[Pp][Nn][Gg]$',r'^.*\.[Bb][Mm][Pp]$']
