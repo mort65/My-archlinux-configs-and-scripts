@@ -78,6 +78,6 @@ if desktop_session is not None:
         args = ["xfdesktop","--reload"]
         subprocess.Popen(args)
     elif "openbox" in desktop_session: #openbox
-        args = ["/usr/bin/feh","-q","--bg-fill",image]
+        args = ["/usr/bin/feh", "-q", "--bg-fill", image]
         subprocess.Popen(args)
 logfile.close()
