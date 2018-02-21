@@ -50,6 +50,8 @@ if os.path.isfile(logfilename):
                     if image in images:
                         images.remove(image)
                 logfile.write('\n')
+            else:
+                logfile.seek(0)
         else:
             if len(previousimages) > 0:
                 if previousimages[len(previousimages)-1] in images:
