@@ -15,7 +15,7 @@ for root, directories, filenames in os.walk(''.join([homedir,'/Pictures/Desktop/
     for filename in filenames:
         for pattern in patterns:
             if re.match(pattern,filename):
-                if (os.path.getsize(os.path.realpath(os.path.join(root,filename))) >> 10) >= 10:  #at least 10kiB
+                if (os.path.getsize(os.path.realpath(os.path.join(root,filename))) >> 10) >= 10:  #at least 10 kiB
                     images.append(os.path.realpath(os.path.join(root,filename)))
                 break
 if len(images)== 0:
