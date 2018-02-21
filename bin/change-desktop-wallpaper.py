@@ -13,13 +13,21 @@ homedir=os.path.expanduser('~')
 logfilename =''.join([homedir,'/.prev_wallpapers.log'])
 patterns=[r'^.*\.[Jj][Pp][Ee]?[Gg]$',r'^.*\.[Pp][Nn][Gg]$',r'^.*\.[Bb][Mm][Pp]$']
 images=[]
-desktop_session = os.environ.get("DESKTOP_SESSION")
 
-if desktop_session is None:
-    exit 1
-else:
-    desktop_session = desktop_session.lower()
-
+def getdesktop():
+    desktop_session = os.environ.get("DESKTOP_SESSION")
+    if desktop_session is None:
+        return "unknown"
+    else:
+        desktop_session = desktop_session.lower()
+    
+    if "xfce" in desktop_session or desktop_session.startswith("xubuntu"): #xfce4
+        return "xfce"
+    elif "openbox" in desktop_session: #openbox
+        return "openbox"
+    else:
+        return "other"
+    
 def trim(f):
     lines=[(l.strip()+'\n') for l in f.readlines() if l.strip() and os.path.isfile(l.strip())]
     if len(lines) > 0:
@@ -38,7 +46,12 @@ def ispic(name):
 
 def issmall(name):
     return ((os.path.getsize(os.path.realpath(os.path.join(root,name))) >> 10) < 10)  #smaller than 10 kiB
-    
+
+desktop = getdesktop()
+
+if not((desktop=="xfce") or (desktop=="openbox")):
+    exit(1)
+
 for root, directories, filenames in os.walk(''.join([homedir,'/Pictures/Desktop/'])):
     for filename in filenames:
         if ispic(filename) and not issmall(filename):
@@ -71,7 +84,7 @@ else:
         image=images[random.randint(0,len(images)-1)]
         logfile.write(image)
 
-if "xfce" in desktop_session or desktop_session.startswith("xubuntu"): #xfce4
+if desktop is "xfce":
     args0 = ["/usr/bin/xfconf-query", "-c", "xfce4-desktop", "-p", "/backdrop/screen0/monitor0/workspace1/last-image", "-s", image]
     args1 = ["/usr/bin/xfconf-query", "-c", "xfce4-desktop", "-p", "/backdrop/screen0/monitor0/workspace1/image-style", "-s", "3"]
     args2 = ["/usr/bin/xfconf-query", "-c", "xfce4-desktop", "-p", "/backdrop/screen0/monitor0/image-show", "-s", "true"]
@@ -80,7 +93,7 @@ if "xfce" in desktop_session or desktop_session.startswith("xubuntu"): #xfce4
     subprocess.Popen(args2)
     args = ["xfdesktop","--reload"]
     subprocess.Popen(args)
-elif "openbox" in desktop_session: #openbox
+elif desktop is "openbox":
     args = ["/usr/bin/feh", "-q", "--bg-fill", image]
     subprocess.Popen(args)
 logfile.close()
