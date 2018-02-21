@@ -84,7 +84,7 @@ else:
         image=images[random.randint(0,len(images)-1)]
         logfile.write(image)
 
-if desktop is "xfce":
+if desktop == "xfce":
     args0 = ["/usr/bin/xfconf-query", "-c", "xfce4-desktop", "-p", "/backdrop/screen0/monitor0/workspace1/last-image", "-s", image]
     args1 = ["/usr/bin/xfconf-query", "-c", "xfce4-desktop", "-p", "/backdrop/screen0/monitor0/workspace1/image-style", "-s", "3"]
     args2 = ["/usr/bin/xfconf-query", "-c", "xfce4-desktop", "-p", "/backdrop/screen0/monitor0/image-show", "-s", "true"]
@@ -93,7 +93,7 @@ if desktop is "xfce":
     subprocess.Popen(args2)
     args = ["xfdesktop","--reload"]
     subprocess.Popen(args)
-elif desktop is "openbox":
+elif desktop == "openbox":
     args = ["/usr/bin/feh", "-q", "--bg-fill", image]
     subprocess.Popen(args)
 logfile.close()
