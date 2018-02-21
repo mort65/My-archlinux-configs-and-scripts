@@ -3,14 +3,22 @@
 #This script changes desktop wallpaper with feh
 
 import os
-import glob
+import re
 import time
 import random
 
 time.sleep(15)
 homedir=os.path.expanduser('~')
 logfilename =''.join([homedir,'/bin/openbox/tmp/.prev_wallpapers.log'])
-images = glob.glob(''.join([homedir,'/Pictures/Desktop/*.jpg']))
+patterns=['^.*\.[Jj][Pp][Ee]?[Gg]$','^.*\.[Pp][Nn][Gg]$','^.*\.[Bb][Mm][Pp]$']
+images=[]
+for root, directories, filenames in os.walk(''.join([homedir,'/Pictures/Desktop/'])):
+    for filename in filenames:
+        for pattern in patterns:
+            if re.match(pattern,filename):
+                if (os.path.getsize(os.path.realpath(os.path.join(root,filename))) >> 10) >= 10:  #at least 10kiB
+                    images.append(os.path.realpath(os.path.join(root,filename)))
+                break
 if len(images)== 0:
     exit(1);
 if os.path.isfile(logfilename):
