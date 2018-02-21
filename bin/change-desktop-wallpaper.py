@@ -13,6 +13,12 @@ homedir=os.path.expanduser('~')
 logfilename =''.join([homedir,'/.prev_wallpapers.log'])
 patterns=[r'^.*\.[Jj][Pp][Ee]?[Gg]$',r'^.*\.[Pp][Nn][Gg]$',r'^.*\.[Bb][Mm][Pp]$']
 images=[]
+desktop_session = os.environ.get("DESKTOP_SESSION")
+
+if desktop_session is None:
+    exit 1
+else:
+    desktop_session = desktop_session.lower()
 
 def trim(f):
     lines=[(l.strip()+'\n') for l in f.readlines() if l.strip() and os.path.isfile(l.strip())]
@@ -65,19 +71,16 @@ else:
         image=images[random.randint(0,len(images)-1)]
         logfile.write(image)
 
-desktop_session = os.environ.get("DESKTOP_SESSION")
-if desktop_session is not None:
-    desktop_session = desktop_session.lower()
-    if "xfce" in desktop_session or desktop_session.startswith("xubuntu"): #xfce4
-        args0 = ["/usr/bin/xfconf-query", "-c", "xfce4-desktop", "-p", "/backdrop/screen0/monitor0/workspace1/last-image", "-s", image]
-        args1 = ["/usr/bin/xfconf-query", "-c", "xfce4-desktop", "-p", "/backdrop/screen0/monitor0/workspace1/image-style", "-s", "3"]
-        args2 = ["/usr/bin/xfconf-query", "-c", "xfce4-desktop", "-p", "/backdrop/screen0/monitor0/image-show", "-s", "true"]
-        subprocess.Popen(args0)
-        subprocess.Popen(args1)
-        subprocess.Popen(args2)
-        args = ["xfdesktop","--reload"]
-        subprocess.Popen(args)
-    elif "openbox" in desktop_session: #openbox
-        args = ["/usr/bin/feh", "-q", "--bg-fill", image]
-        subprocess.Popen(args)
+if "xfce" in desktop_session or desktop_session.startswith("xubuntu"): #xfce4
+    args0 = ["/usr/bin/xfconf-query", "-c", "xfce4-desktop", "-p", "/backdrop/screen0/monitor0/workspace1/last-image", "-s", image]
+    args1 = ["/usr/bin/xfconf-query", "-c", "xfce4-desktop", "-p", "/backdrop/screen0/monitor0/workspace1/image-style", "-s", "3"]
+    args2 = ["/usr/bin/xfconf-query", "-c", "xfce4-desktop", "-p", "/backdrop/screen0/monitor0/image-show", "-s", "true"]
+    subprocess.Popen(args0)
+    subprocess.Popen(args1)
+    subprocess.Popen(args2)
+    args = ["xfdesktop","--reload"]
+    subprocess.Popen(args)
+elif "openbox" in desktop_session: #openbox
+    args = ["/usr/bin/feh", "-q", "--bg-fill", image]
+    subprocess.Popen(args)
 logfile.close()
