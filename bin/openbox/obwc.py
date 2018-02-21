@@ -1,5 +1,4 @@
 #!/usr/bin/env python3
-
 #This script changes desktop wallpaper with feh
 
 import os
@@ -24,11 +23,11 @@ if len(images)== 0:
 if os.path.isfile(logfilename):
     with open(logfilename , 'r+') as logfile:
         previousimages = logfile.read().split('\n')
-        if len(previousimages) < min(len(images),1000): 
-            for image in previousimages:
-                if image in images:
-                    images.remove(image)
-            if len(previousimages) > 0:
+        if len(previousimages) < min(len(images),1000):
+            if len(previousimages) > 0: 
+                for image in previousimages:
+                    if image in images:
+                        images.remove(image)
                 logfile.write('\n')
         else:
              logfile.seek(0)
