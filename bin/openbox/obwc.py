@@ -6,24 +6,44 @@ import re
 import time
 import random
 
-time.sleep(15)
+#time.sleep(15)
 homedir=os.path.expanduser('~')
 logfilename =''.join([homedir,'/bin/openbox/tmp/.prev_wallpapers.log'])
-patterns=['^.*\.[Jj][Pp][Ee]?[Gg]$','^.*\.[Pp][Nn][Gg]$','^.*\.[Bb][Mm][Pp]$']
+patterns=[r'^.*\.[Jj][Pp][Ee]?[Gg]$',r'^.*\.[Pp][Nn][Gg]$',r'^.*\.[Bb][Mm][Pp]$']
 images=[]
+
+def trim(f):
+    lines=[(l.strip()+'\n') for l in f.readlines() if l.strip() and os.path.isfile(l.strip())]
+    if len(lines) > 0:
+        lines[len(lines)-1]=lines[len(lines)-1].rstrip() #remove last \n
+    f.seek(0)
+    for line in lines:
+        f.write(line)
+    f.truncate()
+    f.seek(0)
+
+def ispic(name):
+    for pattern in patterns:
+        if re.match(pattern,name):
+            return True
+    return False
+
+def issmall(name):
+    return ((os.path.getsize(os.path.realpath(os.path.join(root,name))) >> 10) < 10)  #smaller than 10 kiB
+    
 for root, directories, filenames in os.walk(''.join([homedir,'/Pictures/Desktop/'])):
     for filename in filenames:
-        for pattern in patterns:
-            if re.match(pattern,filename):
-                if (os.path.getsize(os.path.realpath(os.path.join(root,filename))) >> 10) >= 10:  #at least 10 kiB
-                    images.append(os.path.realpath(os.path.join(root,filename)))
-                break
+        if ispic(filename) and not issmall(filename):
+            images.append(os.path.realpath(os.path.join(root,filename)))
+
 if len(images)== 0:
     exit(1);
+
 if os.path.isfile(logfilename):
     with open(logfilename , 'r+') as logfile:
+        trim(logfile)
         previousimages = logfile.read().split('\n')
-        if len(previousimages) < min(len(images),1000):
+        if len(previousimages) < min(len(images),1001):
             if len(previousimages) > 0: 
                 for image in previousimages:
                     if image in images:
@@ -38,6 +58,7 @@ else:
    with open(logfilename,"w") as logfile:
         image=images[random.randint(0,len(images)-1)]
         logfile.write(image)
+
 command='/usr/bin/feh -q --bg-fill \'{}\''.format(image)
 os.system(command)
 logfile.close()
