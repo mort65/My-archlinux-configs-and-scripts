@@ -96,4 +96,5 @@ if desktop == "xfce":
 elif desktop == "openbox":
     args = ["/usr/bin/feh", "-q", "--bg-fill", image]
     subprocess.Popen(args)
+
 logfile.close()
