@@ -15,8 +15,11 @@
 # If you want to use XFCE config tools...
 #
 #xfce-mcs-manager &
+
 #~/bin/openbox/obwc &
-/usr/bin/python ~/bin/openbox/obwc.py &
+#/usr/bin/python ~/bin/openbox/obwc.py &
+/usr/bin/python ~/bin/change-desktop-wallpaper.py &
+
 /usr/bin/compton &
 /usr/bin/tint2 &
 #/usr/bin/tint2 -c ~/.config/tint2/tint2launcher &
