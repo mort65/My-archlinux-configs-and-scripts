@@ -79,7 +79,6 @@ if os.path.isfile(logfilename):
         logfile.write(image)
         logfile.truncate()
 else:
-    os.makedirs(os.path.dirname(logfilename), exist_ok=True)
     with open(logfilename,"w") as logfile:
         image=images[random.randint(0,len(images)-1)]
         logfile.write(image)
