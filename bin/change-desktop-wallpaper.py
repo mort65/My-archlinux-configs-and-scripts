@@ -22,7 +22,7 @@ def getdesktop():
         desktop_session = desktop_session.lower()
     
     if "xfce" in desktop_session or desktop_session.startswith("xubuntu"): #xfce4
-        return "xfce"
+        return "xfce4"
     elif "openbox" in desktop_session: #openbox
         return "openbox"
     else:
@@ -49,7 +49,7 @@ def issmall(name):
 
 desktop = getdesktop()
 
-if not((desktop=="xfce") or (desktop=="openbox")):
+if not((desktop=="xfce4") or (desktop=="openbox")):
     exit(1)
 
 for root, directories, filenames in os.walk(''.join([homedir,'/Pictures/Desktop/'])):
@@ -84,7 +84,7 @@ else:
         image=images[random.randint(0,len(images)-1)]
         logfile.write(image)
 
-if desktop == "xfce":
+if desktop == "xfce4":
     args0 = ["/usr/bin/xfconf-query", "-c", "xfce4-desktop", "-p", "/backdrop/screen0/monitor0/workspace1/last-image", "-s", image]
     args1 = ["/usr/bin/xfconf-query", "-c", "xfce4-desktop", "-p", "/backdrop/screen0/monitor0/workspace1/image-style", "-s", "3"]
     args2 = ["/usr/bin/xfconf-query", "-c", "xfce4-desktop", "-p", "/backdrop/screen0/monitor0/image-show", "-s", "true"]
