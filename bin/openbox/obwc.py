@@ -51,7 +51,10 @@ if os.path.isfile(logfilename):
                         images.remove(image)
                 logfile.write('\n')
         else:
-             logfile.seek(0)
+            if len(previousimages) > 0:
+                if previousimages[len(previousimages)-1] in images:
+                    Images.remove(previousimages[len(previousimages)-1])
+            logfile.seek(0)
         image=images[random.randint(0,len(images)-1)]
         logfile.write(image)
         logfile.truncate()
