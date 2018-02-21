@@ -60,6 +60,5 @@ else:
         image=images[random.randint(0,len(images)-1)]
         logfile.write(image)
 
-command='/usr/bin/feh -q --bg-fill \'{}\''.format(image)
-os.system(command)
+os.system('/usr/bin/feh -q --bg-fill \'{}\''.format(image))
 logfile.close()
