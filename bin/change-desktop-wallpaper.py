@@ -27,7 +27,7 @@ def getdesktop():
     elif "openbox" in desktop_session: #openbox
         return "openbox"
     else:
-        return "others"
+        return "other"
     
 def gettrimmed(f):
     lines=[(l.strip()+'\n') for l in f.readlines() if l.strip() and os.path.isfile(l.strip())]
