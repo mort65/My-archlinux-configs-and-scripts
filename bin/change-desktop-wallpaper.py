@@ -95,3 +95,4 @@ elif desktop == "openbox":
     subprocess.Popen(args)
 
 logfile.close()
+
