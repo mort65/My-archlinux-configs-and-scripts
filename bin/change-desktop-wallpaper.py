@@ -29,15 +29,13 @@ def getdesktop():
     else:
         return "others"
     
-def trim(f):
+def gettrimmed(f):
     lines=[(l.strip()+'\n') for l in f.readlines() if l.strip() and os.path.isfile(l.strip())]
-    if len(lines) > 0:
-        lines[len(lines)-1]=lines[len(lines)-1].rstrip() #remove last \n
     f.seek(0)
     for line in lines:
         f.write(line)
     f.truncate()
-    f.seek(0)
+    return [line[:-1] for line in lines]
 
 def ispic(name):
     for pattern in patterns:
@@ -63,14 +61,12 @@ if len(images)== 0:
 
 if os.path.isfile(logfilename):
     with open(logfilename , 'r+') as logfile:
-        trim(logfile)
-        previousimages = logfile.read().split('\n')
+        previousimages=gettrimmed(logfile)
         if len(previousimages) > 0: 
             if len(previousimages) < min(len(images),1001):
                 for image in previousimages:
                     if image in images:
                         images.remove(image)
-                logfile.write('\n')
             else:
                 if previousimages[len(previousimages)-1] in images:
                     images.remove(previousimages[len(previousimages)-1])
@@ -78,12 +74,12 @@ if os.path.isfile(logfilename):
         else:
             logfile.seek(0)
         image=images[random.randint(0,len(images)-1)]
-        logfile.write(image)
+        logfile.write(image+'\n')
         logfile.truncate()
 else:
     with open(logfilename,"w") as logfile:
         image=images[random.randint(0,len(images)-1)]
-        logfile.write(image)
+        logfile.write(image+'\n')
 
 if desktop == "xfce4":
     args0 = ["/usr/bin/xfconf-query", "-c", "xfce4-desktop", "-p", "/backdrop/screen0/monitor0/workspace1/last-image", "-s", image]
