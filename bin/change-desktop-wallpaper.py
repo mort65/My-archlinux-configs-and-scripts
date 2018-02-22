@@ -65,7 +65,7 @@ if os.path.isfile(logfilename):
         trim(logfile)
         previousimages = logfile.read().split('\n')
         if len(previousimages) > 0: 
-            if len(previousimages) < min(len(images),101):
+            if len(previousimages) < min(len(images),1001):
                 for image in previousimages:
                     if image in images:
                         images.remove(image)
