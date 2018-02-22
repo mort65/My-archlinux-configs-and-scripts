@@ -10,8 +10,9 @@ import subprocess
 time.sleep(15)
 
 homedir=os.path.expanduser('~')
-logfilename =''.join([homedir,'/.prev_wallpapers.log'])
-patterns=[r'^.*\.[Jj][Pp][Ee]?[Gg]$',r'^.*\.[Pp][Nn][Gg]$',r'^.*\.[Bb][Mm][Pp]$']
+logfilename =''.join([homedir, '/.prev_wallpapers.log'])
+patterns=[r'^.*\.[Jj][Pp][Ee]?[Gg]$', r'^.*\.[Pp][Nn][Gg]$', r'^.*\.[Bb][Mm][Pp]$']
+desktops=["openbox", "xfce4"]
 images=[]
 
 def getdesktop():
@@ -49,7 +50,7 @@ def issmall(name):
 
 desktop = getdesktop()
 
-if not((desktop=="xfce4") or (desktop=="openbox")):
+if not desktop in desktops:
     exit(1)
 
 for root, directories, filenames in os.walk(''.join([homedir,'/Pictures/Desktop/'])):
