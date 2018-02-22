@@ -37,7 +37,7 @@ def gettrimmed(f):
     f.truncate()
     return [line[:-1] for line in lines]
 
-def ispic(name):
+def isimage(name):
     for pattern in patterns:
         if re.match(pattern,name):
             return True
@@ -53,7 +53,7 @@ if not desktop in desktops:
 
 for root, directories, filenames in os.walk(''.join([homedir,'/Pictures/Desktop/'])):
     for filename in filenames:
-        if ispic(filename) and not issmall(filename):
+        if isimage(filename) and not issmall(filename):
             images.append(os.path.realpath(os.path.join(root,filename)))
 
 if len(images)== 0:
