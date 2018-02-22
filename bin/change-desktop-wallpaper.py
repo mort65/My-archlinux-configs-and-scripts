@@ -44,7 +44,7 @@ def ispic(name):
     return False
 
 def issmall(name):
-    return ((os.path.getsize(os.path.realpath(os.path.join(root,name))) >> 10) < 10)  #smaller than 10 kiB
+    return ((os.path.getsize(os.path.realpath(os.path.join(root,name))) >> 10) < 10)  #Smaller than 10 kiB
 
 desktop = getdesktop()
 
@@ -95,4 +95,3 @@ elif desktop == "openbox":
     subprocess.Popen(args)
 
 logfile.close()
-
