@@ -56,14 +56,14 @@ for root, directories, filenames in os.walk(''.join([homedir,'/Pictures/Desktop/
         if isimage(filename) and not issmall(filename):
             images.append(os.path.realpath(os.path.join(root,filename)))
 
-if len(images)== 0:
+if len(images) == 0:
     exit(1);
 
 if os.path.isfile(logfilename):
     with open(logfilename , 'r+') as logfile:
         previousimages=gettrimmed(logfile)
         if len(previousimages) > 0: 
-            if len(previousimages) < min(len(images),1001):
+            if len(previousimages) < 1001 and len(set(images)-set(previousimages)) > 0:
                 for image in previousimages:
                     if image in images:
                         images.remove(image)
