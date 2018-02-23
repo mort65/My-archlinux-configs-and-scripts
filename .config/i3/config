@@ -92,8 +92,8 @@ bindsym $mod+Shift+g exec --no-startup-id "pgrep -c geany || /usr/bin/geany"; wo
 #start lxtask and switch to it's workspace
 bindsym $mod+Delete exec --no-startup-id "pgrep -c lxtask || /usr/bin/lxtask"; workspace $workspace9
 
-#start waterfox and switch to it's workspace
-bindsym $mod+f exec --no-startup-id "pgrep -c waterfox || /usr/bin/waterfox"; workspace $workspace2
+#start firefox and switch to it's workspace
+bindsym $mod+f exec --no-startup-id "pgrep -c firefox || /usr/bin/firefox"; workspace $workspace2
 
 #start catfish and switch to it's workspace
 bindsym $mod+Shift+s exec --no-startup-id "pgrep -c catfish || /usr/bin/catfish"; workspace $workspace4
