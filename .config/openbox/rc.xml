@@ -419,7 +419,7 @@
     </keybind>
     <keybind key="W-w">
       <action name="Execute">
-        <command>waterfox</command>
+        <command>firefox</command>
       </action>
     </keybind>
     <keybind key="W-l">
