@@ -57,7 +57,7 @@ for root, directories, filenames in os.walk(''.join([homedir,'/Pictures/Desktop/
             images.append(os.path.realpath(os.path.join(root,filename)))
 
 if len(images) == 0:
-    exit(1);
+    exit(2);
 
 if os.path.isfile(logfilename):
     with open(logfilename , 'r+') as logfile:
