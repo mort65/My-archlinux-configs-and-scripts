@@ -367,7 +367,7 @@ fi
 
 if [[ $Tmux == "Yes" ]]; then
     if [ $EUID -eq 0 ]; then
-        echo -e $red"error:$reset You cannot start a tmux session as root."
+        echo -e $red"error:$reset You cannot start a tmux session as root"
         exit 1
     fi
     
