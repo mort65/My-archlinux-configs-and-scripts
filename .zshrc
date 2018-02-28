@@ -317,13 +317,6 @@ export VISUAL="vim"
 export EDITOR=vim
 
 ####################################
-#archey3
-#echo "${Bold}${Random}\n"
-#~/bin/randcowsay
-#~/bin/randsay.py
-#~/bin/randponysay
-#echo '\n'
-#echo "\t${Bold}${Random} $(jdatestatus)"
 echo '\n'
 neofetch
 
