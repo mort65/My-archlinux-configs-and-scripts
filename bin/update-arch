@@ -366,80 +366,62 @@ if [[ $Help == "Yes" ]]; then
 fi
 
 if [[ $Tmux == "Yes" ]]; then
-    if [ $EUID -eq 0 ]; then
+    if [ $EUID -ne 0 ]; then
+        if [ "$TERM" = "screen" ] && [ -n "$TMUX" ]; then #checking if script is running from a tmux session
+            echo "You are already attached to a tmux session"
+        elif /usr/bin/tmux has-session -t $session 2>/dev/null; then  #checking if tmux has a running session
+            /usr/bin/tmux attach-session -t $session
+        else
+            if [[ $Sync == "Yes" ]]; then
+                Arguments="${Arguments}s"
+            fi
+            if [[ $AUR == "Yes" ]]; then
+                Arguments="${Arguments}a"
+            fi
+            if [[ $Install == "Yes" ]]; then
+                Arguments="${Arguments}i"
+            fi
+            if [[ $Build == "Yes" ]]; then
+                Arguments="${Arguments}b"
+            fi
+            if [[ $Mirror == "Yes" ]]; then
+                Arguments="${Arguments}m"
+            fi
+            if [[ $Refresh == "Yes" ]]; then
+                Arguments="${Arguments}y"
+            fi
+            if [[ $LoggingOff == "Yes" ]]; then
+                Arguments = "${Arguments}l"
+            fi
+            if [[ $RSSOff == "Yes" ]]; then
+                Arguments="${Arguments}r"
+            fi
+            if [[ $PacOff == "Yes" ]]; then
+                Arguments="${Arguments}p"
+            fi
+            if [[ $Sleep == "Yes" ]]; then
+                Arguments="${Arguments}u"
+            fi
+            if [[ $Logout == "Yes" ]]; then
+                Arguments="${Arguments}g"
+            fi
+            if [[ $Hibernate == "Yes" ]]; then
+                Arguments="${Arguments}f"
+            fi
+            if [[ $Shutdown == "Yes" ]]; then
+                Arguments="${Arguments}o"
+            fi
+            if [[ $Reboot == "Yes" ]]; then
+                Arguments="${Arguments}e"
+            fi        
+            { /usr/bin/tmux new-session -d -s $session "/usr/bin/sudo $HOMEDIR/.script/.update-arch-in-tmux.sh -${Arguments}" ; } || { exit 1 ; }
+            { /usr/bin/tmux attach-session -t $session ; } || { exit 1 ; }
+        fi
+        exit 0
+    else
         echo -e $red"Error:$reset You cannot run this script in a tmux session as root"
-        exit 1
+        exit 1    
     fi
-    
-    if [[ $Sync == "Yes" ]]; then
-        Arguments="${Arguments}s"
-    fi
-    
-    if [[ $AUR == "Yes" ]]; then
-        Arguments="${Arguments}a"
-    fi
-    
-    if [[ $Install == "Yes" ]]; then
-        Arguments="${Arguments}i"
-    fi
-
-    if [[ $Build == "Yes" ]]; then
-        Arguments="${Arguments}b"
-    fi
-
-    if [[ $Mirror == "Yes" ]]; then
-        Arguments="${Arguments}m"
-    fi
-
-    if [[ $Refresh == "Yes" ]]; then
-        Arguments="${Arguments}y"
-    fi
-
-    if [[ $LoggingOff == "Yes" ]]; then
-        Arguments = "${Arguments}l"
-    fi
-
-    if [[ $RSSOff == "Yes" ]]; then
-        Arguments="${Arguments}r"
-    fi
-
-    if [[ $PacOff == "Yes" ]]; then
-        Arguments="${Arguments}p"
-    fi
-    
-    if [[ $Sleep == "Yes" ]]; then
-        Arguments="${Arguments}u"
-    fi
-    
-    if [[ $Logout == "Yes" ]]; then
-        Arguments="${Arguments}g"
-    fi
-    
-    if [[ $Hibernate == "Yes" ]]; then
-        Arguments="${Arguments}f"
-    fi
-    
-    if [[ $Shutdown == "Yes" ]]; then
-        Arguments="${Arguments}o"
-    fi
-    
-    if [[ $Reboot == "Yes" ]]; then
-        Arguments="${Arguments}e"
-    fi
-    
-    if [ "$TERM" = "screen" ] && [ -n "$TMUX" ]; then #checking if script is running from a tmux session
-        echo "You are already attached to a tmux session"
-        exit 0
-    elif /usr/bin/tmux has-session -t $session 2>/dev/null; then  #checking if tmux has a running session
-        /usr/bin/tmux attach-session -t $session
-        exit 0
-    fi
-
-    { tmux new-session -d -s $session "/usr/bin/sudo $HOMEDIR/.script/.update-arch-in-tmux.sh -${Arguments}" ; } || { exit 1 ; }
-
-    { /usr/bin/tmux attach-session -t $session ; } || { exit 1 ; }
-
-    exit 0
 fi
 
 if [[ $AUR == "Yes" ]]; then
