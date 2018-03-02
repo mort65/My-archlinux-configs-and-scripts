@@ -30,6 +30,7 @@ Sync=""
 LoggingOff=""
 RSSOff=""
 PacOff=""
+NamCapOff=""
 Shutdown=""
 Sleep=""
 Logout=""
@@ -60,7 +61,7 @@ function help {
     echo "  -s, --sync      Refresh and synchronize normal package databases"
     echo "  -y, --refresh   Force the refresh of package databases" 
     echo "  -r  --norss     Disable checking for archlinux news"
-    echo "  -t, --tmux      Run this script in a tmux session" 
+    echo "  -n, --nonamcap  Disable checking packages with namcap" 
     echo "  -p, --nopac     Disable checking for pacnew files" 
     echo "  -i, --install   Install a package"
     echo "  -b, --build     Build a package"
@@ -77,7 +78,7 @@ function usage {
 }
 
 #testing number of args:
-if [ "${#}" -gt 10 ]; then
+if [ "${#}" -gt 11 ]; then
     echo -e $red"Error:$reset Invalid number of parameters"
     echo ""
     usage
@@ -168,7 +169,15 @@ if [ -n "$1" ]; then #non-empty
         echo -e $red"Error:$reset Invalid arguments '${Args}'"
         echo ""
 		usage
-	  fi 
+	  fi
+    elif [[ $PARAM =~ ^--[Nn][Oo][Nn][Aa][Mm][Cc][Aa][Pp]$ ]] || [[ $PARAM =~ ^-[Nn]$ ]]; then
+      if [[ $NamCapOff == "" ]]; then
+        NamCapOff="Yes"
+	  else
+        echo -e $red"Error:$reset Invalid arguments '${Args}'"
+        echo ""
+		usage
+	  fi
     elif [[ $PARAM =~ ^--[Pp][Oo][Ww][Ee][Rr][Oo][Ff][Ff]$ ]] || [[ $PARAM =~ ^--[Ss][Hh][Uu][Tt][Dd][Oo][Ww][Nn]$ ]] || [[ $PARAM =~ ^-[Oo]$ ]]; then
       if [[ $Sleep == "" ]] && [[ $Shutdown == "" ]] && [[ $Reboot == "" ]] && [[ $Hibernate == "" ]] && [[ $Logout == "" ]]; then
         Shutdown="Yes"
@@ -209,7 +218,7 @@ if [ -n "$1" ]; then #non-empty
         echo ""
 		usage
 	  fi
-    elif [[ $PARAM =~ ^-[AaBbEeFfGgIiLlMmOoPpRrSsTtUuYy][AaBbEeFfGgIiLlMmOoPpRrSsTtUuYy][AaBbEeFfGgIiLlMmOoPpRrSsTtUuYy]?[AaBbEeFfGgIiLlMmOoPpRrSsTtUuYy]?[AaBbEeFfGgIiLlMmOoPpRrSsTtUuYy]?[AaBbEeFfGgIiLlMmOoPpRrSsTtUuYy]?[AaBbEeFfGgIiLlMmOoPpRrSsTtUuYy]?[AaBbEeFfGgIiLlMmOoPpRrSsTtUuYy]?[AaBbEeFfGgIiLlMmOoPpRrSsTtUuYy]?[AaBbEeFfGgIiLlMmOoPpRrSsTtUuYy]?[AaBbEeFfGgIiLlMmOoPpRrSsTtUuYy]?$ ]]; then
+    elif [[ $PARAM =~ ^-[AaBbEeFfGgIiLlMmNnOoPpRrSsTtUuYy][AaBbEeFfGgIiLlMmNnOoPpRrSsTtUuYy][AaBbEeFfGgIiLlMmNnOoPpRrSsTtUuYy]?[AaBbEeFfGgIiLlMmNnOoPpRrSsTtUuYy]?[AaBbEeFfGgIiLlMmNnOoPpRrSsTtUuYy]?[AaBbEeFfGgIiLlMmNnOoPpRrSsTtUuYy]?[AaBbEeFfGgIiLlMmNnOoPpRrSsTtUuYy]?[AaBbEeFfGgIiLlMmNnOoPpRrSsTtUuYy]?[AaBbEeFfGgIiLlMmNnOoPpRrSsTtUuYy]?[AaBbEeFfGgIiLlMmNnOoPpRrSsTtUuYy]?[AaBbEeFfGgIiLlMmNnOoPpRrSsTtUuYy]?$ ]]; then
 	  i=1
 	  while (( i++ < ${#PARAM} ))
 	  do
@@ -286,6 +295,14 @@ if [ -n "$1" ]; then #non-empty
 				echo ""
 				usage
 			fi
+        elif [[ $char =~ [Nn] ]]; then
+			if [[ $NamCapOff == "" ]]; then
+				NamCapOff="Yes"
+			else
+				echo -e $red"Error:$reset Invalid arguments '${Args}'"
+				echo ""
+				usage
+			fi
         elif [[ $char =~ [Uu] ]]; then
             if [[ $Sleep == "" ]] && [[ $Shutdown == "" ]] && [[ $Reboot == "" ]] && [[ $Hibernate == "" ]] && [[ $Logout == "" ]]; then
                 Sleep="Yes"
@@ -350,51 +367,15 @@ if [[ $AUR == "Yes" ]]; then
     Sync="Yes"
 fi
 
-if [[ $Install == "" ]]; then
-	Install="No"
-fi
-
-if [[ $Build == "" ]]; then
-	Build="No"
-fi
-
-if [[ $Mirror == "" ]]; then
-	Mirror="No"
-fi
-
-if [[ $Refresh == "" ]]; then
-	Refresh="No"
-fi
-
-if [[ $AUR == "" ]]; then
-	AUR="No"
-fi
-
-if [[ $Sync == "" ]]; then
-	Sync="No"
-fi
-
-if [[ $LoggingOff == "" ]]; then
-	LoggingOff="No"
-fi
-
-if [[ $RSSOff == "" ]]; then
-	RSSOff="No"
-fi
-
-if [[ $PacOff == "" ]]; then
-	PacOff="No"
-fi
-
-if [[ $Refresh == "Yes" ]] && [[ $Sync == "No" ]] && [[ $AUR == "No" ]]; then
+if [[ $Refresh == "Yes" ]] && [[ ! $Sync == "Yes" ]] && [[ ! $AUR == "Yes" ]]; then
     usage
 fi
 
-if [[ $Build == "No" ]] && [[ $Install == "No" ]] && [[ $Mirror == "No" ]] && [[ $AUR == "No" ]] && [[ $Sync == "No" ]]; then
+if [[ ! $Build == "Yes" ]] && [[ ! $Install == "Yes" ]] && [[ ! $Mirror == "Yes" ]] && [[ ! $AUR == "Yes" ]] && [[ ! $Sync == "Yes" ]]; then
     usage
 fi
 
-if [[ $PacOff == "No" ]]; then
+if [[ ! $PacOff == "Yes" ]]; then
     echo
     echo -e $blue"===>$reset Checking for pacnew files..."
     echo
@@ -412,7 +393,7 @@ if [[ $PacOff == "No" ]]; then
     echo
     echo
 fi
-if [[ $RSSOff == "No" ]]; then
+if [[ ! $RSSOff == "Yes" ]]; then
     [ -f $RSSFILE ] && cat "${RSSFILE}" 2> /dev/null
     /usr/bin/rm -f "${TMPFILE}"
     echo
@@ -456,36 +437,39 @@ if [[ $Mirror == "Yes" ]]; then
 fi
 if [[ $Install == "Yes" ]] || [[ $Build == "Yes" ]]; then
     if [[ $Build == "Yes" ]]; then
-        echo ""
-        echo -e $blue"===>$reset Checking PKGBUILD file for error..."
-        echo ""
-        /usr/bin/namcap PKGBUILD
-        echo ""
-        read -p "Press enter to continue..."
+        if [[ ! $NamCapOff == "Yes" ]]; then
+            echo ""
+            echo -e $blue"===>$reset Checking PKGBUILD file for error..."
+            echo ""
+            /usr/bin/namcap PKGBUILD
+            echo ""
+            read -p "Press enter to continue..."
+        fi
         echo ""
         echo -e $blue"===>$reset Building the package..."
         echo ""
-        { /usr/bin/sudo -u $USERNAME /usr/bin/makepkg -sc ; } || { echo -e $red"Error:$reset Cannot build the package" ; read -p "Press enter to exit..." ; exit 1; }
+        { /usr/bin/sudo -u $USERNAME /usr/bin/makepkg -sc ; } || { echo "" ; echo -e $red"Error:$reset Cannot build the package" ; echo "" ; read -p "Press enter to exit..." ; exit 1; }
     fi
-    echo ""
-    echo -e $blue"===>$reset Checking the build package file for error..."
-    echo ""
-    /usr/bin/find . -maxdepth 1 -name '*.pkg.tar.xz' -exec /usr/bin/namcap {} \;
-    echo ""
-    read -p "Press enter to continue..."
+    if [[ ! $NamCapOff == "Yes" ]]; then
+        echo ""
+        echo -e $blue"===>$reset Checking the build package file for error..."
+        echo ""
+        /usr/bin/find . -maxdepth 1 -name '*.pkg.tar.xz' -exec /usr/bin/namcap {} \;
+        echo ""
+        read -p "Press enter to continue..."
+    fi
     if [[ $Install == "Yes" ]]; then
         echo ""
         echo -e $blue"===>$reset Installing the package..."
         echo ""
-        { /usr/bin/find . -maxdepth 1 -name '*.pkg.tar.xz' -exec $SUDO /usr/bin/pacman -U {} \; ; } || { echo -e $red"Error:$reset Cannot install the package" ; read -p "Press enter to exit..." ; exit 1; }
-        #{ $SUDO /usr/bin/pacman -U "$(ls *.pkg.tar.xz 2> /dev/null)" ; } || { echo -e $red"Error:$reset Cannot install the package" ; exit 1; }
+        { /usr/bin/find . -maxdepth 1 -name '*.pkg.tar.xz' -exec $SUDO /usr/bin/pacman -U {} \; ; } || { echo "" ; echo -e $red"Error:$reset Cannot install the package" ; echo "" ; read -p "Press enter to exit..." ; exit 1; }
     fi
 fi	
 if [[ $Sync == "Yes" ]]; then
     echo
     echo -e $blue"===>$reset Checking for updates..."
     echo
-    if [[ $Refresh == "No" ]]; then
+    if [[ ! $Refresh == "Yes" ]]; then
         if [[ $AUR == "Yes" ]]; then
             if [ -x /usr/bin/yaourt ]; then
                 { /usr/bin/sudo -u $USERNAME /usr/bin/yaourt -Syua ; } || { echo -e $red"Error:$reset Cannot update the system" ; read -p "Press enter to exit..." ; exit 1; }
@@ -514,11 +498,11 @@ if [[ $Sync == "Yes" ]]; then
     fi
 fi
 echo
-if [[ $RSSOff == "No" ]]; then
+if [[ ! $RSSOff == "Yes" ]]; then
     [ -f $RSSFILE ] && cat "${RSSFILE}" | 2> /dev/null
 fi
 echo
-if [[ $LoggingOff == "No" ]]; then
+if [[ ! $LoggingOff == "Yes" ]]; then
     echo
     echo -e  $blue"===>$reset Updating log files..."
     echo
@@ -526,7 +510,7 @@ if [[ $LoggingOff == "No" ]]; then
     { /usr/bin/sudo -u $USERNAME /usr/bin/tail --lines=100 /var/log/pacman.log > $HOMEDIR/.updatesystem.log ; } || { echo -e $red"Error:$reset Cannot update '.updatesystem.log' file" ; }
 fi
 echo
-if [[ $RSSOff == "No" ]]; then
+if [[ ! $RSSOff == "Yes" ]]; then
     echo
     echo "Latest arch linux news:"
     echo
