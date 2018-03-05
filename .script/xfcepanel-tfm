@@ -1,5 +1,5 @@
 #!/bin/bash
-#This script is for displaying total free memory on xfce panel with a Generic Monitor
+#This script is for displaying total free memory on xfce panel's Generic Monitor
 USERNAME=${SUDO_USER:-$(id -u -n)}
 HOMEDIR="/home/${USERNAME}"
 TFM=$(${HOMEDIR}/bin/totalfreemem -g 1)
