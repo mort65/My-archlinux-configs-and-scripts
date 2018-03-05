@@ -1,0 +1,12 @@
+#!/bin/bash
+#This script is for displaying date on xfce panel's Generic Monitor
+
+STRING="<txt><span weight='Bold' fgcolor='#f3f3f5'>"
+
+if [ -s /usr/bin/jdate ]; then
+  JDATE=$(/usr/bin/jdate '+ %h %d %b')
+else
+  JDATE=$(/usr/bin/date '+ %h %d %b')
+fi
+
+echo "${STRING}${JDATE}</span></txt>"
