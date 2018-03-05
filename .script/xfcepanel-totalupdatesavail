@@ -1,0 +1,52 @@
+#!/bin/bash
+
+#This script is for displaying number of available updates on xfce panel's Generic Monitor
+
+if [[ -s "/home/mohsen/.number_of_updates.txt" ]]; then
+    NUM=$(cat "/home/mohsen/.number_of_updates.txt")
+    string="<txt><span weight='Bold' fgcolor='Yellow'>🔔"
+    if [[ $NUM =~ ^[0-9]+$ ]]; then
+        if [[ NUM -le 1000 ]]; then
+            string="${string}${NUM}"
+        elif [[ NUM -gt 999999999999999 ]]; then
+            string="${string}N"
+        else
+            ABBR='t'
+            RNG='1000000000000'
+            declare -a ABBRC=('k' 'm' 'b' 't');
+            declare -a ABBRN=('1000' '1000000' '1000000000' '1000000000000');
+            for (( i=1; i<${#ABBRN[@]}; i++ )); do
+                if [[  $(( $NUM / ${ABBRN[$i]} )) -eq 0 ]]; then
+                    ABBR=${ABBRC[$((i-1))]}
+                    RNG=${ABBRN[$((i-1))]}
+                    break
+                fi
+            done
+            TMP=$(( $NUM / $RNG ))
+            case "${#TMP}" in
+                1 )
+                    if [ "$NUM" != "$RNG" ]; then
+                        string="${string}${TMP}.${NUM:1:1}${ABBR}" 
+                    else
+                        string="${string}1${ABBR}"
+                    fi 
+                    ;;
+                2 )
+                    string="${string}${TMP}${ABBR}" 
+                    ;;
+                3 )
+                    string="${string}${TMP:0:1}${TMP:1:1}${TMP:2:1}${ABBRC[$(( i-1 ))]}"
+                    ;;
+            esac
+
+        fi
+        echo "${string}</span></txt>"
+    else
+        echo "<txt><span weight='Bold' fgcolor='Red'></span></txt>"  
+    fi	
+else
+    echo "<txt><span weight='Bold' fgcolor='Light Green'></span></txt>"
+
+fi
+
+exit 0
