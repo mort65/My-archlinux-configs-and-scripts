@@ -1,5 +1,6 @@
 #!/bin/bash
 #This script is for displaying total free memory on xfce panel's Generic Monitor
+
 USERNAME=${SUDO_USER:-$(id -u -n)}
 HOMEDIR="/home/${USERNAME}"
 TFM=$(${HOMEDIR}/bin/totalfreemem -g 1)
@@ -9,6 +10,7 @@ Color=""
 #LOWL=$(bc -l <<< "${LOWH} / 2")
 LOWH=1.0
 LOWL=0.5
+
 if [[  $(bc -l <<< "${TFM1} >= ${LOWH}") -eq 1 ]];
 then
     Color="LightBlue"
@@ -18,5 +20,5 @@ then
 else
     Color="Red"
 fi
-echo "<txt><span weight='Bold' fgcolor='${Color}'>${TFM}</span></txt>"
 
+echo "<txt><span weight='Bold' fgcolor='${Color}'>${TFM}</span></txt>"
