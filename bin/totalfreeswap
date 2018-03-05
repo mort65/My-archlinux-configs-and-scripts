@@ -1,63 +1,83 @@
 #!/bin/bash
-#this script show total amount of available swap space
+#this script show total amount of swap space that is used by system
 
 #Total used memory = MemTotal - MemFree
-#Non cache/buffer memory (green) = Total used memory - (Buffers + Cached memory)
-#Buffers (yellow) = Buffers
-#Cached memory (yellow) = Cached + SReclaimable - Shmem
+#Non cache/buffer memory = Total used memory - (Buffers + Cached memory)
+#Cached memory = Cached + SReclaimable - Shmem
 #Swap = SwapTotal - SwapFree
+
 
 shopt -s extglob
 
-UNIT="G"
+programname="totalusedswap"
+UNIT="M"
 DIGIT=0
+
+function help {
+    echo "Usage: $programname [OPTION]"
+    echo "A script for showing total used swap space"
+    echo ""
+    echo "Options: -h -[k|m|g] [0-9]"
+    echo "  -h,    display help"
+    echo "  -k     show output in kilobytes"
+    echo "  -m     show output in megabytes"
+    echo "  -g,    show output in gigabytes"
+    echo "  [0-9] precision of the output"
+}
+
+function usage {
+    help
+    exit 1
+}
 
 #testing number of args:
 if [ "${#}" -gt 2 ]; then
     echo "Invalid number of parameters"
-    exit 1
+    echo ""
+    usage
 fi
 
 # Test whether command-line argument is present (non-empty).
 if [ -n "$1" ]; then
-  if [[ "$1" =~ ^-?[Mm]$ ]]; then
+  if [[ "$1" == "-h" ]]; then
+    help
+    exit 0
+  elif [[ "$1" == "-m" ]]; then
 	UNIT="M"
-  elif [[ "$1" =~ ^-?[Kk]$ ]]; then
+  elif [[ "$1" == "-k" ]]; then
 	UNIT="K"
-  elif [[ "$1" =~ ^-?[Gg]$ ]]; then
+  elif [[ "$1" == "-g" ]]; then
 	UNIT="G"
-  elif [[ "$1" =~ ^-?[Bb]$ ]]; then
-	UNIT="B"
   else
 	echo "Invalid argument '${1}'"
-	exit 1
+	echo ""
+    usage
   fi
 fi
 
 if [ -n "$2" ]; then
-  if [[ "$2" =~ ^-?[1-9]+$ ]]; then
+  if [[ "$2" =~ ^[0-9]$ ]]; then
 	DIGIT="${2#-}"
   else
 	echo "Invalid argument '${2}'"
-	exit 1
- fi
-elif [[ "$UNIT" == "G" ]]; then
-	DIGIT="1"
+	echo ""
+    usage
+  fi
 fi
 
-resultK=$(awk '/^SwapFree:/ {print $2}' '/proc/meminfo')
+freeswapK=$(awk '/^SwapFree:/ {print $2}' '/proc/meminfo')
+totalswapK=$(awk '/^SwapTotal:/ {print $2}' '/proc/meminfo')
+resultK=$(($totalswapK -$freeswapK))
 
-if [ $UNIT == "B" ]; then
-	resultB=$(($resultK * 1024))
-	printf "%.${DIGIT}fB\n" $resultB
-elif [ $UNIT == "K" ]; then
-	printf "%.${DIGIT}fK\n" $resultK
+
+if [ $UNIT == "K" ]; then
+  printf "%.${DIGIT}fK\n" $resultK
 elif [ $UNIT == "M" ]; then
-	resultM=$(bc -l <<< $resultK/1024)
-	printf "%.${DIGIT}fM\n" $resultM
+  resultM=$(bc -l <<< $resultK/1024)
+  printf "%.${DIGIT}fM\n" $resultM
 elif [ $UNIT == "G" ]; then
-	resultG=$(bc -l <<< $resultK/1024/1024)
-	printf "%.${DIGIT}fG\n" $resultG
+  resultG=$(bc -l <<< $resultK/1024/1024)
+  printf "%.${DIGIT}fG\n" $resultG
 fi
 
 exit 0
