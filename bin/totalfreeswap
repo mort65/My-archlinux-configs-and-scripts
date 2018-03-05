@@ -1,21 +1,21 @@
 #!/bin/bash
-#this script show total amount of swap space that is used by system
+#this script show total amount of available swap space
 
 #Total used memory = MemTotal - MemFree
 #Non cache/buffer memory = Total used memory - (Buffers + Cached memory)
+#Buffers = Buffers
 #Cached memory = Cached + SReclaimable - Shmem
 #Swap = SwapTotal - SwapFree
 
-
 shopt -s extglob
 
-programname="totalusedswap"
+programname="totalfreeswap"
 UNIT="M"
 DIGIT=0
 
 function help {
     echo "Usage: $programname [OPTION]"
-    echo "A script for showing total used swap space"
+    echo "A script for showing total free swap space"
     echo ""
     echo "Options: -h -[k|m|g] [0-9]"
     echo "  -h,    display help"
@@ -35,6 +35,7 @@ if [ "${#}" -gt 2 ]; then
     echo "Invalid number of parameters"
     echo ""
     usage
+    exit 1
 fi
 
 # Test whether command-line argument is present (non-empty).
@@ -62,22 +63,19 @@ if [ -n "$2" ]; then
 	echo "Invalid argument '${2}'"
 	echo ""
     usage
-  fi
+ fi
 fi
 
-freeswapK=$(awk '/^SwapFree:/ {print $2}' '/proc/meminfo')
-totalswapK=$(awk '/^SwapTotal:/ {print $2}' '/proc/meminfo')
-resultK=$(($totalswapK -$freeswapK))
-
+resultK=$(awk '/^SwapFree:/ {print $2}' '/proc/meminfo')
 
 if [ $UNIT == "K" ]; then
-  printf "%.${DIGIT}fK\n" $resultK
+	printf "%.${DIGIT}fK\n" $resultK
 elif [ $UNIT == "M" ]; then
-  resultM=$(bc -l <<< $resultK/1024)
-  printf "%.${DIGIT}fM\n" $resultM
+	resultM=$(bc -l <<< $resultK/1024)
+	printf "%.${DIGIT}fM\n" $resultM
 elif [ $UNIT == "G" ]; then
-  resultG=$(bc -l <<< $resultK/1024/1024)
-  printf "%.${DIGIT}fG\n" $resultG
+	resultG=$(bc -l <<< $resultK/1024/1024)
+	printf "%.${DIGIT}fG\n" $resultG
 fi
 
 exit 0
