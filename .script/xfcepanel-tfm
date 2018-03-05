@@ -1,0 +1,22 @@
+#!/bin/bash
+#This script is for displaying total free memory on xfce panel with a Generic Monitor
+USERNAME=${SUDO_USER:-$(id -u -n)}
+HOMEDIR="/home/${USERNAME}"
+TFM=$(${HOMEDIR}/bin/totalfreemem -g 1)
+TFM1=$(echo ${TFM} | sed 's/.$//')
+Color=""
+#LOWH=$(bc -l <<< "($(awk '/^MemTotal:/ {print $2}' '/proc/meminfo') / ( 1024 ^ 2 )) / 8") #one eighth of totalmemory
+#LOWL=$(bc -l <<< "${LOWH} / 2")
+LOWH=1.0
+LOWL=0.5
+if [[  $(bc -l <<< "${TFM1} >= ${LOWH}") -eq 1 ]];
+then
+    Color="LightBlue"
+elif [[  $(bc -l <<< "${TFM1} >= ${LOWL}") -eq 1 ]];
+then
+    Color="Pink"
+else
+    Color="Red"
+fi
+echo "<txt><span weight='Bold' fgcolor='${Color}'>${TFM}</span></txt>"
+
