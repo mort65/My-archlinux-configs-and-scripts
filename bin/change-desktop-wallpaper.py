@@ -62,6 +62,7 @@ def is_excluded(name):
         if os.path.realpath(name) == os.path.realpath(exclusion):
             return True
         if is_in_dir(name,exclusion):
+            print(name)
             return True
     return False
 
@@ -80,8 +81,8 @@ else:
     image_dirs = [os.path.join(home_dir,'Pictures')]
 
 for image_dir in image_dirs:
-    if os.path.exists(image_dir):
-        for root, directories, file_names in os.walk(image_dir):
+    if os.path.exists(os.path.realpath(image_dir)):
+        for root, directories, file_names in os.walk(os.path.realpath(image_dir)):
             for file_name in file_names:
                 if is_image(os.path.join(root,file_name)):
                     if not is_small(os.path.join(root,file_name)):
