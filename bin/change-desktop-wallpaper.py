@@ -16,7 +16,7 @@ image_dirs = [r'',] #wallpaper directories
 exclusions = [] #excluded files and directories
 min_size = 10 #10 KiB
 patterns = [r'^.*\.[Jj][Pp][Ee]?[Gg]$', r'^.*\.[Pp][Nn][Gg]$', r'^.*\.[Bb][Mm][Pp]$']
-log_name = os.path.join(home_dir,'.change-desktop-wallpaper', '.prev_wallpapers.log')
+log_path = os.path.join(home_dir,'.change-desktop-wallpaper', '.prev_wallpapers.log')
 images = []
 DESKTOPS = ["windows","openbox", "xfce4"]
 
@@ -93,12 +93,12 @@ images = list(set(images)) #removing duplicates
 if len(images) == 0:
     exit(2);
 
-if not os.path.exists(os.path.dirname(log_name)):
-    os.makedirs(os.path.dirname(log_name))
+if not os.path.exists(os.path.dirname(log_path)):
+    os.makedirs(os.path.dirname(log_path))
 
-if os.path.isfile(log_name):
-    with open(log_name , 'r+') as log_file:
-        previous_images = get_trimmed(log_file)
+if os.path.isfile(log_path):
+    with open(log_path , 'r+') as log:
+        previous_images = get_trimmed(log)
         if len(previous_images) > 0:
             if len(previous_images) < 1001 and len(set(images) - set(previous_images)) > 0:
                 for image in previous_images:
@@ -107,16 +107,16 @@ if os.path.isfile(log_name):
             else:
                 if previous_images[len(previous_images) - 1] in images:
                     images.remove(previous_images[len(previous_images) - 1])
-                log_file.seek(0)
+                log.seek(0)
         else:
-            log_file.seek(0)
+            log.seek(0)
         image = images[random.randint(0,len(images) - 1)]
-        log_file.write(image + '\n')
-        log_file.truncate()
+        log.write(image + '\n')
+        log.truncate()
 else:
-    with open(log_name,"w") as log_file:
+    with open(log_path,"w") as log:
         image = images[random.randint(0,len(images) - 1)]
-        log_file.write(image + '\n')
+        log.write(image + '\n')
 
 if desktop == "windows":
     ctypes.windll.user32.SystemParametersInfoW(20, 0, image, 0) #SystemParametersInfoA in Python2
@@ -133,6 +133,6 @@ elif desktop == "openbox":
     args = ["/usr/bin/feh", "-q", "--bg-fill", image]
     subprocess.Popen(args)
 
-log_file.close()
+log.close()
 
 exit(0)
