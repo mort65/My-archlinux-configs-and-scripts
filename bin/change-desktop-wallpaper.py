@@ -6,81 +6,120 @@ import re
 import time
 import random
 import subprocess
+import platform
+import ctypes
 
-time.sleep(15)
+time.sleep(10)
 
-homedir=os.path.expanduser('~')
-logfilename =''.join([homedir, '/.prev_wallpapers.log'])
-patterns=[r'^.*\.[Jj][Pp][Ee]?[Gg]$', r'^.*\.[Pp][Nn][Gg]$', r'^.*\.[Bb][Mm][Pp]$']
-desktops=["openbox", "xfce4"]
-images=[]
+home_dir = os.path.expanduser('~')
+image_dirs = [r'',] #wallpaper directories
+exclusions = [] #excluded files and directories
+min_size = 10 #10 KiB
+patterns = [r'^.*\.[Jj][Pp][Ee]?[Gg]$', r'^.*\.[Pp][Nn][Gg]$', r'^.*\.[Bb][Mm][Pp]$']
+log_name = os.path.join(home_dir,'.change-desktop-wallpaper', '.prev_wallpapers.log')
+images = []
+DESKTOPS = ["windows","openbox", "xfce4"]
 
-def getdesktop():
+def get_desktop():
     desktop_session = os.environ.get("DESKTOP_SESSION")
     if desktop_session is None:
-        return "unknown"
+        if platform.system() is None:
+            return "unknown"
+        else:
+            return platform.system().lower()
     else:
         desktop_session = desktop_session.lower()
-    
+
     if "xfce" in desktop_session or desktop_session.startswith("xubuntu"): #xfce4
         return "xfce4"
     elif "openbox" in desktop_session: #openbox
         return "openbox"
     else:
         return "other"
-    
-def gettrimmed(f):
-    lines=[(l.strip()+'\n') for l in f.readlines() if l.strip() and os.path.isfile(l.strip())]
+
+def get_trimmed(f):
+    lines = [(l.strip() + '\n') for l in f.readlines() if l.strip() and os.path.isfile(l.strip())]
     f.seek(0)
     for line in lines:
         f.write(line)
     f.truncate()
     return [line[:-1] for line in lines]
 
-def isimage(name):
+def is_image(name):
     for pattern in patterns:
         if re.match(pattern,name):
             return True
     return False
 
-def issmall(name):
-    return ((os.path.getsize(os.path.realpath(os.path.join(root,name))) >> 10) < 10)  #Smaller than 10 kiB
+def is_small(name):
+    return ((os.path.getsize(os.path.realpath(name)) >> 10) < min_size)  #Smaller than min_size
+	
+def is_in_dir(file_path,directory):
+    return os.path.realpath(file_path).startswith(os.path.realpath(directory) + os.sep)
 
-desktop = getdesktop()
+def is_excluded(name):
+    for exclusion in exclusions:
+        if os.path.realpath(name) == os.path.realpath(exclusion):
+            return True
+        if is_in_dir(name,exclusion):
+            return True
+    return False
 
-if not desktop in desktops:
+desktop = get_desktop()
+
+if not desktop in DESKTOPS:
     exit(1)
 
-for root, directories, filenames in os.walk(''.join([homedir,'/Pictures/Desktop/'])):
-    for filename in filenames:
-        if isimage(filename) and not issmall(filename):
-            images.append(os.path.realpath(os.path.join(root,filename)))
+if 'image_dirs' in locals(): #if image_dirs local variable exist
+    for image_dir in image_dirs:
+        if image_dir:
+            break
+    else: #if image_dirs variable only has empty strings
+        image_dirs = [os.path.join(home_dir,'Pictures')]
+else:
+    image_dirs = [os.path.join(home_dir,'Pictures')]
+
+for image_dir in image_dirs:
+    if os.path.exists(image_dir):
+        for root, directories, file_names in os.walk(image_dir):
+            for file_name in file_names:
+                if is_image(os.path.join(root,file_name)):
+                    if not is_small(os.path.join(root,file_name)):
+                        if not is_excluded(os.path.join(root,file_name)):
+                            images.append(os.path.realpath(os.path.join(root,file_name)))
+
+images = list(set(images)) #removing duplicates
 
 if len(images) == 0:
     exit(2);
 
-if os.path.isfile(logfilename):
-    with open(logfilename , 'r+') as logfile:
-        previousimages=gettrimmed(logfile)
-        if len(previousimages) > 0: 
-            if len(previousimages) < 1001 and len(set(images)-set(previousimages)) > 0:
-                for image in previousimages:
+if not os.path.exists(os.path.dirname(log_name)):
+    os.makedirs(os.path.dirname(log_name))
+
+if os.path.isfile(log_name):
+    with open(log_name , 'r+') as log_file:
+        previous_images = get_trimmed(log_file)
+        if len(previous_images) > 0:
+            if len(previous_images) < 1001 and len(set(images) - set(previous_images)) > 0:
+                for image in previous_images:
                     if image in images:
                         images.remove(image)
             else:
-                if previousimages[len(previousimages)-1] in images:
-                    images.remove(previousimages[len(previousimages)-1])
-                logfile.seek(0)
+                if previous_images[len(previous_images) - 1] in images:
+                    images.remove(previous_images[len(previous_images) - 1])
+                log_file.seek(0)
         else:
-            logfile.seek(0)
-        image=images[random.randint(0,len(images)-1)]
-        logfile.write(image+'\n')
-        logfile.truncate()
+            log_file.seek(0)
+        image = images[random.randint(0,len(images) - 1)]
+        log_file.write(image + '\n')
+        log_file.truncate()
 else:
-    with open(logfilename,"w") as logfile:
-        image=images[random.randint(0,len(images)-1)]
-        logfile.write(image+'\n')
+    with open(log_name,"w") as log_file:
+        image = images[random.randint(0,len(images) - 1)]
+        log_file.write(image + '\n')
 
+if desktop == "windows":
+    ctypes.windll.user32.SystemParametersInfoW(20, 0, image, 0) #SystemParametersInfoA in Python2
 if desktop == "xfce4":
     args0 = ["/usr/bin/xfconf-query", "-c", "xfce4-desktop", "-p", "/backdrop/screen0/monitor0/workspace1/last-image", "-s", image]
     args1 = ["/usr/bin/xfconf-query", "-c", "xfce4-desktop", "-p", "/backdrop/screen0/monitor0/workspace1/image-style", "-s", "5"]
@@ -94,4 +133,6 @@ elif desktop == "openbox":
     args = ["/usr/bin/feh", "-q", "--bg-fill", image]
     subprocess.Popen(args)
 
-logfile.close()
+log_file.close()
+
+exit(0)
