@@ -29,7 +29,6 @@ def get_desktop():
         return "unknown"
     else:
         desktop_session = desktop_session.lower()
-
     if "xfce" in desktop_session or desktop_session.startswith("xubuntu"):
         return "xfce4"
     elif "openbox" in desktop_session:
