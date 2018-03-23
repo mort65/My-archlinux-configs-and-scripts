@@ -18,8 +18,8 @@ min_size = 10 #KiB
 patterns = [r'^.*\.[Jj][Pp][Ee]?[Gg]$', r'^.*\.[Pp][Nn][Gg]$', r'^.*\.[Bb][Mm][Pp]$']
 log_path = os.path.join(home_dir,'.change-desktop-wallpaper', '.prev_wallpapers.log')
 images = []
-PLATFORMS = ["windows","linux"]
-DESKTOPS = ["openbox", "xfce4"]
+PLATFORMS = ("windows","linux")
+DESKTOPS = ("openbox", "xfce4")
 platform = platform.system().lower()
 desktop = ''
 
