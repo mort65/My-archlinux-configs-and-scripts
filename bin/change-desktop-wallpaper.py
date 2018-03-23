@@ -18,24 +18,15 @@ min_size = 10 #KiB
 patterns = [r'^.*\.[Jj][Pp][Ee]?[Gg]$', r'^.*\.[Pp][Nn][Gg]$', r'^.*\.[Bb][Mm][Pp]$']
 log_path = os.path.join(home_dir,'.change-desktop-wallpaper', '.prev_wallpapers.log')
 images = []
-DESKTOPS = ["windows","openbox", "xfce4"]
+PLATFORMS = ["windows","linux"]
+DESKTOPS = ["openbox", "xfce4"]
+platform = platform.system().lower()
+desktop = ''
 
-if len(image_dirs) > 0:
-    for image_dir in image_dirs:
-        if image_dir:
-            break
-    else:
-        image_dirs = [os.path.join(home_dir,'Pictures')]
-else:
-    image_dirs = [os.path.join(home_dir,'Pictures')]
-	
 def get_desktop():
     desktop_session = os.environ.get("DESKTOP_SESSION")
     if desktop_session is None:
-        if platform.system() is None:
-            return "unknown"
-        else:
-            return platform.system().lower()
+        return "unknown"
     else:
         desktop_session = desktop_session.lower()
 
@@ -62,26 +53,64 @@ def is_image(name):
 
 def is_small(name):
     return ((os.path.getsize(os.path.realpath(name)) >> 10) < min_size)
-	
-def is_in_dir(file_path,directory):
-    if os.path.realpath(file_path).startswith(os.path.realpath(directory) + os.sep):
-        return True
+    
+def is_same_file(name,file_name):
+    if platform == "windows":
+        if os.path.realpath(name).upper() == file_name.upper():
+            return True
+        elif os.path.basename(name).upper() == file_name.upper():
+            return True
+    else:
+        if os.path.realpath(name) == file_name:
+            return True
+        elif os.path.basename(name) == file_name:
+            return True
     return False
-
+    
+def is_in_dir(file_path,dir_name):
+    if platform == "windows":
+        if os.path.realpath(file_path).upper().startswith(os.path.realpath(dir_name).upper() + os.sep):
+            return True
+    else:
+        if os.path.realpath(file_path).startswith(os.path.realpath(dir_name) + os.sep):
+            return True
+    return False
+    
+def is_in_drive(file_path,drive_name):
+    if platform == "windows":
+        if os.path.splitdrive(os.path.realpath(drive_name))[0]:
+            if os.path.splitdrive(os.path.realpath(file_path))[0].upper() == drive_name.upper():
+                return True
+            elif ( os.path.splitdrive(os.path.realpath(file_path))[0] + os.sep ) == drive_name.upper():
+                return True
+    return False
+                
 def is_excluded(name):
     for exclusion in exclusions:
-        if os.path.realpath(name) == exclusion:
-            return True
-        elif os.path.basename(name) == exclusion:
+        if is_same_file(name,exclusion):
             return True
         elif is_in_dir(name,exclusion):
             return True
+        elif is_in_drive(name,exclusion):
+            return True
     return False
 
-desktop = get_desktop()
-
-if not desktop in DESKTOPS:
+if platform in PLATFORMS:
+    if platform == "linux":
+        desktop = get_desktop()
+        if not desktop in DESKTOPS:
+            exit(1)
+else:
     exit(1)
+    
+if len(image_dirs) > 0:
+    for image_dir in image_dirs:
+        if image_dir:
+            break
+    else:
+        image_dirs = [os.path.join(home_dir,'Pictures')]
+else:
+    image_dirs = [os.path.join(home_dir,'Pictures')]
 
 for image_dir in image_dirs:
     if os.path.exists(os.path.realpath(image_dir)):
@@ -123,20 +152,21 @@ else:
         image = images[random.randint(0,len(images) - 1)]
         log.write(image + '\n')
 
-if desktop == "windows":
+if platform == "windows":
     ctypes.windll.user32.SystemParametersInfoW(20, 0, image, 0)
-elif desktop == "xfce4":
-    args0 = ["/usr/bin/xfconf-query", "-c", "xfce4-desktop", "-p", "/backdrop/screen0/monitor0/workspace1/last-image", "-s", image]
-    args1 = ["/usr/bin/xfconf-query", "-c", "xfce4-desktop", "-p", "/backdrop/screen0/monitor0/workspace1/image-style", "-s", "5"]
-    args2 = ["/usr/bin/xfconf-query", "-c", "xfce4-desktop", "-p", "/backdrop/screen0/monitor0/image-show", "-s", "true"]
-    subprocess.Popen(args0)
-    subprocess.Popen(args1)
-    subprocess.Popen(args2)
-    args = ["xfdesktop","--reload"]
-    subprocess.Popen(args)
-elif desktop == "openbox":
-    args = ["/usr/bin/feh", "-q", "--bg-fill", image]
-    subprocess.Popen(args)
+elif platform == "linux":
+    if desktop == "xfce4":
+        args0 = ["/usr/bin/xfconf-query", "-c", "xfce4-desktop", "-p", "/backdrop/screen0/monitor0/workspace1/last-image", "-s", image]
+        args1 = ["/usr/bin/xfconf-query", "-c", "xfce4-desktop", "-p", "/backdrop/screen0/monitor0/workspace1/image-style", "-s", "5"]
+        args2 = ["/usr/bin/xfconf-query", "-c", "xfce4-desktop", "-p", "/backdrop/screen0/monitor0/image-show", "-s", "true"]
+        subprocess.Popen(args0)
+        subprocess.Popen(args1)
+        subprocess.Popen(args2)
+        args = ["xfdesktop","--reload"]
+        subprocess.Popen(args)
+    elif desktop == "openbox":
+        args = ["/usr/bin/feh", "-q", "--bg-fill", image]
+        subprocess.Popen(args)
 
 log.close()
 
