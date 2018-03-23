@@ -12,7 +12,7 @@ import ctypes
 time.sleep(10)
 
 home_dir = os.path.expanduser('~')
-image_dirs = [r'',] #wallpaper directories
+image_dirs = [r'',] #wallpaper directories (default: ~/Pictures)
 exclusions = [] #excluded files and directories
 min_size = 10 #KiB
 patterns = [r'^.*\.[Jj][Pp][Ee]?[Gg]$', r'^.*\.[Pp][Nn][Gg]$', r'^.*\.[Bb][Mm][Pp]$']
@@ -37,7 +37,7 @@ def get_desktop():
         return "other"
 
 def get_trimmed(f):
-    lines = [(l.strip() + '\n') for l in f.readlines() if l.strip() and os.path.isfile(l.strip())]
+    lines = [(l.strip() + '\n') for l in f.readlines() if l.strip() and (l.strip() in images)]
     f.seek(0)
     for line in lines:
         f.write(line)
@@ -59,7 +59,7 @@ def is_same_file(name,file_name):
             return True
         elif os.path.basename(name).upper() == file_name.upper():
             return True
-    else:
+    elif platform == "linux":
         if os.path.realpath(name) == file_name:
             return True
         elif os.path.basename(name) == file_name:
@@ -70,7 +70,7 @@ def is_in_dir(file_path,dir_name):
     if platform == "windows":
         if os.path.realpath(file_path).upper().startswith(os.path.realpath(dir_name).upper() + os.sep):
             return True
-    else:
+    elif platform == "linux":
         if os.path.realpath(file_path).startswith(os.path.realpath(dir_name) + os.sep):
             return True
     return False
@@ -134,12 +134,10 @@ if os.path.isfile(log_path):
         if len(previous_images) > 0:
             if len(previous_images) < 1001 and len(set(images) - set(previous_images)) > 0:
                 for image in previous_images:
-                    if image in images:
-                        images.remove(image)
+                    images.remove(image)
             else:
                 if len(images) > 1:
-                    if previous_images[len(previous_images) - 1] in images:
-                        images.remove(previous_images[len(previous_images) - 1])
+                    images.remove(previous_images[len(previous_images) - 1])
                 log.seek(0)
         else:
             log.seek(0)
