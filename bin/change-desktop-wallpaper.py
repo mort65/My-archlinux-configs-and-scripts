@@ -80,7 +80,7 @@ def is_in_drive(file_path,drive_name):
         if os.path.splitdrive(os.path.realpath(drive_name))[0]:
             if os.path.splitdrive(os.path.realpath(file_path))[0].upper() == drive_name.upper():
                 return True
-            elif ( os.path.splitdrive(os.path.realpath(file_path))[0] + os.sep ) == drive_name.upper():
+            elif ( os.path.splitdrive(os.path.realpath(file_path))[0].upper() + os.sep ) == drive_name.upper():
                 return True
     return False
                 
