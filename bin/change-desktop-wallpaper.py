@@ -14,12 +14,21 @@ time.sleep(10)
 home_dir = os.path.expanduser('~')
 image_dirs = [r'',] #wallpaper directories
 exclusions = [] #excluded files and directories
-min_size = 10 #10 KiB
+min_size = 10 #KiB
 patterns = [r'^.*\.[Jj][Pp][Ee]?[Gg]$', r'^.*\.[Pp][Nn][Gg]$', r'^.*\.[Bb][Mm][Pp]$']
 log_path = os.path.join(home_dir,'.change-desktop-wallpaper', '.prev_wallpapers.log')
 images = []
 DESKTOPS = ["windows","openbox", "xfce4"]
 
+if len(image_dirs) > 0:
+    for image_dir in image_dirs:
+        if image_dir:
+            break
+    else:
+        image_dirs = [os.path.join(home_dir,'Pictures')]
+else:
+    image_dirs = [os.path.join(home_dir,'Pictures')]
+	
 def get_desktop():
     desktop_session = os.environ.get("DESKTOP_SESSION")
     if desktop_session is None:
@@ -30,9 +39,9 @@ def get_desktop():
     else:
         desktop_session = desktop_session.lower()
 
-    if "xfce" in desktop_session or desktop_session.startswith("xubuntu"): #xfce4
+    if "xfce" in desktop_session or desktop_session.startswith("xubuntu"):
         return "xfce4"
-    elif "openbox" in desktop_session: #openbox
+    elif "openbox" in desktop_session:
         return "openbox"
     else:
         return "other"
@@ -52,17 +61,20 @@ def is_image(name):
     return False
 
 def is_small(name):
-    return ((os.path.getsize(os.path.realpath(name)) >> 10) < min_size)  #Smaller than min_size
+    return ((os.path.getsize(os.path.realpath(name)) >> 10) < min_size)
 	
 def is_in_dir(file_path,directory):
-    return os.path.realpath(file_path).startswith(os.path.realpath(directory) + os.sep)
+    if os.path.realpath(file_path).startswith(os.path.realpath(directory) + os.sep):
+        return True
+    return False
 
 def is_excluded(name):
     for exclusion in exclusions:
-        if os.path.realpath(name) == os.path.realpath(exclusion):
+        if os.path.realpath(name) == exclusion:
             return True
-        if is_in_dir(name,exclusion):
-            print(name)
+        elif os.path.basename(name) == exclusion:
+            return True
+        elif is_in_dir(name,exclusion):
             return True
     return False
 
@@ -70,15 +82,6 @@ desktop = get_desktop()
 
 if not desktop in DESKTOPS:
     exit(1)
-
-if 'image_dirs' in locals(): #if image_dirs local variable exist
-    for image_dir in image_dirs:
-        if image_dir:
-            break
-    else: #if image_dirs variable only has empty strings
-        image_dirs = [os.path.join(home_dir,'Pictures')]
-else:
-    image_dirs = [os.path.join(home_dir,'Pictures')]
 
 for image_dir in image_dirs:
     if os.path.exists(os.path.realpath(image_dir)):
@@ -106,8 +109,9 @@ if os.path.isfile(log_path):
                     if image in images:
                         images.remove(image)
             else:
-                if previous_images[len(previous_images) - 1] in images:
-                    images.remove(previous_images[len(previous_images) - 1])
+                if len(images) > 1:
+                    if previous_images[len(previous_images) - 1] in images:
+                        images.remove(previous_images[len(previous_images) - 1])
                 log.seek(0)
         else:
             log.seek(0)
@@ -120,8 +124,8 @@ else:
         log.write(image + '\n')
 
 if desktop == "windows":
-    ctypes.windll.user32.SystemParametersInfoW(20, 0, image, 0) #SystemParametersInfoA in Python2
-if desktop == "xfce4":
+    ctypes.windll.user32.SystemParametersInfoW(20, 0, image, 0)
+elif desktop == "xfce4":
     args0 = ["/usr/bin/xfconf-query", "-c", "xfce4-desktop", "-p", "/backdrop/screen0/monitor0/workspace1/last-image", "-s", image]
     args1 = ["/usr/bin/xfconf-query", "-c", "xfce4-desktop", "-p", "/backdrop/screen0/monitor0/workspace1/image-style", "-s", "5"]
     args2 = ["/usr/bin/xfconf-query", "-c", "xfce4-desktop", "-p", "/backdrop/screen0/monitor0/image-show", "-s", "true"]
