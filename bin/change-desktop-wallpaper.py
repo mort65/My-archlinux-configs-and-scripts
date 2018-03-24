@@ -155,21 +155,22 @@ if platform == "windows":
     ctypes.windll.user32.SystemParametersInfoW(20, 0, image, 0)
 elif platform == "linux":
     if desktop == "xfce4":
-        args0 = ["/usr/bin/xfconf-query", "-c", "xfce4-desktop", "-p", "/backdrop/screen0/monitor0/workspace1/last-image", "-s", image]
-        args1 = ["/usr/bin/xfconf-query", "-c", "xfce4-desktop", "-p", "/backdrop/screen0/monitor0/workspace1/image-style", "-s", "5"]
-        args2 = ["/usr/bin/xfconf-query", "-c", "xfce4-desktop", "-p", "/backdrop/screen0/monitor0/image-show", "-s", "true"]
-        subprocess.Popen(args0)
-        subprocess.Popen(args1)
-        subprocess.Popen(args2)
+        arg0 = ["/usr/bin/xfconf-query", "-c", "xfce4-desktop", "-p", "/backdrop/screen0/monitor0/workspace1/last-image", "-s", image]
+        arg1 = ["/usr/bin/xfconf-query", "-c", "xfce4-desktop", "-p", "/backdrop/screen0/monitor0/workspace1/image-style", "-s", "5"]
+        arg2 = ["/usr/bin/xfconf-query", "-c", "xfce4-desktop", "-p", "/backdrop/screen0/monitor0/image-show", "-s", "true"]
+        subprocess.Popen(arg0)
+        subprocess.Popen(arg1)
+        subprocess.Popen(arg2)
         args = ["xfdesktop","--reload"]
-        subprocess.Popen(args)
-    elif desktop == "openbox":
-        args = ["/usr/bin/feh", "-q", "--bg-fill", image]
         subprocess.Popen(args)
     elif desktop == "plasma":
         script0 = "var allDesktops = desktops(); for (i=0;i<allDesktops.length;i++) { d=allDesktops[i]; d.wallpaperPlugin = \"org.kde.image\"; d.currentConfigGroup=Array(\"Wallpaper\",\"org.kde.image\",\"General\"); d.writeConfig(\"Image\",\"file://" + image + "\")}"
-        args0 = ["/usr/bin/qdbus", "org.kde.plasmashell","/PlasmaShell", "org.kde.PlasmaShell.evaluateScript", "{}".format(script0)]
-        subprocess.Popen(args0)
+        arg0 = ["/usr/bin/qdbus", "org.kde.plasmashell","/PlasmaShell", "org.kde.PlasmaShell.evaluateScript", "{}".format(script0)]
+        subprocess.Popen(arg0)
+    elif desktop == "openbox":
+        args = ["/usr/bin/feh", "-q", "--bg-fill", image]
+        subprocess.Popen(args)
+
 log.close()
 
 exit(0)
