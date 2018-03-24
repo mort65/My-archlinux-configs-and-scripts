@@ -169,7 +169,7 @@ elif platform == "linux":
         subprocess.Popen(args)
     elif desktop == "plasma":
         script0 = "var allDesktops = desktops(); for (i=0;i<allDesktops.length;i++) { d=allDesktops[i]; d.wallpaperPlugin = \"org.kde.image\"; d.currentConfigGroup=Array(\"Wallpaper\",\"org.kde.image\",\"General\"); d.writeConfig(\"Image\",\"file://" + image + "\")}"
-        args0 = ["/usr/bin/qdbus", "org.kde.plasmashell","/PlasmaShell", "org.kde.PlasmaShell.evaluateScript", "{}".format(script0)]
+        args0 = ["/usr/bin/qdbus", "org.kde.plasmashell","/PlasmaShell", "org.kde.PlasmaShell.evaluateScript", script0]
         subprocess.Popen(args0)
     elif desktop == "gnome":
         args = ["gsettings", "set", "org.gnome.desktop.background", "picture-uri", "file://{}".format(image)]
