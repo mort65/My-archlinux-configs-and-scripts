@@ -74,11 +74,11 @@ floating_modifier $mod
 
 # start a terminal
 #bindsym $mod+Return exec /usr/bin/i3-sensible-terminal
-bindsym $mod+shift+Return exec "pgrep -c uxterm || /usr/bin/uxterm"; workspace $workspace3
-bindsym $mod+Return exec "pgrep -c mlterm || /usr/bin/mlterm"; workspace $workspace3
-bindsym Mod1+Control+Return exec "pgrep -c urxvt || /usr/bin/urxvt"; workspace $workspace3
 bindsym $mod+t exec --no-startup-id /usr/bin/lxterminal
-bindsym Mod1+Control+t exec --no-startup-id /usr/bin/lilyterm
+bindsym Mod1+Control+t exec --no-startup-id /usr/bin/lxterminal
+bindsym Control+t exec --no-startup-id /usr/bin/lxterminal
+bindsym $mod+Return exec "pgrep -c urxvt || /usr/bin/urxvt"; workspace $workspace3
+bindsym Control+Return exec "pgrep -c termite || /usr/bin/termite"; workspace $workspace3
 
 #start pcman file manager
 bindsym $mod+Home exec --no-startup-id "pgrep -c pcmanfm || /usr/bin/pcmanfm"; workspace $workspace4
@@ -87,7 +87,7 @@ bindsym $mod+shift+Home exec --no-startup-id /usr/bin/gksu /usr/bin/pcmanfm
 
 
 #start geany
-bindsym $mod+Shift+g exec --no-startup-id "pgrep -c geany || /usr/bin/geany"; workspace $workspace5
+bindsym $mod+g exec --no-startup-id "pgrep -c geany || /usr/bin/geany"; workspace $workspace5
 
 #start lxtask and switch to it's workspace
 bindsym $mod+Delete exec --no-startup-id "pgrep -c lxtask || /usr/bin/lxtask"; workspace $workspace9
@@ -435,6 +435,7 @@ assign [class="Trick and Treat"] → $workspace8
 assign [class="Code"] → $workspace5
 assign [class="octopi"] → $workspace9
 assign [class="URxvt"] → $workspace3
+assign [class="Terminator"] → $workspace3
 assign [class="Pamac-updater"] → $workspace9
 assign [class="Pamac-manager"] → $workspace9
 assign [class="Lxtask"] → $workspace9
@@ -455,6 +456,7 @@ assign [class="Tor Browser"] → $workspace2
 assign [class="Waterfox"] → $workspace2
 assign [class="Urxvt-tabbed"] → $workspace3
 assign [class="Urxvt"] → $workspace3
+assign [class="Termite"] → $workspace3
 assign [class="mlterm"] → $workspace3
 assign [class="Filezilla"] → $workspace9
 assign [class="Gnome-mpv"] → $workspace7
@@ -522,6 +524,8 @@ for_window [class=(?i)Leafpad] focus
 for_window [class=(?i)Urxvt-tabbed] focus
 for_window [class=(?i)Urxvt] focus
 for_window [class=(?i)mlterm] focus
+for_window [class=(?i)Termite] focus
+for_window [class=(?i)Terminator] focus
 #for_window [class=(?i)QuiteRss] focus
 for_window [class="(?i)Tor Browser"] focus
 for_window [class=(?i)Gedit] focus
@@ -541,7 +545,10 @@ focus_follows_mouse yes
 focus_on_window_activation urgent
 
 #set monitor as primary to fix showing tray icons 
-#exec_always --no-startup-id /usr/bin/xrandr --output DisplayPort-0 --off --output DVI-1 --off --output DVI-0 --primary --mode 1600x900 --pos 0x0 --rotate normal --output HDMI-0 --off
+exec_always --no-startup-id /usr/bin/xrandr --output DisplayPort-0 --off --output DVI-1 --off --output DVI-0 --primary --mode 1600x900 --pos 0x0 --rotate normal --output HDMI-0 --off
+
+#fix for dark theme on kde apps
+exec --no-startup-id ~/bin/bflogin.sh
 
 # Pulse Audio controls
 # run pactl list sinks
@@ -566,11 +573,15 @@ mode "$mode_system" {
 }
 bindsym $mod+Pause mode "$mode_system"
 
+exec --no-startup-id /bin/bash ~/bin/keep_notif_log.sh ~/bin/tmp/log.txt &
+
 #set a random wallpaper for wokspace1
 #exec --no-startup-id $feh -recursive --randomize --bg-fill ~/Pictures/Pics/*
 
 #put random wallpapers for each workspace in a directory:
 exec --no-startup-id /usr/bin/python ~/bin/i3/i3ws.py &
+
+
 
 #Change to Workspace1:
 exec --no-startup-id /usr/bin/i3-msg workspace $workspace1 &
@@ -579,19 +590,38 @@ exec --no-startup-id /usr/bin/i3-msg workspace $workspace1 &
 exec_always --no-startup-id $feh --bg-scale $HOME/.i3wm-wallpapers/1.jpg &
 exec --no-startup-id /usr/bin/python ~/bin/i3/wsp.py &
 
+#check for update
+#exec --no-startup-id /usr/bin/nohup ~/bin/update-checker &
+#exec --no-startup-id /usr/bin/pamac-tray &
+
+#change keyboard layout with alt+shift:
+exec --no-startup-id /usr/bin/setxkbmap us,ir -option 'grp:alt_shift_toggle'
+
 exec --no-startup-id /usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1
+#exec --no-startup-id /usr/bin/octopi-notifier &
 exec --no-startup-id /usr/bin/pamac-tray &
+#exec --no-startup-id /usr/bin/kalu &
 exec --no-startup-id /usr/bin/nm-applet &
 exec --no-startup-id /usr/bin/compton -b &
+#exec --no-startup-id /usr/bin/pasystray &
 exec --no-startup-id /usr/bin/volumeicon &
+#exec --no-startup-id /usr/bin/tilda &
 exec --no-startup-id /usr/bin/guake &
+#exec --no-startup-id /usr/bin/quiterss &
 exec --no-startup-id /usr/bin/conky -c ~/bin/i3/conky/.conkyrc &
+#exec --no-startup-id /usr/bin/parcellite &
 
 #start dropbox
 exec --no-startup-id ~/.dropbox-dist/dropboxd &
 exec --no-startup-id /usr/bin/sudo bash -c "echo 100000 > /proc/sys/fs/inotify/max_user_watches" &
-
+#exec --no-startup-id /usr/bin/synapse &
+#exec --no-startup-id /usr/bin/startupsound &
+exec --no-startup-id $HOME/bin/redshift-kerman.sh &
+#exec --no-startup-id /usr/bin/indicator-kdeconnect &
+exec --no-startup-id $HOME/bin/brush-teeth-reminder &
 exec --no-startup-id /usr/bin/psensor &
+#exec --no-startup-id /usr/bin/caffeine &
+#exec --no-startup-id /usr/bin/goldendict &
 exec --no-startup-id /usr/bin/udiskie -2 -s &
 exec --no-startup-id /usr/bin/clipit &
 exec --no-startup-id $HOME/bin/enablenotifyforcronie &
