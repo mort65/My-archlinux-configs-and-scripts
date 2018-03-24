@@ -90,8 +90,9 @@ ${color3}${hr}
 ${color1}Super+⏎$alignr Terminal
 Super+t$alignr Floating terminal
 ${color3}${hr}
-${color1}Super+delete$alignr Task Manager
-Super+home$alignr File Manager
+${color1}Super+delete$alignr Task manager
+Super+home$alignr File manager
+Super+⇧+home$alignr Root file manager
 ${color3}${hr}
 ${color1}Super+g$alignr Geany
 Super+l$alignr Leafpad
@@ -102,8 +103,8 @@ Super+v$alignr Vivaldi
 Super+f$alignr Firefox
 Super+c$alignr Chromium
 ${color3}${hr}
-${color1}Super+addition$alignr Volume Up
-Super+subtract$alignr Volume Down
+${color1}Super+addition$alignr Volume up
+Super+subtract$alignr Volume down
 Super+multiply$alignr Mute
 ${color3}${hr}
 ${color1}Super+⇧+e$alignr Exit i3
