@@ -95,12 +95,12 @@ Super+home$alignr File Manager
 ${color3}${hr}
 ${color1}Super+g$alignr Geany
 Super+l$alignr Leafpad
+Super+m$alignr Pragha
 ${color3}${hr}
 ${color1}Super+b$alignr Tor
 Super+v$alignr Vivaldi
 Super+f$alignr Firefox
 Super+c$alignr Chromium
-Super+m$alignr Pragha
 ${color3}${hr}
 ${color1}Super+addition$alignr Volume Up
 Super+subtract$alignr Volume Down
