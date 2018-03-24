@@ -29,12 +29,12 @@ def get_desktop():
         return "unknown"
     else:
         desktop_session = desktop_session.lower()
-    if "xfce" in desktop_session or desktop_session.startswith("xubuntu"):
+    if "xfce" in desktop_session or "xubuntu" in desktop_session:
         return "xfce4"
+    elif "plasma" in desktop_session or "openbox-kde" in desktop_session:
+        return "plasma"
     elif "openbox" in desktop_session:
         return "openbox"
-    elif "plasma" in desktop_session:
-        return "plasma"
     else:
         return "other"
 
