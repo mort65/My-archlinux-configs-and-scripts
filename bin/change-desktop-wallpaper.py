@@ -19,7 +19,7 @@ patterns = [r'^.*\.[Jj][Pp][Ee]?[Gg]$', r'^.*\.[Pp][Nn][Gg]$', r'^.*\.[Bb][Mm][P
 log_path = os.path.join(home_dir,'.change-desktop-wallpaper', '.prev_wallpapers.log')
 images = []
 PLATFORMS = ("windows","linux")
-DESKTOPS = ("openbox", "xfce4")
+DESKTOPS = ("openbox", "xfce4", "plasma")
 platform = platform.system().lower()
 desktop = ''
 
@@ -33,6 +33,8 @@ def get_desktop():
         return "xfce4"
     elif "openbox" in desktop_session:
         return "openbox"
+    elif "plasma" in desktop_session:
+        return "plasma"
     else:
         return "other"
 
@@ -164,7 +166,10 @@ elif platform == "linux":
     elif desktop == "openbox":
         args = ["/usr/bin/feh", "-q", "--bg-fill", image]
         subprocess.Popen(args)
-
+    elif desktop == "plasma":
+        script0 = "var allDesktops = desktops(); for (i=0;i<allDesktops.length;i++) { d=allDesktops[i]; d.wallpaperPlugin = \"org.kde.image\"; d.currentConfigGroup=Array(\"Wallpaper\",\"org.kde.image\",\"General\"); d.writeConfig(\"Image\",\"file://" + image + "\")}"
+        args0 = ["/usr/bin/qdbus", "org.kde.plasmashell","/PlasmaShell", "org.kde.PlasmaShell.evaluateScript", "{}".format(script0)]
+        subprocess.Popen(args0)
 log.close()
 
 exit(0)
