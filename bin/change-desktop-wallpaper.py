@@ -19,7 +19,7 @@ patterns = [r'^.*\.[Jj][Pp][Ee]?[Gg]$', r'^.*\.[Pp][Nn][Gg]$', r'^.*\.[Bb][Mm][P
 log_path = os.path.join(home_dir,'.change-desktop-wallpaper', '.prev_wallpapers')
 images = []
 PLATFORMS = ("windows","linux")
-DESKTOPS = ("i3", "openbox", "xfce4", "plasma")
+DESKTOPS = ("i3", "openbox", "xfce4", "plasma", "gnome")
 platform = platform.system().lower()
 desktop = ''
 
@@ -33,6 +33,8 @@ def get_desktop():
         return "xfce4"
     elif "plasma" in desktop_session or "openbox-kde" in desktop_session:
         return "plasma"
+    elif "gnome" in desktop_session:
+        return "gnome"
     elif "i3" in desktop_session:
         return "i3"
     elif "openbox" in desktop_session:
@@ -157,18 +159,21 @@ if platform == "windows":
     ctypes.windll.user32.SystemParametersInfoW(20, 0, image, 0)
 elif platform == "linux":
     if desktop == "xfce4":
-        arg0 = ["/usr/bin/xfconf-query", "-c", "xfce4-desktop", "-p", "/backdrop/screen0/monitor0/workspace1/last-image", "-s", image]
-        arg1 = ["/usr/bin/xfconf-query", "-c", "xfce4-desktop", "-p", "/backdrop/screen0/monitor0/workspace1/image-style", "-s", "5"]
-        arg2 = ["/usr/bin/xfconf-query", "-c", "xfce4-desktop", "-p", "/backdrop/screen0/monitor0/image-show", "-s", "true"]
-        subprocess.Popen(arg0)
-        subprocess.Popen(arg1)
-        subprocess.Popen(arg2)
+        args0 = ["/usr/bin/xfconf-query", "-c", "xfce4-desktop", "-p", "/backdrop/screen0/monitor0/workspace1/last-image", "-s", image]
+        args1 = ["/usr/bin/xfconf-query", "-c", "xfce4-desktop", "-p", "/backdrop/screen0/monitor0/workspace1/image-style", "-s", "5"]
+        args2 = ["/usr/bin/xfconf-query", "-c", "xfce4-desktop", "-p", "/backdrop/screen0/monitor0/image-show", "-s", "true"]
+        subprocess.Popen(args0)
+        subprocess.Popen(args1)
+        subprocess.Popen(args2)
         args = ["xfdesktop","--reload"]
         subprocess.Popen(args)
     elif desktop == "plasma":
         script0 = "var allDesktops = desktops(); for (i=0;i<allDesktops.length;i++) { d=allDesktops[i]; d.wallpaperPlugin = \"org.kde.image\"; d.currentConfigGroup=Array(\"Wallpaper\",\"org.kde.image\",\"General\"); d.writeConfig(\"Image\",\"file://" + image + "\")}"
-        arg0 = ["/usr/bin/qdbus", "org.kde.plasmashell","/PlasmaShell", "org.kde.PlasmaShell.evaluateScript", "{}".format(script0)]
-        subprocess.Popen(arg0)
+        args0 = ["/usr/bin/qdbus", "org.kde.plasmashell","/PlasmaShell", "org.kde.PlasmaShell.evaluateScript", "{}".format(script0)]
+        subprocess.Popen(args0)
+    elif desktop == "gnome":
+        args = ["gsettings", "set", "org.gnome.desktop.background", "picture-uri", "file://{}".format(image)]
+        subprocess.Popen(args)
     elif desktop == "openbox" or desktop == "i3":
         args = ["/usr/bin/feh", "-q", "--bg-fill", image]
         subprocess.Popen(args)
