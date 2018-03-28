@@ -58,7 +58,8 @@ keys = [
     Key([mod, "shift"], "j", lazy.layout.shuffle_up()),
 
     # Switch window focus to other pane(s) of stack
-    Key([mod], "space", lazy.layout.next()),
+    Key(["mod1"], "Tab", lazy.layout.next()),
+    Key([mod], "space", lazy.layout.previous()),
     
     Key([mod], "f", lazy.window.toggle_fullscreen()),
     Key([mod, "shift"], "f", lazy.window.toggle_floating()),
@@ -170,7 +171,8 @@ layouts = [
     layout.MonadTall(**layout_style),
     layout.Tile(**layout_style),
     layout.Stack(num_stacks=2,**layout_style),
-    layout.Max(**layout_style)
+    layout.Max(**layout_style),
+    #layout.Floating(**layout_style)
 ]
 
 widget_defaults = dict(
@@ -219,7 +221,7 @@ screens = [
                                ),
                 widget.Prompt(prompt="{0}@{1}: ".format(os.environ["USER"], hostname), cursor_color='33FF00',foreground='C1F2E4'),
                 widget.WindowName(foreground='81B2A4'),
-                widget.Net(interface='enp3s0',foreground='FFAAFF'),
+                widget.Net(interface='auto',foreground='FFAAFF'),
                 widget.GenPollText(func=get_ctemp, update_interval=5, foreground='66C5FF'),
                 widget.GenPollText(func=get_gtemp, update_interval=5, foreground='66C5FF'),
                 widget.GenPollText(func=get_freemem, update_interval=5, foreground='00FFBB'),
