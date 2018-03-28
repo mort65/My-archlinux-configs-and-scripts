@@ -22,8 +22,6 @@ exec /usr/bin/udiskie -2 -s &
 #exec ~/.dropbox-dist/dropboxd &
 #exec /usr/bin/sudo bash -c "echo 100000 > /proc/sys/fs/inotify/max_user_watches" &
 
-exec ~/bin/redshift-kerman.sh &
-exec ~/bin/brush-teeth-reminder &
 exec ~/bin/enablenotifyforcronie &
 exec ~/bin/logupdates &
 
