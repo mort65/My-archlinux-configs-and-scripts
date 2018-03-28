@@ -23,5 +23,6 @@ exec ~/bin/logupdates &
 # Set desktop wallpaper
 exec ~/bin/change-desktop-wallpaper.py &
 
+#replace mate notification daemon with xfce notification daemon:
 killall mate-notification-daemon &> /dev/null
 exec /usr/lib/xfce4/notifyd/xfce4-notifyd &
