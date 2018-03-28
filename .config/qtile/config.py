@@ -226,7 +226,7 @@ screens = [
                 widget.GenPollText(func=get_freeswap, update_interval=5, foreground='00FFBB'),
                 widget.GenPollText(func=get_updates, update_interval=5, foreground='FFFF7F'),
                 widget.GenPollText(func=get_keyboardlayout, update_interval=1, foreground='FFAA7F'),
-                widget.GenPollText(func=get_jdatetime, update_interval=1, foreground='A1C0FF'),
+                widget.GenPollText(func=get_jdatetime, update_interval=1, foreground='B1D0FF'),
                 widget.Systray(),
                 widget.Spacer(length=3)
             ],
@@ -292,4 +292,3 @@ def autostart():
             f.write(
                 datetime.now().strftime('%Y-%m-%dT%H:%M') +
                 'There was an error\n')
-
