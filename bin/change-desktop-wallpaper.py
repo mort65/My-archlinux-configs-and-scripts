@@ -9,17 +9,15 @@ import subprocess
 import platform
 import ctypes
 
-time.sleep(10)
-
 home_dir = os.path.expanduser('~')
-image_dirs = [r'',] #wallpaper directories (default: ~/Pictures)
+image_dirs = [r'/home/mohsen/Pictures/Desktop',] #wallpaper directories (default: ~/Pictures)
 exclusions = [] #excluded files and directories
 min_size = 10 #KiB
 patterns = [r'^.*\.[Jj][Pp][Ee]?[Gg]$', r'^.*\.[Pp][Nn][Gg]$', r'^.*\.[Bb][Mm][Pp]$']
 log_path = os.path.join(home_dir,'.change-desktop-wallpaper', '.prev_wallpapers')
 images = []
 PLATFORMS = ("windows","linux")
-DESKTOPS = ("i3", "openbox", "xfce4", "plasma", "gnome")
+DESKTOPS = ("i3", "openbox", "qtile", "xfce4", "plasma", "gnome")
 platform = platform.system().lower()
 desktop = ''
 
@@ -37,6 +35,8 @@ def get_desktop():
         return "gnome"
     elif "i3" in desktop_session:
         return "i3"
+    elif "qtile" in desktop_session:
+        return "qtile"
     elif "openbox" in desktop_session:
         return "openbox"
     else:
@@ -174,7 +174,7 @@ elif platform == "linux":
     elif desktop == "gnome":
         args = ["gsettings", "set", "org.gnome.desktop.background", "picture-uri", "file://{}".format(image)]
         subprocess.Popen(args)
-    elif desktop == "openbox" or desktop == "i3":
+    elif desktop == "openbox" or desktop == "i3" or desktop == "qtile":
         args = ["/usr/bin/feh", "-q", "--bg-fill", image]
         subprocess.Popen(args)
 
