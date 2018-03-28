@@ -17,11 +17,6 @@ exec /usr/bin/volumeicon &
 exec /usr/bin/clipit &
 exec /usr/bin/indicator-kdeconnect &
 exec /usr/bin/udiskie -2 -s &
-
-#Start dropbox
-#exec ~/.dropbox-dist/dropboxd &
-#exec /usr/bin/sudo bash -c "echo 100000 > /proc/sys/fs/inotify/max_user_watches" &
-
 exec ~/bin/enablenotifyforcronie &
 exec ~/bin/logupdates &
 
