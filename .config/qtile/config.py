@@ -221,7 +221,7 @@ screens = [
                                ),
                 widget.Prompt(prompt="{0}@{1}: ".format(os.environ["USER"], hostname), cursor_color='33FF00',foreground='C1F2E4'),
                 widget.WindowName(foreground='81B2A4'),
-                widget.Net(interface='auto',foreground='FFAAFF'),
+                widget.Net(interface='enp3s0',foreground='FFAAFF'),
                 widget.GenPollText(func=get_ctemp, update_interval=5, foreground='66C5FF'),
                 widget.GenPollText(func=get_gtemp, update_interval=5, foreground='66C5FF'),
                 widget.GenPollText(func=get_freemem, update_interval=5, foreground='00FFBB'),
