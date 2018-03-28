@@ -1,0 +1,32 @@
+#!/bin/bash
+#This script displays temperature of GPU
+
+TEMP=$(/usr/bin/sensors \
+| /usr/bin/grep -e '^temp1:[[:space:]]*+[0-9]*\.[0-9]*°C[[:space:]]*(crit[[:space:]]=[[:space:]]+[0-9]*\.[0-9]*°C,[[:space:]]hyst[[:space:]]=[[:space:]]+[0-9]*\.[0-9]*°C)$' \
+| /usr/bin/sed -e "s/temp1: *+//" \
+| /usr/bin/sed -e "s/ *(.*//")
+if [[ ! $TEMP =~ ^[0-9]+\.[0-9]+°C$ ]]; then
+    TEMP=$(/usr/bin/sensors \
+    | /usr/bin/awk '/temp1:.*crit.*hyst/ {print $2 }' \
+    | /usr/bin/awk 'NR==1' \
+    | /usr/bin/sed -e "s/[^0-9.°C]//")
+    if [[ ! $TEMP =~ ^[0-9]+\.[0-9]+°C$ ]]; then
+        TEMP=$(/usr/bin/sensors \
+        | /usr/bin/grep 'temp1' \
+        | /usr/bin/awk 'NR==2' \
+        | /usr/bin/cut -c 16-22)
+        if [[ ! $TEMP =~ ^[0-9]+\.[0-9]+°C$ ]]; then
+            TEMP=$(/usr/bin/sensors \
+            | /usr/bin/grep 'temp1' \
+            | /usr/bin/awk 'NR==2' \
+            | /usr/bin/sed -e "s/temp1: *+//" \
+            | /usr/bin/sed -e "s/ *(.*//")
+            if [[ ! $TEMP =~ ^[0-9]+\.[0-9]+°C$ ]]; then
+                exit 1
+            fi
+        fi  
+    fi
+fi  
+echo "${TEMP}"
+exit 0
+
