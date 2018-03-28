@@ -34,6 +34,6 @@
 /usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1 &
 #/usr/bin/nitrogen --restore &
 
-#replace current notification daemon with xfce notification daemon:
-killall notification-daemon &> /dev/null
+#replace mate notification daemon with xfce notification daemon:
+killall mate-notification-daemon &> /dev/null
 /usr/lib/xfce4/notifyd/xfce4-notifyd &
