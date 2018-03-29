@@ -29,12 +29,11 @@ from libqtile.command import lazy
 from libqtile import layout, bar, widget, hook
 import os
 import subprocess
-import socket
+
 #mod1=Alt,mod4=Super
 mod = "mod4"
 term = "/usr/bin/urxvt"
 home = os.path.expanduser('~')
-hostname = socket.gethostname()
 
 @lazy.function
 def window_to_prev_group(qtile):
@@ -185,9 +184,9 @@ layout_style = {
 }
 
 layouts = [
+    layout.Stack(num_stacks=2,**layout_style),
     layout.MonadTall(**layout_style),
     layout.MonadWide(**layout_style),
-    layout.Stack(num_stacks=2,**layout_style),
     layout.Tile(**layout_style),
     layout.Bsp(**layout_style),
    #layout.Matrix(**layout_style),
@@ -315,4 +314,3 @@ def autostart():
             f.write(
                 datetime.now().strftime('%Y-%m-%dT%H:%M') +
                 'There was an error\n')
-
