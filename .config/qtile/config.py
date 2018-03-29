@@ -184,12 +184,12 @@ layout_style = {
 }
 
 layouts = [
-    layout.Stack(num_stacks=2,**layout_style),
-    layout.MonadTall(**layout_style),
-    layout.MonadWide(**layout_style),
     layout.Tile(**layout_style),
+    layout.Stack(num_stacks=2,**layout_style),
     layout.Bsp(**layout_style),
    #layout.Matrix(**layout_style),
+    layout.MonadTall(**layout_style),
+    layout.MonadWide(**layout_style),
     layout.Zoomy(**layout_style),
     layout.Max(**layout_style),
     #layout.Floating(**layout_style),
