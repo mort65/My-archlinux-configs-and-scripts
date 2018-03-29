@@ -52,14 +52,19 @@ keys = [
     # Switch between windows in current stack pane
     Key([mod], "k", lazy.layout.down()),
     Key([mod], "j", lazy.layout.up()),
+    Key([mod], "l", lazy.layout.right()),
+    Key([mod], "h", lazy.layout.left()),
 
     # Move windows up or down in current stack
-    Key([mod, "shift"], "k", lazy.layout.shuffle_down()),
-    Key([mod, "shift"], "j", lazy.layout.shuffle_up()),
+    Key([mod, "shift"], "k", lazy.layout.shuffle_up()),
+    Key([mod, "shift"], "j", lazy.layout.shuffle_down()),
+
+    Key([mod, "shift"], "l", lazy.layout.shuffle_right()),
+    Key([mod, "shift"], "h", lazy.layout.shuffle_left()),
 
     # Switch window focus to other pane(s) of stack
     Key(["mod1"], "Tab", lazy.layout.next()),
-    Key([mod], "space", lazy.layout.previous()),
+    Key(["mod1"], "space", lazy.layout.previous()),
     
     Key([mod], "f", lazy.window.toggle_fullscreen()),
     Key([mod, "shift"], "f", lazy.window.toggle_floating()),
@@ -71,33 +76,43 @@ keys = [
     Key([mod], "Right", lazy.screen.next_group()),
     
     Key([mod, "control"], "l", 
-        lazy.layout.delete(),
+        lazy.layout.grow_right(),
+        lazy.layout.grow(),
         lazy.layout.increase_ratio(),
-        lazy.layout.grow()
+        lazy.layout.delete(),
     ),
     Key([mod, "control"], "h", 
-        lazy.layout.add(),
+        lazy.layout.grow_left(),
+        lazy.layout.shrink(),
         lazy.layout.decrease_ratio(),
-        lazy.layout.shrink()
+        lazy.layout.add(),
     ),
 
     Key([mod, "control"], "k", 
+        lazy.layout.grow_up(),
         lazy.layout.grow(),
-        lazy.layout.decrease_nmaster()
+        lazy.layout.decrease_nmaster(),
     ),
     
     Key([mod, "control"], "j", 
+        lazy.layout.grow_down(),
         lazy.layout.shrink(),
-        lazy.layout.increase_nmaster()
+        lazy.layout.increase_nmaster(),
     ),
     
-    Key([mod, "control"], "m", 
-        lazy.layout.maximize()
+    Key([mod], "m", 
+        lazy.layout.maximize(),
     ),
     
-    Key([mod, "control"], "n", 
-        lazy.layout.normalize()
+    Key([mod], "n", 
+        lazy.layout.normalize(),
     ),
+    
+    Key([mod, "mod1"], "k", lazy.layout.flip_up()),
+    Key([mod, "mod1"], "j", lazy.layout.flip_down()),
+
+    Key([mod, "mod1"], "l", lazy.layout.flip_right()),
+    Key([mod, "mod1"], "h", lazy.layout.flip_left()),
     
     # Swap panes of split stack
     Key([mod, "shift"], "space", 
@@ -112,6 +127,7 @@ keys = [
 
     # Toggle between different layouts as defined below
     Key([mod], "Tab", lazy.next_layout()),
+    Key([mod], "space", lazy.prev_layout()),
     Key([mod, "shift"], "x", lazy.window.kill()),
 
     Key([mod, "shift"], "r", lazy.restart()),
@@ -122,13 +138,13 @@ keys = [
     Key([mod], "g", lazy.switchgroup()),
     
     # Applications
-    Key([mod], "d", lazy.spawn("/usr/bin/dmenu_run")),
-    Key([mod], "e", lazy.spawn("/usr/bin/geany")),
-    Key([mod], "l", lazy.spawn("/usr/bin/leafpad")),
+    Key([mod], "d", lazy.spawn("/usr/bin/rofi -modi run,drun -show drun run")),
+    Key([mod], "e", lazy.spawn("/usr/bin/leafpad")),
+    Key([mod, "shift"], "e", lazy.spawn("/usr/bin/geany")),
     Key([mod], "Home", lazy.spawn("/usr/bin/pcmanfm")),
     Key([mod, "shift"], "Home", lazy.spawn(term + " -e '/usr/bin/ranger'")),
-    Key([mod], "m", lazy.spawn("/usr/bin/pragha")),
-    Key([mod, "shift"], "m", lazy.spawn(term + " -e '/usr/bin/cmus'")),
+    Key([mod], "p", lazy.spawn("/usr/bin/pragha")),
+    Key([mod], "c", lazy.spawn(term + " -e '/usr/bin/cmus'")),
     Key([mod], "w", lazy.spawn("/usr/bin/firefox")),
     Key([mod], "i", lazy.spawn("/usr/bin/pamac-manager")),
 
@@ -160,23 +176,28 @@ for i in groups:
     ])
 
 layout_style = {
-    'border_normal' : '#000000',
-    'border_focus' : '#008080',
+    'font' : 'ubuntu',
     'margin' : 2,
     'border_width' : 1,
+    'border_normal' : '000000',
+    'border_focus' : '0000FF',
     
 }
 
 layouts = [
     layout.MonadTall(**layout_style),
-    layout.Tile(**layout_style),
+    layout.MonadWide(**layout_style),
     layout.Stack(num_stacks=2,**layout_style),
+    layout.Tile(**layout_style),
+    layout.Bsp(**layout_style),
+   #layout.Matrix(**layout_style),
+    layout.Zoomy(**layout_style),
     layout.Max(**layout_style),
-    #layout.Floating(**layout_style)
+    #layout.Floating(**layout_style),
 ]
 
 widget_defaults = dict(
-    font='sans',
+    font='ubuntu',
     fontsize=12,
     padding=3,
 )
@@ -219,8 +240,8 @@ screens = [
                                 highlight_method='line',
                                 highlight_color=['20262A','060A0F']
                                ),
-                widget.Prompt(prompt="{0}@{1}: ".format(os.environ["USER"], hostname), cursor_color='33FF00',foreground='C1F2E4'),
-                widget.WindowName(foreground='81B2A4'),
+                widget.Prompt(fontsize=13,cursor_color='FFFFFF',foreground='FAF0A8',background='271B1B'),
+                widget.WindowName(foreground='89BAAC'),
                 widget.Net(interface='enp3s0',foreground='FFAAFF'),
                 widget.GenPollText(func=get_ctemp, update_interval=5, foreground='66C5FF'),
                 widget.GenPollText(func=get_gtemp, update_interval=5, foreground='66C5FF'),
@@ -232,7 +253,7 @@ screens = [
                 widget.Systray(),
                 widget.Spacer(length=3)
             ],
-            24,
+            22,
             background=['20262A','060A0F'],
             opacity=0.90,
         ),
@@ -294,3 +315,4 @@ def autostart():
             f.write(
                 datetime.now().strftime('%Y-%m-%dT%H:%M') +
                 'There was an error\n')
+
