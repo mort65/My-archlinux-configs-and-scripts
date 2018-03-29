@@ -35,17 +35,52 @@ mod = "mod4"
 term = "/usr/bin/urxvt"
 home = os.path.expanduser('~')
 
-@lazy.function
-def window_to_prev_group(qtile):
-    if qtile.currentWindow is not None:
-        i = qtile.groups.index(qtile.currentGroup)
-        qtile.currentWindow.togroup(qtile.groups[i - 1].name)
+def window_to_prev_group():
+    @lazy.function
+    def __inner(qtile):
+        if qtile.currentWindow is not None:
+            i = qtile.groups.index(qtile.currentGroup)
+            if i > 0:
+                qtile.currentWindow.togroup(qtile.groups[i - 1].name)
+            else:
+                qtile.currentWindow.togroup(qtile.groups[len(qtile.groups) - 1].name)
+    return __inner
 
-@lazy.function
-def window_to_next_group(qtile):
-    if qtile.currentWindow is not None:
-        i = qtile.groups.index(qtile.currentGroup)
-        qtile.currentWindow.togroup(qtile.groups[i + 1].name)
+def window_to_next_group():
+    @lazy.function
+    def __inner(qtile):
+        if qtile.currentWindow is not None:
+            i = qtile.groups.index(qtile.currentGroup)
+            if i < len(qtile.groups) - 1:
+                qtile.currentWindow.togroup(qtile.groups[i + 1].name)
+            else:
+                qtile.currentWindow.togroup(qtile.groups[0].name)
+    return __inner
+
+def window_to_prev_screen():
+    @lazy.function
+    def _inner(qtile):
+        if qtile.currentScreen is not None:
+            if qtile.currentWindow is not None:
+                i = qtile.screens.index(qtile.currentScreen)
+                if i > 0:
+                    qtile.currentWindow.togroup(qtile.screens[i - 1].group.name)
+                else:
+                    qtile.currentWindow.togroup(qtile.screens[len(qtile.screens) - 1].group.name)
+    return __inner
+
+def window_to_next_screen():
+    @lazy.function
+    def _inner(qtile):
+        if qtile.currentScreen is not None:
+            if qtile.currentWindow is not None:
+                i = qtile.screens.index(qtile.currentScreen)
+                if i < len(qtile.screens) - 1:
+                    qtile.currentWindow.togroup(qtile.screens[i + 1].group.name)
+            else:
+                qtile.currentWindow.togroup(qtile.screens[0].group.name)
+    return __inner
+
 
 keys = [
     # Switch between windows in current stack pane
@@ -68,8 +103,8 @@ keys = [
     Key([mod], "f", lazy.window.toggle_fullscreen()),
     Key([mod, "shift"], "f", lazy.window.toggle_floating()),
    
-    Key([mod, "shift"], "Left", window_to_prev_group),
-    Key([mod, "shift"], "Right", window_to_next_group),
+    Key([mod, "shift"], "Left", window_to_prev_group()),
+    Key([mod, "shift"], "Right", window_to_next_group()),
    
     Key([mod], "Left", lazy.screen.prev_group()),
     Key([mod], "Right", lazy.screen.next_group()),
@@ -163,17 +198,6 @@ keys = [
     Key([], "XF86AudioRaiseVolume", lazy.spawn("/usr/bin/pactl set-sink-volume alsa_output.pci-0000_00_1b.0.analog-stereo +5%"))
 ]
 
-groups = [Group(i) for i in "1234567890"]
-
-for i in groups:
-    keys.extend([
-        # mod1 + letter of group = switch to group
-        Key([mod], i.name, lazy.group[i.name].toscreen()),
-
-        # mod1 + shift + letter of group = switch to & move focused window to group
-        Key([mod, "shift"], i.name, lazy.window.togroup(i.name)),
-    ])
-
 layout_style = {
     'font' : 'ubuntu',
     'margin' : 2,
@@ -194,6 +218,29 @@ layouts = [
     layout.Max(**layout_style),
     #layout.Floating(**layout_style),
 ]
+
+
+groups = [
+    Group('1'),
+    Group('2', layout='max'),
+    Group('3'),
+    Group('4'),
+    Group('5'),
+    Group('6'),
+    Group('7'),
+    Group('8'),
+    Group('9'),
+    Group('0'),
+    ]
+
+for i in groups:
+    keys.extend([
+        # mod1 + letter of group = switch to group
+        Key([mod], i.name, lazy.group[i.name].toscreen()),
+
+        # mod1 + shift + letter of group = switch to & move focused window to group
+        Key([mod, "shift"], i.name, lazy.window.togroup(i.name)),
+    ])
 
 widget_defaults = dict(
     font='ubuntu',
@@ -302,6 +349,26 @@ focus_on_window_activation = "smart"
 # We choose LG3D to maximize irony: it is a 3D non-reparenting WM written in
 # java that happens to be on java's whitelist.
 wmname = "LG3D"
+
+@hook.subscribe.client_new
+def set_floating(window):
+    floating_types = ["notification", "toolbar", "splash", "dialog"]
+    floating_roles = ["EventDialog", "Msgcompose", "Preferences"]
+    floating_names = ["Terminator Preferences", "Search Dialog",
+                      "Module", "Goto", "IDLE Preferences", "Sozi",
+                      "Create new database",
+                     ]
+    if (window.window.get_wm_type() in floating_types
+        or window.window.get_wm_window_role() in floating_roles
+        or window.window.get_name() in floating_names
+        or window.window.get_wm_transient_for()):
+        window.floating = True
+
+@hook.subscribe.client_new
+def libreoffice_dialogues(window):
+    if((window.window.get_wm_class() == ('VCLSalFrame', 'libreoffice-calc')) or
+    (window.window.get_wm_class() == ('VCLSalFrame', 'LibreOffice 3.4'))):
+        window.floating = True
 
 # Qtile startup commands, not repeated at qtile restart
 @hook.subscribe.startup_once
