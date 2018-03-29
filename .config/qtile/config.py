@@ -186,10 +186,10 @@ layout_style = {
 layouts = [
     layout.Tile(**layout_style),
     layout.Stack(num_stacks=2,**layout_style),
-    layout.Bsp(**layout_style),
-   #layout.Matrix(**layout_style),
     layout.MonadTall(**layout_style),
     layout.MonadWide(**layout_style),
+    layout.Bsp(**layout_style),
+   #layout.Matrix(**layout_style),
     layout.Zoomy(**layout_style),
     layout.Max(**layout_style),
     #layout.Floating(**layout_style),
@@ -314,3 +314,4 @@ def autostart():
             f.write(
                 datetime.now().strftime('%Y-%m-%dT%H:%M') +
                 'There was an error\n')
+
