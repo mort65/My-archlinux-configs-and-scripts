@@ -3,11 +3,11 @@
 
 import os
 import re
-import time
 import random
 import subprocess
 import platform
 import ctypes
+
 
 home_dir = os.path.expanduser('~')
 image_dirs = [r'/home/mohsen/Pictures/Desktop',] #wallpaper directories (default: ~/Pictures)
