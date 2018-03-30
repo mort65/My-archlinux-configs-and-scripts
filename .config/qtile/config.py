@@ -475,7 +475,7 @@ focus_on_window_activation = "smart"
 wmname = "LG3D"
 
 @hook.subscribe.client_managed
-def change_group(window):
+def goto_group(window):
     if (window.window.get_wm_class()[1] in wm_groups.keys()
     or window.window.get_wm_window_role() in wm_roles.keys()):
         window.group.cmd_toscreen()
