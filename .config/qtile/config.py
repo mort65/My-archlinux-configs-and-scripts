@@ -24,16 +24,132 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-from libqtile.config import Key, Screen, Group, Drag, Click
-from libqtile.command import lazy
+from libqtile.config import Key, Screen, Group, Drag, Click, Match, Rule
+from libqtile.command import lazy,Client
 from libqtile import layout, bar, widget, hook
 import os
 import subprocess
 
-#mod1=Alt,mod4=Super
 mod = "mod4"
 term = "/usr/bin/urxvt"
 home = os.path.expanduser('~')
+client=Client()
+
+wm_groups = {
+    "luakit" : "2", "Firefox" : "2","Opera" : "2","Google-chrome" : "2",
+    "Chromium" : "2","Vivaldi-stable" : "2","Midori" : "2", "Dillo" : "2",
+    "Netsurf-gtk3" : "2","QupZilla" : "2", "Uget-gtk" : "2","Tor Browser" : "2",
+    "Waterfox" : "2", "UXTerm" : "3","URxvt" : "3","Terminator" : "3",
+    "Urxvt-tabbed" : "3","Urxvt" : "3","Termite" : "3", "mlterm" : "3",
+    "Pcmanfm" : "4","Thunar" : "4","dolphin" : "4", "Caja" : "4",
+    "Catfish" : "4", "Zathura" : "5", "libreoffice-writer" : "5","libreoffice" : "5",
+    "Leafpad" : "5","kate" : "5","Pluma" : "5","Mousepad" : "5",
+    "kwrite" : "5", "Geany" : "5","Gedit" : "5","Code" : "5",
+    "Atom" : "5", "Gimp" : "6","Gthumb" : "6", "org.kde.gwenview" : "6",
+    "Ristretto" : "6","lximage-qt" : "6", "Eom" : "6", "Gpicview" : "6", 
+    "vlc" : "7","xv/mplayer" : "7", "Clementine" : "7", "MPlayer" : "7",
+    "smplayer" : "7","mpv" : "7", "Gnome-mpv" : "7","Rhythmbox" : "7",
+    "Pragha" : "7",  "Steam" : "8","Wine" : "8","Zenity" : "8",
+    "PlayOnLinux" : "8", "VirtualBox" : "9", "okular" : "9", "calibre" : "9", 
+    "octopi" : "9", "Pamac-updater" : "9", "Pamac-manager" : "9", "Lxtask" : "9", 
+    "Dukto" : "9","QuiteRss" : "9", "Filezilla" : "9",
+    }
+wm_roles = {
+    "browser" : "2"
+    }
+
+group_labels = [
+    "🏠", "🌎", "",
+    "📁", "📓", "",
+    "", "🎮", "🌸",
+    "🌑", 
+    ]
+    
+group_names = [ 
+    "1", "2", "3",
+    "4", "5", "6",
+    "7", "8", "9",
+    "0",
+    ]
+    
+group_exclusives = [
+    False,False,False,
+    False,False,False,
+    False,False,False,
+    False,
+    ]
+group_persists = [
+    True, True, True,
+    True, True, True,
+    True, True, True,
+    True,
+    ]
+group_inits = [
+    True, True, True,
+    True, True, True,
+    True, True, True,
+    True,
+    ]
+    
+group_layouts = [
+    "tile", "max", "monadwide",
+    "zoomy", "stack", "zoomy",
+    "max", "max", "columns", 
+    "bsp",
+]
+
+group_matches = [
+    None,
+    [ Match(wm_class=[
+    "luakit","Firefox","Opera","Google-chrome",
+    "Chromium","Vivaldi-stable","Midori",
+    "Dillo","Netsurf-gtk3","QupZilla",
+    "Uget-gtk","Tor Browser","Waterfox",
+    ],role=["browser"]),],
+
+    [ Match(wm_class=[
+    "UXTerm","URxvt","Terminator",
+    "Urxvt-tabbed","Urxvt","Termite",
+    "mlterm",
+    ]),],
+
+    [ Match(wm_class=[
+    "Pcmanfm","Thunar","dolphin",
+    "Caja","Catfish",
+    ]),],
+
+    [ Match(wm_class=[
+    "Zathura","libreoffice-writer","libreoffice",
+    "Leafpad","kate","Pluma","Mousepad","kwrite",
+    "Geany","Gedit","Code","Atom",
+    ],),],
+
+    [ Match(wm_class=[
+    "Gimp","Gthumb","org.kde.gwenview",
+    "Ristretto","lximage-qt","Eom",
+    "Gpicview",
+    ]),],
+
+    [ Match(wm_class=[
+    "vlc","xv/mplayer","Clementine",
+    "MPlayer","smplayer","mpv",
+    "Gnome-mpv","Rhythmbox","Pragha",
+    ]),],
+    
+    [ Match(wm_class=[
+    "Steam","Wine","Zenity",
+    "PlayOnLinux",
+    ]),],
+
+    [ Match(wm_class=[
+    "VirtualBox","okular","calibre",
+    "octopi","Pamac-updater",
+    "Pamac-manager","Lxtask",
+    "Dukto","QuiteRss",
+    "Filezilla",
+    ]),],
+    None,
+    ]
 
 def window_to_prev_group():
     @lazy.function
@@ -80,7 +196,10 @@ def window_to_next_screen():
             else:
                 qtile.currentWindow.togroup(qtile.screens[0].group.name)
     return __inner
+    
 
+def get_group_key():
+    return client.group.info()['name']
 
 keys = [
     # Switch between windows in current stack pane
@@ -209,7 +328,8 @@ layout_style = {
 
 layouts = [
     layout.Tile(**layout_style),
-    layout.Stack(num_stacks=2,**layout_style),
+    layout.Columns(num_columns=2,autosplit=True,**layout_style),
+    layout.Stack(num_stacks=1,**layout_style),
     layout.MonadTall(**layout_style),
     layout.MonadWide(**layout_style),
     layout.Bsp(**layout_style),
@@ -219,19 +339,20 @@ layouts = [
     #layout.Floating(**layout_style),
 ]
 
+groups = []
 
-groups = [
-    Group('1'),
-    Group('2', layout='max'),
-    Group('3'),
-    Group('4'),
-    Group('5'),
-    Group('6'),
-    Group('7'),
-    Group('8'),
-    Group('9'),
-    Group('0'),
-    ]
+
+for i in range(len(group_names)):
+    groups.append(
+    Group(
+    name = group_names[i],
+    matches = group_matches[i],
+    exclusive = group_exclusives[i],
+    layout = group_layouts[i].lower(),
+    persist = group_persists[i],
+    init = group_inits[i],
+    label = group_labels[i],
+    ))
 
 for i in groups:
     keys.extend([
@@ -241,6 +362,7 @@ for i in groups:
         # mod1 + shift + letter of group = switch to & move focused window to group
         Key([mod, "shift"], i.name, lazy.window.togroup(i.name)),
     ])
+
 
 widget_defaults = dict(
     font='ubuntu',
@@ -280,6 +402,7 @@ screens = [
         bottom=bar.Bar(
             [
                 widget.CurrentLayoutIcon(scale=0.8),
+                widget.GenPollText(func=get_group_key, update_interval=0.5, foreground='DFE8EB',padding=1,fontsize=12),
                 widget.GroupBox(active='EFF8FB',inactive='8F888B',
                                 this_current_screen_border='00BCD4',
                                 this_screen_border='00BCD4',
@@ -351,6 +474,13 @@ focus_on_window_activation = "smart"
 # java that happens to be on java's whitelist.
 wmname = "LG3D"
 
+@hook.subscribe.client_managed
+def change_group(window):
+    if (window.window.get_wm_class()[1] in wm_groups.keys()
+    or window.window.get_wm_window_role() in wm_roles.keys()):
+        window.group.cmd_toscreen()
+
+
 @hook.subscribe.client_new
 def set_floating(window):
     floating_types = ["notification", "toolbar", "splash", "dialog"]
@@ -382,4 +512,3 @@ def autostart():
             f.write(
                 datetime.now().strftime('%Y-%m-%dT%H:%M') +
                 'There was an error\n')
-
