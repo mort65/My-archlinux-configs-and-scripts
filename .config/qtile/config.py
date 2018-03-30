@@ -25,6 +25,7 @@
 # SOFTWARE.
 
 from libqtile.config import Key, Screen, Group, Drag, Click, Match, Rule
+#from libqtile.config import ScratchPad, DropDown
 from libqtile.command import lazy,Client
 from libqtile import layout, bar, widget, hook
 import os
@@ -41,7 +42,7 @@ wm_groups = {
     "Netsurf-gtk3" : "2","QupZilla" : "2", "Uget-gtk" : "2","Tor Browser" : "2",
     "Waterfox" : "2", "UXTerm" : "3","URxvt" : "3","Terminator" : "3",
     "Urxvt-tabbed" : "3","Urxvt" : "3","Termite" : "3", "mlterm" : "3",
-    "Pcmanfm" : "4","Thunar" : "4","dolphin" : "4", "Caja" : "4",
+    "XTerm" : "3", "Pcmanfm" : "4","Thunar" : "4","dolphin" : "4", "Caja" : "4",
     "Catfish" : "4", "Zathura" : "5", "libreoffice-writer" : "5","libreoffice" : "5",
     "Leafpad" : "5","kate" : "5","Pluma" : "5","Mousepad" : "5",
     "kwrite" : "5", "Geany" : "5","Gedit" : "5","Code" : "5",
@@ -53,43 +54,43 @@ wm_groups = {
     "PlayOnLinux" : "8", "VirtualBox" : "9", "okular" : "9", "calibre" : "9", 
     "octopi" : "9", "Pamac-updater" : "9", "Pamac-manager" : "9", "Lxtask" : "9", 
     "Dukto" : "9","QuiteRss" : "9", "Filezilla" : "9",
-    }
+}
 wm_roles = {
     "browser" : "2"
-    }
+}
 
 group_labels = [
     "🏠", "🌎", "",
     "📁", "📓", "",
     "", "🎮", "🌸",
     "🌑", 
-    ]
+]
     
 group_names = [ 
     "1", "2", "3",
     "4", "5", "6",
     "7", "8", "9",
     "0",
-    ]
+]
     
 group_exclusives = [
     False,False,False,
     False,False,False,
     False,False,False,
     False,
-    ]
+]
 group_persists = [
     True, True, True,
     True, True, True,
     True, True, True,
     True,
-    ]
+]
 group_inits = [
     True, True, True,
     True, True, True,
     True, True, True,
     True,
-    ]
+]
     
 group_layouts = [
     "tile", "max", "monadwide",
@@ -110,7 +111,7 @@ group_matches = [
     [ Match(wm_class=[
     "UXTerm","URxvt","Terminator",
     "Urxvt-tabbed","Urxvt","Termite",
-    "mlterm",
+    "mlterm", "XTerm",
     ]),],
 
     [ Match(wm_class=[
@@ -149,7 +150,7 @@ group_matches = [
     "Filezilla",
     ]),],
     None,
-    ]
+]
 
 def window_to_prev_group():
     @lazy.function
@@ -362,6 +363,27 @@ for i in groups:
         # mod1 + shift + letter of group = switch to & move focused window to group
         Key([mod, "shift"], i.name, lazy.window.togroup(i.name)),
     ])
+    
+#groups.append(   
+#    ScratchPad("scratchpad", [
+        # define a drop down terminal.
+        # it is placed in the upper third of screen by default.
+#        DropDown("term", "urxvt", opacity=0.9),
+
+        # define another terminal exclusively for qshell at different position
+#        DropDown("qshell", "urxvt -hold -e qshell",
+#                 x=0.05, y=0.4, width=0.9, height=0.6, opacity=0.9,
+#                 on_focus_lost_hide=True) ]), 
+#)
+
+#keys.extend ([
+#    # Scratchpad
+#    # toggle visibiliy of above defined DropDown named "term"
+#    Key([], 'F11', lazy.group['scratchpad'].dropdown_toggle('term')),
+#    Key([], 'F12', lazy.group['scratchpad'].dropdown_toggle('qshell')),
+
+#])
+
 
 
 widget_defaults = dict(
@@ -460,6 +482,10 @@ floating_layout = layout.Floating(float_rules=[
     {'wname': 'pinentry'},  # GPG key password entry
     {'wmclass': 'ssh-askpass'},  # ssh-askpass
     {'wmclass': 'Dukto'},  # Dukto
+    {'wmclass': 'Guake'},  # Guake
+    {'wmclass': 'Tilda'},  # Tilda
+    {'wmclass': 'yakuake'},  #yakuake
+    
 ])
 auto_fullscreen = True
 focus_on_window_activation = "smart"
