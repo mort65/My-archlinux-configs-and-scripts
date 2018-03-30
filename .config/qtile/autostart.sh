@@ -17,6 +17,7 @@ exec /usr/bin/volumeicon &
 exec /usr/bin/clipit &
 exec /usr/bin/indicator-kdeconnect &
 exec /usr/bin/udiskie -2 -s &
+exec /usr/bin/guake &
 exec ~/bin/enablenotifyforcronie &
 exec ~/bin/logupdates &
 
