@@ -26,7 +26,7 @@
 
 from libqtile.config import Key, Screen, Group, Drag, Click, Match
 from libqtile.config import ScratchPad, DropDown
-from libqtile.command import lazy,Client
+from libqtile.command import lazy, Client
 from libqtile import layout, bar, widget, hook
 import os
 import subprocess
@@ -36,7 +36,7 @@ term = "/usr/bin/urxvt"
 home = os.path.expanduser('~')
 client=Client()
 
-wm_groups = {
+wm_class_groups = {
     "luakit" : "2", "Firefox" : "2","Opera" : "2","Google-chrome" : "2",
     "Chromium" : "2","Vivaldi-stable" : "2","Midori" : "2", "Dillo" : "2",
     "Netsurf-gtk3" : "2","QupZilla" : "2", "Uget-gtk" : "2","Tor Browser" : "2",
@@ -55,7 +55,7 @@ wm_groups = {
     "octopi" : "9", "Pamac-updater" : "9", "Pamac-manager" : "9", "Lxtask" : "9", 
     "Dukto" : "9","QuiteRss" : "9", "Filezilla" : "9",
 }
-wm_roles = {
+wm_role_groups = {
     "browser" : "2"
 }
 
@@ -152,10 +152,10 @@ group_matches = [
     None,
 ]
 
-date_command = "/usr/bin/date"
+date_command = ["/usr/bin/date", "+%a %D"]
 
 if os.path.exists("/usr/bin/jdate"):
-    date_command = "/usr/bin/jdate"
+    date_command = ["/usr/bin/jdate", "+%h %D"]
 
 def window_to_prev_group():
     @lazy.function
@@ -398,7 +398,7 @@ widget_defaults = dict(
 extension_defaults = widget_defaults.copy()
 
 def get_jdate():
-    return '📅 ' + subprocess.check_output([date_command, '+%h %D']).decode('utf-8').strip()
+    return '📅 ' + subprocess.check_output(date_command).decode('utf-8').strip()
 def get_time():
     return ' ⏰ ' + subprocess.check_output(['/usr/bin/date', '+%I:%M %p']).decode('utf-8').strip()
 
@@ -555,8 +555,8 @@ def set_floating(window):
 
 @hook.subscribe.client_managed
 def goto_group(window):
-    if (window.window.get_wm_class()[1] in wm_groups.keys()
-    or window.window.get_wm_window_role() in wm_roles.keys()):
+    if (window.window.get_wm_class()[1] in wm_class_groups.keys()
+    or window.window.get_wm_window_role() in wm_role_groups.keys()):
         window.group.cmd_toscreen()
 
 # Qtile startup commands, not repeated at qtile restart
