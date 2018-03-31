@@ -24,8 +24,8 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-from libqtile.config import Key, Screen, Group, Drag, Click, Match, Rule
-#from libqtile.config import ScratchPad, DropDown
+from libqtile.config import Key, Screen, Group, Drag, Click, Match
+from libqtile.config import ScratchPad, DropDown
 from libqtile.command import lazy,Client
 from libqtile import layout, bar, widget, hook
 import os
@@ -41,7 +41,7 @@ wm_groups = {
     "Chromium" : "2","Vivaldi-stable" : "2","Midori" : "2", "Dillo" : "2",
     "Netsurf-gtk3" : "2","QupZilla" : "2", "Uget-gtk" : "2","Tor Browser" : "2",
     "Waterfox" : "2", "UXTerm" : "3","URxvt" : "3","Terminator" : "3",
-    "Urxvt-tabbed" : "3","Urxvt" : "3","Termite" : "3", "mlterm" : "3",
+    "Urxvt-tabbed" : "3","Urxvt" : "3", "mlterm" : "3", "Lxterminal" : "3",
     "XTerm" : "3", "Pcmanfm" : "4","Thunar" : "4","dolphin" : "4", "Caja" : "4",
     "Catfish" : "4", "Zathura" : "5", "libreoffice-writer" : "5","libreoffice" : "5",
     "Leafpad" : "5","kate" : "5","Pluma" : "5","Mousepad" : "5",
@@ -94,7 +94,7 @@ group_inits = [
     
 group_layouts = [
     "tile", "max", "monadwide",
-    "zoomy", "stack", "zoomy",
+    "monadtall", "stack", "zoomy",
     "max", "max", "columns", 
     "bsp",
 ]
@@ -110,8 +110,8 @@ group_matches = [
 
     [ Match(wm_class=[
     "UXTerm","URxvt","Terminator",
-    "Urxvt-tabbed","Urxvt","Termite",
-    "mlterm", "XTerm",
+    "Urxvt-tabbed","Urxvt",
+    "XTerm", "mlterm", "Lxterminal",
     ]),],
 
     [ Match(wm_class=[
@@ -152,6 +152,11 @@ group_matches = [
     None,
 ]
 
+date_command = "/usr/bin/date"
+
+if os.path.exists("/usr/bin/jdate"):
+    date_command = "/usr/bin/jdate"
+
 def window_to_prev_group():
     @lazy.function
     def __inner(qtile):
@@ -160,7 +165,7 @@ def window_to_prev_group():
             if i > 0:
                 qtile.currentWindow.togroup(qtile.groups[i - 1].name)
             else:
-                qtile.currentWindow.togroup(qtile.groups[len(qtile.groups) - 1].name)
+                qtile.currentWindow.togroup(qtile.groups[len(qtile.groups) - 2].name)
     return __inner
 
 def window_to_next_group():
@@ -168,7 +173,7 @@ def window_to_next_group():
     def __inner(qtile):
         if qtile.currentWindow is not None:
             i = qtile.groups.index(qtile.currentGroup)
-            if i < len(qtile.groups) - 1:
+            if i < len(qtile.groups) - 2:
                 qtile.currentWindow.togroup(qtile.groups[i + 1].name)
             else:
                 qtile.currentWindow.togroup(qtile.groups[0].name)
@@ -364,25 +369,24 @@ for i in groups:
         Key([mod, "shift"], i.name, lazy.window.togroup(i.name)),
     ])
     
-#groups.append(   
-#    ScratchPad("scratchpad", [
+groups.append(   
+    ScratchPad("scratchpad", [
         # define a drop down terminal.
         # it is placed in the upper third of screen by default.
-#        DropDown("term", "urxvt", opacity=0.9),
+        DropDown("term", "/usr/bin/termite", opacity=0.88,height=0.55,width=0.80, ),
 
         # define another terminal exclusively for qshell at different position
-#        DropDown("qshell", "urxvt -hold -e qshell",
-#                 x=0.05, y=0.4, width=0.9, height=0.6, opacity=0.9,
-#                 on_focus_lost_hide=True) ]), 
-#)
+        #DropDown("qshell", "/usr/bin/termite -e qshell",
+        #         x=0.05, y=0.4, width=0.9, height=0.6, opacity=0.9,
+        #         on_focus_lost_hide=True) 
+]),)
 
-#keys.extend ([
-#    # Scratchpad
-#    # toggle visibiliy of above defined DropDown named "term"
-#    Key([], 'F11', lazy.group['scratchpad'].dropdown_toggle('term')),
-#    Key([], 'F12', lazy.group['scratchpad'].dropdown_toggle('qshell')),
-
-#])
+keys.extend ([
+    # Scratchpad
+    # toggle visibiliy of above defined DropDown named "term"
+    Key([], 'F12', lazy.group['scratchpad'].dropdown_toggle('term')),
+    #Key([], 'F11', lazy.group['scratchpad'].dropdown_toggle('qshell')),
+])
 
 
 
@@ -394,10 +398,9 @@ widget_defaults = dict(
 extension_defaults = widget_defaults.copy()
 
 def get_jdate():
-    return '📅 ' + subprocess.check_output(['/usr/bin/jdate', '+%h %D']).decode('utf-8').strip()
-
+    return '📅 ' + subprocess.check_output([date_command, '+%h %D']).decode('utf-8').strip()
 def get_time():
-    return ' ⏰ ' + subprocess.check_output(['/usr/bin/jdate', '+%I:%M %p']).decode('utf-8').strip()
+    return ' ⏰ ' + subprocess.check_output(['/usr/bin/date', '+%I:%M %p']).decode('utf-8').strip()
 
 def get_jdatetime():
     return (get_jdate() + get_time())
@@ -434,8 +437,8 @@ screens = [
                 widget.Prompt(fontsize=13,cursor_color='FFFFFF',foreground='FAF0A8',background='271B1B'),
                 widget.WindowName(foreground='89BAAC'),
                 widget.Net(interface='enp3s0',foreground='FFAAFF'),
-                widget.GenPollText(func=get_ctemp, update_interval=5, foreground='88D2FF'),
-                widget.GenPollText(func=get_gtemp, update_interval=5, foreground='88D2FF'),
+                widget.GenPollText(func=get_ctemp, update_interval=5, foreground="88D2FF"),
+                widget.GenPollText(func=get_gtemp, update_interval=5, foreground="88D2FF"),
                 widget.GenPollText(func=get_freemem, update_interval=5, foreground='00FFBB'),
                 widget.GenPollText(func=get_freeswap, update_interval=5, foreground='00FFBB'),
                 widget.GenPollText(func=get_updates, update_interval=5, foreground='FFFF7F'),
@@ -466,29 +469,6 @@ main = None
 follow_mouse_focus = True
 bring_front_click = False
 cursor_warp = False
-floating_layout = layout.Floating(float_rules=[
-    {'wmclass': 'confirm'},
-    {'wmclass': 'dialog'},
-    {'wmclass': 'download'},
-    {'wmclass': 'error'},
-    {'wmclass': 'file_progress'},
-    {'wmclass': 'notification'},
-    {'wmclass': 'splash'},
-    {'wmclass': 'toolbar'},
-    {'wmclass': 'confirmreset'},  # gitk
-    {'wmclass': 'makebranch'},  # gitk
-    {'wmclass': 'maketag'},  # gitk
-    {'wname': 'branchdialog'},  # gitk
-    {'wname': 'pinentry'},  # GPG key password entry
-    {'wmclass': 'ssh-askpass'},  # ssh-askpass
-    {'wmclass': 'Dukto'},  # Dukto
-    {'wmclass': 'Guake'},  # Guake
-    {'wmclass': 'Tilda'},  # Tilda
-    {'wmclass': 'yakuake'},  #yakuake
-    
-])
-auto_fullscreen = True
-focus_on_window_activation = "smart"
 
 # XXX: Gasp! We're lying here. In fact, nobody really uses or cares about this
 # string besides java UI toolkits; you can see several discussions on the
@@ -500,32 +480,84 @@ focus_on_window_activation = "smart"
 # java that happens to be on java's whitelist.
 wmname = "LG3D"
 
+floating_layout = layout.Floating(float_rules=[
+    {"role" :"EventDialog"}, 
+    {"role" : "Msgcompose"}, 
+    {"role" : "Preferences"}, 
+    {"role" : "pop-up" },
+    {"role" : "prefwindow"}, 
+    { "role" : "task_dialog"},
+    {"role"  : "browser"}, 
+    {"wname" : "Module"}, 
+    {"wname" : "Terminator Preferences"}, 
+    {"wname" : "Search Dialog"}, 
+    {"wname" : "Goto"}, 
+    {"wname" : "IDLE Preferences"}, 
+    {"wname" : "Sozi"}, 
+    {"wname" : "Create new database"}, 
+    {"wname" : "Preferences"}, 
+    {"wname" : "File Transfer"}, 
+    {"wname" : 'branchdialog'}, 
+    {"wname" : 'pinentry'}, 
+    {"wname" : 'confirm'},  
+    {"wmclass" : 'dialog'},
+    {"wmclass" : 'download'}, 
+    {"wmclass" : 'error'}, 
+    {"wmclass" : 'file_progress'}, 
+    {"wmclass" : 'notification'}, 
+    {"wmclass" : 'splash'}, 
+    {"wmclass" : 'toolbar'}, 
+    {"wmclass" : 'confirmreset'}, 
+    {"wmclass" : 'makebranch'}, 
+    {"wmclass" : 'maketag'}, 
+    {"wmclass" : 'Dukto'}, 
+    {"wmclass" : 'Guake'},
+    {"wmclass" : 'Tilda'}, 
+    {"wmclass" : 'yakuake'},
+    {"wmclass" : 'Xfce4-appfinder'}, 
+    {"wmclass" : "GoldenDict"},
+    {"wmclass" : "Synapse"}, 
+    {"wmclass" : "Pamac-updater"},
+    {"wmclass" : "TelegramDesktop"}, 
+    {"wmclass": "Galculator"},
+    {"wmclass" : "notify"}, 
+    {"wmclass" : "Lxappearance"}, 
+    {"wmclass" : "Nitrogen"}, 
+    {"wmclass" : "Oblogout"}, 
+    {"wmclass" : "Pavucontrol"}, 
+    {"wmclass" : "VirtualBox"},
+    {"wmclass" : "Skype"}, 
+    {"wmclass" : "Steam"},
+    {"wmclass" : "nvidia-settings"},
+    {"wmclass" : "Eog"},
+    {"wmclass" : "Rhythmbox"}, 
+    {"wmclass" : "obs"}, 
+    {"wmclass" : "Gufw.py"}, 
+    {"wmclass" : "Catfish"}, 
+    {"wmclass" : "libreoffice-calc"}, 
+    {"wmclass" : "LibreOffice 3.4" },
+    {"wmclass" : 'ssh-askpass'},
+    {"wmclass" : "Mlconfig"},
+    {"wmclass" : "Termite"},
+])
+auto_fullscreen = True
+focus_on_window_activation = "smart"
+
+floating_types = ["notification", "toolbar", "splash", "dialog",
+"utility","menu","dropdown_menu","popup_menu","tooltip,dock",
+]
+
+@hook.subscribe.client_new
+def set_floating(window):
+    if (window.window.get_wm_transient_for()
+    or window.window.get_wm_type() in floating_types):
+        window.floating = True
+
 @hook.subscribe.client_managed
 def goto_group(window):
     if (window.window.get_wm_class()[1] in wm_groups.keys()
     or window.window.get_wm_window_role() in wm_roles.keys()):
         window.group.cmd_toscreen()
-
-
-@hook.subscribe.client_new
-def set_floating(window):
-    floating_types = ["notification", "toolbar", "splash", "dialog"]
-    floating_roles = ["EventDialog", "Msgcompose", "Preferences"]
-    floating_names = ["Terminator Preferences", "Search Dialog",
-                      "Module", "Goto", "IDLE Preferences", "Sozi",
-                      "Create new database",
-                     ]
-    if (window.window.get_wm_type() in floating_types
-        or window.window.get_wm_window_role() in floating_roles
-        or window.window.get_name() in floating_names
-        or window.window.get_wm_transient_for()):
-        window.floating = True
-
-@hook.subscribe.client_new
-def libreoffice_dialogues(window):
-    if((window.window.get_wm_class() == ('VCLSalFrame', 'libreoffice-calc')) or
-    (window.window.get_wm_class() == ('VCLSalFrame', 'LibreOffice 3.4'))):
-        window.floating = True
 
 # Qtile startup commands, not repeated at qtile restart
 @hook.subscribe.startup_once
@@ -533,8 +565,10 @@ def autostart():
     from datetime import datetime
     try:
         subprocess.call([home + '/.config/qtile/autostart.sh'])
-    except:
-        with open('log file', 'w') as f:
+        subprocess.Popen(["/usr/bin/setxkbmap","us,ir","-option", "'grp:alt_shift_toggle'"])
+    except Exception as e:
+        with open('qtile_log', 'a+') as f:
             f.write(
                 datetime.now().strftime('%Y-%m-%dT%H:%M') +
-                'There was an error\n')
+                + ' ' + e + '\n')
+
