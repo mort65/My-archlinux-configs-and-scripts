@@ -427,7 +427,7 @@ screens = [
         bottom=bar.Bar(
             [
                 widget.CurrentLayoutIcon(scale=0.8,foreground="EFEFEF",),
-                widget.GenPollText(func=get_group_key, update_interval=0.5, foreground='EFEFEF',padding=1,fontsize=12),
+                widget.GenPollText(func=get_group_key, update_interval=0.5, foreground='EFEFEF',padding=1,),
                 widget.GroupBox(active='F6F6F6',inactive='968F92',
                                 this_current_screen_border='00BCD4',
                                 this_screen_border='00BCD4',
