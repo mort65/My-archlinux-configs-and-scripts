@@ -1,9 +1,11 @@
 #!/bin/bash
 #this script show total amount of free memory
 
+#Htop:
 #Total used memory = MemTotal - MemFree
-#Non cache/buffer memory = Total used memory - (Buffers + Cached memory)
-#Cached memory = Cached + SReclaimable - Shmem
+#Non cache/buffer memory (green) = Total used memory - (Buffers + Cached memory)
+#Buffers (yellow) = Buffers
+#Cached memory (yellow) = Cached + SReclaimable - Shmem
 #Swap = SwapTotal - SwapFree
 
 
