@@ -56,7 +56,7 @@ wm_class_groups = {
     "Dukto" : "9","QuiteRss" : "9", "Filezilla" : "9",
 }
 wm_role_groups = {
-    "browser" : "2"
+    "browser" : "2", "gimp-image-window":"5",
 }
 
 group_labels = [
@@ -129,7 +129,7 @@ group_matches = [
     "Gimp","Gthumb","org.kde.gwenview",
     "Ristretto","lximage-qt","Eom",
     "Gpicview",
-    ]),],
+    ],role=["gimp-image-window"]),],
 
     [ Match(wm_class=[
     "vlc","xv/mplayer","Clementine",
@@ -426,16 +426,16 @@ screens = [
     Screen(
         bottom=bar.Bar(
             [
-                widget.CurrentLayoutIcon(scale=0.8),
-                widget.GenPollText(func=get_group_key, update_interval=0.5, foreground='DFE8EB',padding=1,fontsize=12),
-                widget.GroupBox(active='F8FAFF',inactive='8F888B',
+                widget.CurrentLayoutIcon(scale=0.8,foreground="EFEFEF",),
+                widget.GenPollText(func=get_group_key, update_interval=0.5, foreground='EFEFEF',padding=1,fontsize=12),
+                widget.GroupBox(active='F6F6F6',inactive='968F92',
                                 this_current_screen_border='00BCD4',
                                 this_screen_border='00BCD4',
                                 highlight_method='line',
-                                highlight_color=['20262A','060A0F']
+                                highlight_color=['1A2024','060A0F']
                                ),
                 widget.Prompt(fontsize=13,cursor_color='FFFFFF',foreground='FAF0A8',background='271B1B'),
-                widget.WindowName(foreground='89BAAC'),
+                widget.WindowName(foreground='89BCAE'),
                 widget.Net(interface='enp3s0',foreground='FFAAFF'),
                 widget.GenPollText(func=get_ctemp, update_interval=5, foreground="88D2FF"),
                 widget.GenPollText(func=get_gtemp, update_interval=5, foreground="88D2FF"),
@@ -449,8 +449,8 @@ screens = [
                 default_icon=home + "/.config/qtile/shutdown.png",), #Change logout command in "/etc/oblogout.conf" to ~/bin/logoff
             ],
             22,
-            background=['20262A','060A0F'],
-            opacity=0.90,
+            background=['1A2024','060A0F'],
+            opacity=0.95,
         ),
     ),
 ]
