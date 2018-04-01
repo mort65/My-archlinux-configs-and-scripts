@@ -1,2 +1,0 @@
-#!/bin/bash
-echo $(sensors | grep 'Core 0' | cut -c 18-21)°C
