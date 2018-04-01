@@ -428,7 +428,7 @@ screens = [
             [
                 widget.CurrentLayoutIcon(scale=0.8),
                 widget.GenPollText(func=get_group_key, update_interval=0.5, foreground='DFE8EB',padding=1,fontsize=12),
-                widget.GroupBox(active='EFF8FB',inactive='8F888B',
+                widget.GroupBox(active='F8FAFF',inactive='8F888B',
                                 this_current_screen_border='00BCD4',
                                 this_screen_border='00BCD4',
                                 highlight_method='line',
@@ -445,7 +445,8 @@ screens = [
                 widget.GenPollText(func=get_keyboardlayout, update_interval=1, foreground='FFAA7F'),
                 widget.GenPollText(func=get_jdatetime, update_interval=1, foreground='B1D0FF'),
                 widget.Systray(),
-                widget.Spacer(length=3)
+                widget.LaunchBar(progs=[('oblogout','/usr/bin/oblogout','logout'),], 
+                default_icon=home + "/.config/qtile/shutdown.png",), #Change logout command in "/etc/oblogout.conf" to ~/bin/logoff
             ],
             22,
             background=['20262A','060A0F'],
@@ -571,4 +572,3 @@ def autostart():
             f.write(
                 datetime.now().strftime('%Y-%m-%dT%H:%M') +
                 + ' ' + e + '\n')
-
