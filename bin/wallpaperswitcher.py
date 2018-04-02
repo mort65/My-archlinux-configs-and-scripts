@@ -141,7 +141,7 @@ class wallpaperswitcher(object):
     def _check_platform(self):
         if self._platform in self._PLATFORMS:
             if self._platform == "linux":
-                self._get_desktop()
+                return self._get_desktop()
         else:
             return False
         return True
