@@ -31,30 +31,6 @@ class wallpaperswitcher(object):
         self._min_size = Min_Size
         self._interval = Interval
 
-    def _get_desktop(self):
-        desktop_session = os.environ.get("DESKTOP_SESSION")
-        if desktop_session is None:
-            self._desktop = "unknown"
-        else:
-            desktop_session = desktop_session.lower()
-            if "xfce" in desktop_session or "xubuntu" in desktop_session:
-                self._desktop = "xfce4"
-            elif "plasma" in desktop_session or "openbox-kde" in desktop_session:
-                self._desktop = "plasma"
-            elif "gnome" in desktop_session:
-                self._desktop = "gnome"
-            elif "i3" in desktop_session:
-                self._desktop = "i3"
-            elif "qtile" in desktop_session:
-                self._desktop = "qtile"
-            elif "openbox" in desktop_session:
-                self._desktop = "openbox"
-            else:
-                self._desktop = "other"
-        if self._desktop in self._DESKTOPS:
-            return True
-        return False
-
     def _get_trimmed(self,f):
         lines = [(l.strip() + '\n') for l in f.readlines() if l.strip() and (l.strip() in self._images)]
         f.seek(0)
@@ -137,6 +113,30 @@ class wallpaperswitcher(object):
         if len(self._images) == 0:
            return False
         return True
+        
+    def _get_desktop(self):
+        desktop_session = os.environ.get("DESKTOP_SESSION")
+        if desktop_session is None:
+            self._desktop = "unknown"
+        else:
+            desktop_session = desktop_session.lower()
+            if "xfce" in desktop_session or "xubuntu" in desktop_session:
+                self._desktop = "xfce4"
+            elif "plasma" in desktop_session or "openbox-kde" in desktop_session:
+                self._desktop = "plasma"
+            elif "gnome" in desktop_session:
+                self._desktop = "gnome"
+            elif "i3" in desktop_session:
+                self._desktop = "i3"
+            elif "qtile" in desktop_session:
+                self._desktop = "qtile"
+            elif "openbox" in desktop_session:
+                self._desktop = "openbox"
+            else:
+                self._desktop = "other"
+        if self._desktop in self._DESKTOPS:
+            return True
+        return False
 
     def _check_platform(self):
         if self._platform in self._PLATFORMS:
