@@ -22,7 +22,7 @@ exec ~/bin/enablenotifyforcronie &
 exec ~/bin/logupdates &
 
 # Set desktop wallpaper
-exec ~/bin/change-desktop-wallpaper.py &
+exec ~/bin/wallpaperswitcher.py &
 
 #replace mate notification daemon with xfce notification daemon:
 killall mate-notification-daemon &> /dev/null
