@@ -141,7 +141,7 @@ class wallpaperswitcher(object):
     def _check_platform(self):
         if self._platform in self._PLATFORMS:
             if self._platform == "linux":
-                self._get_desktop()
+                return self._get_desktop()
         else:
             return False
         return True
@@ -215,7 +215,7 @@ class wallpaperswitcher(object):
             self._run()
         else:
             if ( self._interval < 0 ) or ( self._interval > 0 and self._interval < 1 ):
-                raise ValueError
+                raise ValueError("Interval must be atleast on second.")
             self._interval = int(self._interval)
             if self._interval == 0:
                 self._run()
@@ -227,7 +227,8 @@ class wallpaperswitcher(object):
                         time.sleep(self._interval - ((time.time() - starttime) % self._interval))
                 except KeyboardInterrupt:
                     print("\nManual break by User")
-                except Exception:
+                except Exception as err:
+                    print(err.args)
                     exit(1)
 
 if __name__ == "__main__":
@@ -238,3 +239,4 @@ if __name__ == "__main__":
 
     w = wallpaperswitcher(pic_dirs,exceptions,min_size_in_kb,interval_in_sec)
     w.start()
+
