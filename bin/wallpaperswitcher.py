@@ -231,10 +231,10 @@ class wallpaperswitcher(object):
                     exit(1)
 
 if __name__ == "__main__":
-    pic_dirs = ["//home//mohsen//Pictures//Desktop",]
+    pic_dirs = []
     exceptions = []
     min_size_in_kb = 10.0
-    interval_in_sec = 60 * 60 * 3
+    interval_in_sec = None
 
     w = wallpaperswitcher(pic_dirs,exceptions,min_size_in_kb,interval_in_sec)
     w.start()
