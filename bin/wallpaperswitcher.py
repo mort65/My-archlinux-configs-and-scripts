@@ -145,9 +145,6 @@ class wallpaperswitcher(object):
             else:
                 return True
         return False
-        
-            
-        
 
     def _select_image(self):
         image=''
@@ -184,9 +181,9 @@ class wallpaperswitcher(object):
                 ctypes.windll.user32.SystemParametersInfoW(20, 0, image, 0)
             elif self._platform == "linux":
                 if  self._desktop == "xfce4":
-                    args0 = ["/usr/bin/xfconf-query", "-c", "xfce4-_desktop", "-p", "/backdrop/screen0/monitor0/workspace1/last-image", "-s", image]
-                    args1 = ["/usr/bin/xfconf-query", "-c", "xfce4-_desktop", "-p", "/backdrop/screen0/monitor0/workspace1/image-style", "-s", "5"]
-                    args2 = ["/usr/bin/xfconf-query", "-c", "xfce4-_desktop", "-p", "/backdrop/screen0/monitor0/image-show", "-s", "true"]
+                    args0 = ["/usr/bin/xfconf-query", "-c", "xfce4-desktop", "-p", "/backdrop/screen0/monitor0/workspace1/last-image", "-s", image]
+                    args1 = ["/usr/bin/xfconf-query", "-c", "xfce4-desktop", "-p", "/backdrop/screen0/monitor0/workspace1/image-style", "-s", "5"]
+                    args2 = ["/usr/bin/xfconf-query", "-c", "xfce4-desktop", "-p", "/backdrop/screen0/monitor0/image-show", "-s", "true"]
                     subprocess.Popen(args0)
                     subprocess.Popen(args1)
                     subprocess.Popen(args2)
@@ -214,25 +211,21 @@ class wallpaperswitcher(object):
             exit(2)
 
     def start(self):
-        if self._interval is None:
+        if self._interval is None or (self._interval == 0):
             self._run()
+        elif self._interval < 0 or (self._interval > 0 and self._interval < 1):
+            raise ValueError("Interval must be 0 or >=1.")
         else:
-            if ( self._interval < 0 ) or ( self._interval > 0 and self._interval < 1 ):
-                raise ValueError("Interval must be atleast on second.")
-            self._interval = int(self._interval)
-            if self._interval == 0:
-                self._run()
-            else:
-                starttime = time.time()
-                try:
-                    while True:
-                        self._run()
-                        time.sleep(self._interval - ((time.time() - starttime) % self._interval))
-                except KeyboardInterrupt:
-                    print("\nManual break by User")
-                except Exception as err:
-                    print(err.args)
-                    exit(1)
+            starttime = time.time()
+            try:
+                while True:
+                    self._run()
+                    time.sleep(self._interval - ((time.time() - starttime) % self._interval))
+            except KeyboardInterrupt:
+                print("\nManual break by User")
+            except Exception as err:
+                print(err.args)
+                exit(1)
 
 if __name__ == "__main__":
     pic_dirs = []
@@ -242,4 +235,3 @@ if __name__ == "__main__":
 
     w = wallpaperswitcher(pic_dirs,exceptions,min_size_in_kb,interval_in_sec)
     w.start()
-
