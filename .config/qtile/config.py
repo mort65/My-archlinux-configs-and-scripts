@@ -153,7 +153,6 @@ group_matches = [
 ]
 
 date_command = ["/usr/bin/date", "+%a %D"]
-
 if os.path.exists("/usr/bin/jdate"):
     date_command = ["/usr/bin/jdate", "+%h %D"]
 
