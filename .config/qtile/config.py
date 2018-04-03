@@ -452,7 +452,7 @@ screens = [
                                 highlight_color=['1A2024','060A0F']
                                ),
                 widget.Prompt(fontsize=13,cursor_color='FFFFFF',foreground='FDF3A9',background='271B1B'),
-                widget.WindowName(foreground='7ABCA0'),
+                widget.WindowName(foreground='7AA0BC'),
                 widget.Net(interface='enp3s0',foreground='FFAAFF'),
                 widget.GenPollText(func=get_ctemp, update_interval=5, foreground="88D2FF"),
                 widget.GenPollText(func=get_gtemp, update_interval=5, foreground="88D2FF"),
