@@ -180,7 +180,7 @@ def window_to_next_group():
 
 def window_to_prev_screen():
     @lazy.function
-    def _inner(qtile):
+    def __inner(qtile):
         if qtile.currentWindow is not None:
             i = qtile.screens.index(qtile.currentScreen)
             if i > 0:
@@ -191,7 +191,7 @@ def window_to_prev_screen():
 
 def window_to_next_screen():
     @lazy.function
-    def _inner(qtile):
+    def __inner(qtile):
         if qtile.currentWindow is not None:
             i = qtile.screens.index(qtile.currentScreen)
             if i < len(qtile.screens) - 1:
