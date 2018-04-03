@@ -15,7 +15,7 @@ class wallpaperswitcher(object):
     _patterns = [r'^.*\.[Jj][Pp][Ee]?[Gg]$', r'^.*\.[Pp][Nn][Gg]$', r'^.*\.[Bb][Mm][Pp]$']
     _log_path = os.path.join(_home_dir,'.wallpaperswitcher', '.prev_wallpapers')
     _PLATFORMS = ("windows","linux")
-    _DESKTOPS = ("i3", "openbox", "qtile", "xfce4", "plasma", "gnome")
+    _DESKTOPS = ("i3", "openbox", "qtile", "xfce4", "plasma", "gnome", "lxde",)
     _platform = platform.system().lower()
     _desktop = ''
     _images = []
@@ -95,9 +95,9 @@ class wallpaperswitcher(object):
                 if image_dir:
                     break
             else:
-                self._image_dirs=[os.path.join(_home_dir,'Pictures'),]
+                self._image_dirs=[os.path.join(self._home_dir,'Pictures'),]
         else:
-            self._image_dirs=[os.path.join(_home_dir,'Pictures'),]
+            self._image_dirs=[os.path.join(self._home_dir,'Pictures'),]
 
         for image_dir in self._image_dirs:
             if os.path.exists(os.path.realpath(image_dir)):
@@ -126,6 +126,8 @@ class wallpaperswitcher(object):
                 self._desktop = "plasma"
             elif "gnome" in desktop_session:
                 self._desktop = "gnome"
+            elif "lxde" in desktop_session:
+                self._desktop = "lxde"
             elif "i3" in desktop_session:
                 self._desktop = "i3"
             elif "qtile" in desktop_session:
@@ -196,7 +198,10 @@ class wallpaperswitcher(object):
                 elif self._desktop == "gnome":
                     args = ["gsettings", "set", "org.gnome.desktop.background", "picture-uri", "file://{}".format(image)]
                     subprocess.Popen(args)
-                elif self._desktop == "openbox" or self._desktop == "i3" or self._desktop == "qtile":
+                elif self._desktop == "lxde":
+                    args = ["/usr/bin/pcmanfm", "--set-wallpaper={}".format(image)]
+                    subprocess.Popen(args)
+                elif (self._desktop == "openbox" or self._desktop == "i3" or self._desktop == "qtile"):
                     args = ["/usr/bin/feh", "-q", "--bg-fill", image]
                     subprocess.Popen(args)
 
