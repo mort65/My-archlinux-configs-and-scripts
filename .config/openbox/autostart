@@ -19,6 +19,7 @@
 #~/bin/openbox/obwc &
 #/usr/bin/python ~/bin/openbox/obwc.py &
 
+# Set desktop wallpaper
 /usr/bin/ps aux | /usr/bin/awk '$12~/^.*wallpaperswitcher.py$/{print $2}' 2> /dev/null | /usr/bin/xargs kill &> /dev/null 
 /usr/bin/python ~/bin/wallpaperswitcher.py &
 
