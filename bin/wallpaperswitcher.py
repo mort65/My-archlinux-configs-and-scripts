@@ -15,7 +15,7 @@ class wallpaperswitcher(object):
     _patterns = [r'^.*\.[Jj][Pp][Ee]?[Gg]$', r'^.*\.[Pp][Nn][Gg]$', r'^.*\.[Bb][Mm][Pp]$']
     _log_path = os.path.join(_home_dir,'.wallpaperswitcher', '.prev_wallpapers')
     _PLATFORMS = ("windows","linux")
-    _DESKTOPS = ("i3", "openbox", "qtile", "xfce4", "plasma", "gnome", "lxde",)
+    _DESKTOPS = ("i3", "openbox", "qtile", "xfce4", "plasma", "gnome", "budgie", "lxde",)
     _platform = platform.system().lower()
     _desktop = ''
     _images = []
@@ -126,6 +126,8 @@ class wallpaperswitcher(object):
                 self._desktop = "plasma"
             elif "gnome" in desktop_session:
                 self._desktop = "gnome"
+            elif "budgie" in desktop_session:
+                self._desktop = "budgie"
             elif "lxde" in desktop_session:
                 self._desktop = "lxde"
             elif "i3" in desktop_session:
@@ -195,7 +197,7 @@ class wallpaperswitcher(object):
                     script0 = "var allDesktops = desktops(); for (i=0;i<allDesktops.length;i++) { d=allDesktops[i]; d.wallpaperPlugin = \"org.kde.image\"; d.currentConfigGroup=Array(\"Wallpaper\",\"org.kde.image\",\"General\"); d.writeConfig(\"Image\",\"file://" + image + "\")}"
                     args0 = ["/usr/bin/qdbus", "org.kde.plasmashell","/PlasmaShell", "org.kde.PlasmaShell.evaluateScript", script0]
                     subprocess.Popen(args0)
-                elif self._desktop == "gnome":
+                elif self._desktop == "gnome" or self._desktop == "budgie":
                     args = ["gsettings", "set", "org.gnome.desktop.background", "picture-uri", "file://{}".format(image)]
                     subprocess.Popen(args)
                 elif self._desktop == "lxde":
