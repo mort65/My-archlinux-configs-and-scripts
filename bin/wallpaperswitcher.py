@@ -142,9 +142,12 @@ class wallpaperswitcher(object):
         if self._platform in self._PLATFORMS:
             if self._platform == "linux":
                 return self._get_desktop()
-        else:
-            return False
-        return True
+            else:
+                return True
+        return False
+        
+            
+        
 
     def _select_image(self):
         image=''
