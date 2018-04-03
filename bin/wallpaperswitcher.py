@@ -208,13 +208,17 @@ class wallpaperswitcher(object):
             if self._check_images():
                 self._set_wallpaper(self._select_image())
         else:
+            if self._platform == "linux":
+                print("Unsupported desktop")
+            else:
+                print("Unsupported platform")
             exit(2)
 
     def start(self):
         if self._interval is None or (self._interval == 0):
             self._run()
         elif self._interval < 0 or (self._interval > 0 and self._interval < 1):
-            raise ValueError("Interval must be 0 or >=1.")
+            raise ValueError("Interval must be 0 or >=1")
         else:
             starttime = time.time()
             try:
@@ -222,7 +226,7 @@ class wallpaperswitcher(object):
                     self._run()
                     time.sleep(self._interval - ((time.time() - starttime) % self._interval))
             except KeyboardInterrupt:
-                print("\nManual break by User")
+                exit(0)
             except Exception as err:
                 print(err.args)
                 exit(1)
