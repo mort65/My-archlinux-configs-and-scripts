@@ -182,28 +182,46 @@ def window_to_next_group():
 def window_to_prev_screen():
     @lazy.function
     def _inner(qtile):
-        if qtile.currentScreen is not None:
-            if qtile.currentWindow is not None:
-                i = qtile.screens.index(qtile.currentScreen)
-                if i > 0:
-                    qtile.currentWindow.togroup(qtile.screens[i - 1].group.name)
-                else:
-                    qtile.currentWindow.togroup(qtile.screens[len(qtile.screens) - 1].group.name)
+        if qtile.currentWindow is not None:
+            i = qtile.screens.index(qtile.currentScreen)
+            if i > 0:
+                qtile.currentWindow.togroup(qtile.screens[i - 1].group.name)
+            else:
+                qtile.currentWindow.togroup(qtile.screens[len(qtile.screens) - 1].group.name)
     return __inner
 
 def window_to_next_screen():
     @lazy.function
     def _inner(qtile):
-        if qtile.currentScreen is not None:
-            if qtile.currentWindow is not None:
-                i = qtile.screens.index(qtile.currentScreen)
-                if i < len(qtile.screens) - 1:
-                    qtile.currentWindow.togroup(qtile.screens[i + 1].group.name)
+        if qtile.currentWindow is not None:
+            i = qtile.screens.index(qtile.currentScreen)
+            if i < len(qtile.screens) - 1:
+                qtile.currentWindow.togroup(qtile.screens[i + 1].group.name)
             else:
                 qtile.currentWindow.togroup(qtile.screens[0].group.name)
     return __inner
-    
 
+def go_to_next_group():
+    @lazy.function
+    def __inner(qtile):
+        i = qtile.groups.index(qtile.currentGroup)
+        if i < len(qtile.groups) - 2:
+            qtile.groups[i + 1].cmd_toscreen()
+        else:
+            qtile.groups[0].cmd_toscreen()
+
+    return __inner
+
+def go_to_prev_group():
+    @lazy.function
+    def __inner(qtile):
+        i = qtile.groups.index(qtile.currentGroup)
+        if i > 0:
+            qtile.groups[i - 1].cmd_toscreen()
+        else:
+            qtile.groups[len(qtile.groups) - 2].cmd_toscreen()
+    return __inner
+    
 def get_group_key():
     return client.group.info()['name']
 
@@ -231,8 +249,8 @@ keys = [
     Key([mod, "shift"], "Left", window_to_prev_group()),
     Key([mod, "shift"], "Right", window_to_next_group()),
    
-    Key([mod], "Left", lazy.screen.prev_group()),
-    Key([mod], "Right", lazy.screen.next_group()),
+    Key([mod], "Left", go_to_prev_group()),
+    Key([mod], "Right", go_to_next_group()),
     
     Key([mod, "control"], "l", 
         lazy.layout.grow_right(),
