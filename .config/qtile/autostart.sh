@@ -22,6 +22,7 @@ exec ~/bin/enablenotifyforcronie &
 exec ~/bin/logupdates &
 
 # Set desktop wallpaper
+/usr/bin/ps aux | /usr/bin/awk '$12~/^.*wallpaperswitcher.py$/{print $2}' 2> /dev/null | /usr/bin/xargs kill &> /dev/null 
 exec ~/bin/wallpaperswitcher.py &
 
 #replace mate notification daemon with xfce notification daemon:
