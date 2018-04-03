@@ -194,7 +194,7 @@ class wallpaperswitcher(object):
                     args0 = ["/usr/bin/qdbus", "org.kde.plasmashell","/PlasmaShell", "org.kde.PlasmaShell.evaluateScript", script0]
                     subprocess.Popen(args0)
                 elif self._desktop == "gnome":
-                    args = ["gsettings", "set", "org.gnome._desktop.background", "picture-uri", "file://{}".format(image)]
+                    args = ["gsettings", "set", "org.gnome.desktop.background", "picture-uri", "file://{}".format(image)]
                     subprocess.Popen(args)
                 elif self._desktop == "openbox" or self._desktop == "i3" or self._desktop == "qtile":
                     args = ["/usr/bin/feh", "-q", "--bg-fill", image]
