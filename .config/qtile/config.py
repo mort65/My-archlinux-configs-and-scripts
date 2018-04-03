@@ -409,7 +409,7 @@ keys.extend ([
 
 widget_defaults = dict(
     font='ubuntu',
-    fontsize=12,
+    fontsize=11,
     padding=3,
 )
 extension_defaults = widget_defaults.copy()
@@ -443,29 +443,30 @@ screens = [
     Screen(
         bottom=bar.Bar(
             [
-                widget.CurrentLayoutIcon(scale=0.8,foreground="EFEFEF",),
+                widget.CurrentLayoutIcon(scale=0.80,foreground="EFEFEF",),
                 widget.GenPollText(func=get_group_key, update_interval=0.5, foreground='EFEFEF',padding=1,),
                 widget.GroupBox(active='F6F6F6',inactive='968F92',
                                 this_current_screen_border='00BCD4',
                                 this_screen_border='00BCD4',
                                 highlight_method='line',
-                                highlight_color=['1A2024','060A0F']
+                                highlight_color=['1A2024','060A0F'],
+                                fontsize=12,
                                ),
                 widget.Prompt(fontsize=13,cursor_color='FFFFFF',foreground='FDF3A9',background='271B1B'),
-                widget.WindowName(foreground='7AA0BC'),
-                widget.Net(interface='enp3s0',foreground='FFAAFF'),
-                widget.GenPollText(func=get_ctemp, update_interval=5, foreground="88D2FF"),
-                widget.GenPollText(func=get_gtemp, update_interval=5, foreground="88D2FF"),
-                widget.GenPollText(func=get_freemem, update_interval=5, foreground='00FFBB'),
-                widget.GenPollText(func=get_freeswap, update_interval=5, foreground='00FFBB'),
-                widget.GenPollText(func=get_updates, update_interval=5, foreground='FFFF7F'),
-                widget.GenPollText(func=get_keyboardlayout, update_interval=1, foreground='FFAA7F'),
-                widget.GenPollText(func=get_jdatetime, update_interval=1, foreground='B1D0FF'),
+                widget.WindowName(foreground='7AA0BC',),
+                widget.Net(interface='enp3s0',foreground='FFAAFF',),
+                widget.GenPollText(func=get_ctemp, update_interval=5, foreground="88D2FF",),
+                widget.GenPollText(func=get_gtemp, update_interval=5, foreground="88D2FF",),
+                widget.GenPollText(func=get_freemem, update_interval=5, foreground='00FFBB',),
+                widget.GenPollText(func=get_freeswap, update_interval=5, foreground='00FFBB',),
+                widget.GenPollText(func=get_updates, update_interval=5, foreground='FFFF7F',),
+                widget.GenPollText(func=get_keyboardlayout, update_interval=1, foreground='FFAA7F',),
+                widget.GenPollText(func=get_jdatetime, update_interval=1, foreground='B1D0FF',),
                 widget.Systray(),
                 widget.LaunchBar(progs=[('oblogout','/usr/bin/oblogout','logout'),], 
                 default_icon=home + "/.config/qtile/shutdown.png",), #Change logout command in "/etc/oblogout.conf" to ~/bin/logoff
             ],
-            22,
+            20,
             background=['1A2024','060A0F'],
             opacity=0.96,
         ),
