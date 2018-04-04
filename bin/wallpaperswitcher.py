@@ -8,29 +8,131 @@ import subprocess
 import platform
 import ctypes
 import time
+import sys
+from operator import itemgetter
+
 
 class wallpaperswitcher(object):
     '''This class changes desktop wallpaper.'''
     _home_dir = os.path.expanduser('~')
-    _patterns = [r'^.*\.[Jj][Pp][Ee]?[Gg]$', r'^.*\.[Pp][Nn][Gg]$', r'^.*\.[Bb][Mm][Pp]$']
-    _log_path = os.path.join(_home_dir,'.wallpaperswitcher', '.prev_wallpapers')
-    _PLATFORMS = ("windows","linux")
-    _DESKTOPS = ("i3", "openbox", "qtile", "xfce4", "plasma", "gnome", "budgie", "lxde",)
-    _platform = platform.system().lower()
-    _desktop = ''
-    _images = []
-    _image_dirs = []
-    _exclusions = []
-    _min_size = []
-    _interval = None
-
+    initialized = False
+    cleanedup = False
+            
     def __init__(self,Image_Dirs=[os.path.join(_home_dir,'Pictures'),],
-                 Exclusions = [], Min_Size=10.0,Interval=None):
-        self._image_dirs = Image_Dirs
-        self._exclusions = Exclusions
-        self._min_size = Min_Size
-        self._interval = Interval
+                 Exclusions = [], Min_Size=10.0,Image_Order=("Random",None),Interval=None):
+        
+        self._patterns = [r'^.*\.[Jj][Pp][Ee]?[Gg]$', r'^.*\.[Pp][Nn][Gg]$', r'^.*\.[Bb][Mm][Pp]$']
+        self._log_path = os.path.join(self._home_dir,'.wallpaperswitcher', '.prev_wallpapers')
+        self._PLATFORMS = ("windows","linux")
+        self._DESKTOPS = ("i3", "openbox", "qtile", "xfce4", "plasma", "gnome", "budgie", "lxde",)
+        self._ORDERS = {"random":(None,), "name":("ascend","descend"), "size":("ascend","descend",),
+        "date":("ascend","descend",)}
+        self._platform = platform.system().lower()
+        self._desktop = ''
+        self._images = []
+        self._image_dirs = []
+        self._exclusions = []
+        self._min_size = []
+        self._interval = None
+        self._fh = None
+        
+        try:
+            if type(Image_Dirs) == type(self._image_dirs):
+                for i in Image_Dirs:
+                    if not (type(i) == type('')):
+                        raise ValueError("Invalid value: {}".format("Image_Dirs"))
+                self._image_dirs = Image_Dirs
+            else:
+                raise ValueError("Invalid value: {}".format("Image_Dirs"))
+            
+            if type(Exclusions) == type(self._exclusions):
+                for i in Exclusions:
+                    if not (type(i) == type('')):
+                        raise ValueError("Invalid value: {}".format("Exclusions"))
+                self._exclusions = Exclusions
+            else:
+                raise ValueError("Invalid value: {}".format("Exclusions"))
+            
+            if (type(Min_Size) == type(0.0) or
+            type(Min_Size) == type(0)):
+                self._min_size = Min_Size
+            else:
+                raise ValueError("Invalid value: {}".format("Min_Size"))
+            
+            if (type(Interval) == type(0.0) or
+            type(Interval) == type(0) or
+            type(Interval) == type(None)):
+                self._interval = Interval
+            else:
+                raise ValueError("Invalid value: {}".format("Interval"))
+            
+            if len(Image_Order) == 2:
+                if (Image_Order[0] in self._ORDERS.keys()):
+                    if(Image_Order[1] in self._ORDERS[Image_Order[0]]):
+                        self._order = Image_Order
+                    else:
+                        raise ValueError("Invalid value: {}".format("Image_Order"))
+                else:
+                    raise ValueError("Invalid value: {}".format("Image_Order"))
+            else:
+                raise ValueError("Invalid value: {}".format("Image_Order"))
+            
+            if not os.path.exists(os.path.dirname(self._log_path)):
+                os.makedirs(os.path.dirname(self._log_path))
+            
+            self._fh = os.path.join(self._home_dir,'.wallpaperswitcher','.lock')
+            
+            if not self._check_single_instance():
+                print("Another instance is already running, quitting.")
+                exit(0)
+            
+            self.initialized = True
+        except ValueError as err:
+            print(err)
+            exit(1)
+    
 
+    def __del__(self):
+        if self.initialized:
+            if not self.cleanedup:
+                _clean_up()
+            
+        
+    def _clean_up(self):
+        if self._platform == "linux":
+            import fcntl
+            fcntl.lockf(self.fp, fcntl.LOCK_UN)
+            if os.path.isfile(self._fh):
+                os.unlink(self._fh)
+        elif self._platform == 'windows':
+            if hasattr(self, 'fd'):
+                os.close(self.fd)
+                os.unlink(self._fh)
+        self.cleanedup = True
+
+    def _check_single_instance(self):
+        if self._platform == "windows":
+            try:
+                if os.path.exists(self._fh):
+                     os.unlink(self._fh)
+                self.fd = os.open(self._fh, os.O_CREAT | os.O_EXCL | os.O_RDWR)
+            except OSError:
+                t, v, b = sys.exc_info()
+                if v.errno == 13:
+                   return False
+                raise
+            return True
+        else:
+            import fcntl
+            self.fp = open(self._fh, 'w')
+            self.fp.flush()
+            try:
+                fcntl.lockf(self.fp, fcntl.LOCK_EX | fcntl.LOCK_NB)
+            except IOError:
+               return False
+            return True
+
+                
     def _get_trimmed(self,f):
         lines = [(l.strip() + '\n') for l in f.readlines() if l.strip() and (l.strip() in self._images)]
         f.seek(0)
@@ -150,11 +252,47 @@ class wallpaperswitcher(object):
                 return True
         return False
 
+    def _get_next_image(self):
+        next_image = ''
+        if self._order[0] == "random":
+            next_image = self._images[random.randint(0,len(self._images) - 1)]
+        elif self._order[0] == "name":
+            images_dict = {}
+            ordered_images = []
+            for i in self._images:
+                images_dict[i] = os.path.basename(i).lower()
+            if self._order[1] == "ascend":
+                ordered_images = sorted(images_dict.items(),key=itemgetter(1))
+            elif self._order[1] == "descend": 
+                ordered_images = sorted(images_dict.items(),key=itemgetter(1),reverse=True)
+            next_image = ordered_images[0][0]
+        elif self._order[0] == "size":
+            images_dict = {}
+            ordered_images = []
+            for i in self._images:
+                images_dict[i] = os.path.getsize(i)
+            if self._order[1] == "ascend":
+                ordered_images = sorted(images_dict.items(),key=itemgetter(1))
+            elif self._order[1] == "descend": 
+                ordered_images = sorted(images_dict.items(),key=itemgetter(1),reverse=True)
+            next_image = ordered_images[0][0]
+        elif self._order[0] == "date":
+            images_dict = {}
+            ordered_images = []
+            for i in self._images:
+                images_dict[i] = os.path.getmtime(i)
+            if self._order[1] == "ascend":
+                ordered_images = sorted(images_dict.items(),key=itemgetter(1))
+            elif self._order[1] == "descend": 
+                ordered_images = sorted(images_dict.items(),key=itemgetter(1),reverse=True)
+            next_image = ordered_images[0][0]
+                
+        return next_image
+        
+        
+    
     def _select_image(self):
         image=''
-        if not os.path.exists(os.path.dirname(self._log_path)):
-            os.makedirs(os.path.dirname(self._log_path))
-
         if os.path.isfile(self._log_path):
             with open(self._log_path , 'r+') as log:
                 previous_images = self._get_trimmed(log)
@@ -168,12 +306,12 @@ class wallpaperswitcher(object):
                         log.seek(0)
                 else:
                     log.seek(0)
-                image = self._images[random.randint(0,len(self._images) - 1)]
+                image = self._get_next_image()
                 log.write(image + '\n')
                 log.truncate()
         else:
             with open(self._log_path,"w") as log:
-                image = self._images[random.randint(0,len(self._images) - 1)]
+                image = self._get_next_image()
                 log.write(image + '\n')
         log.close()
         return image
@@ -222,27 +360,31 @@ class wallpaperswitcher(object):
             exit(2)
 
     def start(self):
-        if self._interval is None or (self._interval == 0):
-            self._run()
-        elif self._interval < 0 or (self._interval > 0 and self._interval < 1):
-            raise ValueError("Interval must be 0 or >=1")
-        else:
-            starttime = time.time()
-            try:
-                while True:
-                    self._run()
-                    time.sleep(self._interval - ((time.time() - starttime) % self._interval))
-            except KeyboardInterrupt:
-                exit(0)
-            except Exception as err:
-                print(err.args)
-                exit(1)
+        try:
+            if self._interval is None or (self._interval == 0):
+                self._run()
+            elif self._interval < 0 or (self._interval > 0 and self._interval < 1):
+                raise ValueError("Interval must be 0 or >=1")
+            else:
+                starttime = time.time()
+                try:
+                    while True:
+                        self._run()
+                        time.sleep(self._interval - ((time.time() - starttime) % self._interval))
+                except KeyboardInterrupt:
+                    exit(0)
+        finally:
+            if not self.cleanedup:
+                self._clean_up()
+            
 
 if __name__ == "__main__":
-    pic_dirs = []
-    exceptions = []
+    image_dirs = []
+    exclusions = []
     min_size_in_kb = 10.0
+    image_order = ("random",None)
     interval_in_sec = None
-
-    w = wallpaperswitcher(pic_dirs,exceptions,min_size_in_kb,interval_in_sec)
+    
+    w = wallpaperswitcher( Image_Dirs = image_dirs, Exclusions = exclusions, 
+    Min_Size = min_size_in_kb, Image_Order = image_order, Interval = interval_in_sec )
     w.start()
