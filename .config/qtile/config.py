@@ -342,7 +342,7 @@ keys = [
 
 layout_style = {
     'font' : 'ubuntu',
-    'margin' : 2,
+    'margin' : 0,
     'border_width' : 1,
     'border_normal' : '000000',
     'border_focus' : '0000FF',
@@ -408,14 +408,14 @@ keys.extend ([
 
 
 widget_defaults = dict(
-    font='ubuntu',
+    font='ubuntu bold',
     fontsize=11,
     padding=3,
 )
 extension_defaults = widget_defaults.copy()
 
 def get_jdate():
-    return '📅 ' + subprocess.check_output(date_command).decode('utf-8').strip()
+    return '📆 ' + subprocess.check_output(date_command).decode('utf-8').strip()
 def get_time():
     return ' ⏰ ' + subprocess.check_output(['/usr/bin/date', '+%I:%M %p']).decode('utf-8').strip()
 
@@ -441,9 +441,9 @@ def get_gtemp():
 
 screens = [
     Screen(
-        bottom=bar.Bar(
+        top=bar.Bar(
             [
-                widget.CurrentLayoutIcon(scale=0.80,foreground="EFEFEF",),
+                widget.CurrentLayoutIcon(scale=0.9,foreground="EFEFEF",),
                 widget.GenPollText(func=get_group_key, update_interval=0.5, foreground='EFEFEF',padding=1,),
                 widget.GroupBox(active='F6F6F6',inactive='968F92',
                                 this_current_screen_border='00BCD4',
