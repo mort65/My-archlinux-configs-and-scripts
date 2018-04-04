@@ -221,7 +221,7 @@ def go_to_prev_group():
             qtile.groups[len(qtile.groups) - 2].cmd_toscreen()
     return __inner
     
-def get_group_key():
+def get_cur_group_name():
     return client.group.info()['name']
 
 keys = [
@@ -444,7 +444,7 @@ screens = [
         top=bar.Bar(
             [
                 widget.CurrentLayoutIcon(scale=0.9,foreground="EFEFEF",),
-                widget.GenPollText(func=get_group_key, update_interval=0.5, foreground='EFEFEF',padding=1,),
+                widget.GenPollText(func=get_cur_group_name, update_interval=0.5, foreground='EFEFEF',padding=1,),
                 widget.GroupBox(active='F6F6F6',inactive='968F92',
                                 this_current_screen_border='00BCD4',
                                 this_screen_border='00BCD4',
