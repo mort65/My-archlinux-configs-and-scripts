@@ -11,7 +11,6 @@ import time
 import sys
 from operator import itemgetter
 
-
 class wallpaperswitcher(object):
     '''This class changes desktop wallpaper.'''
     _home_dir = os.path.expanduser('~')
@@ -133,7 +132,6 @@ class wallpaperswitcher(object):
                return False
             return True
 
-                
     def _get_trimmed(self,f):
         lines = [(l.strip() + '\n') for l in f.readlines() if l.strip() and (l.strip() in self._images)]
         f.seek(0)
@@ -299,8 +297,6 @@ class wallpaperswitcher(object):
                 
         return next_image
         
-        
-    
     def _select_image(self):
         image=''
         if os.path.isfile(self._log_path):
@@ -325,7 +321,6 @@ class wallpaperswitcher(object):
                 log.write(image + '\n')
         log.close()
         return image
-
 
     def _set_wallpaper(self,image):
         if os.path.exists(image):
