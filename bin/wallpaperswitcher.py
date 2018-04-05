@@ -382,7 +382,6 @@ class wallpaperswitcher(object):
             if not self.cleanedup:
                 self._clean_up()
             
-
 if __name__ == "__main__":
     image_dirs = []
     exclusions = []
