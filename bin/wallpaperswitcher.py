@@ -95,7 +95,7 @@ class wallpaperswitcher(object):
     def __del__(self):
         if self.initialized:
             if not self.cleanedup:
-                _clean_up()
+                self._clean_up()
             
         
     def _clean_up(self):
