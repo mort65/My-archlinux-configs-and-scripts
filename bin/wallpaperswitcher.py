@@ -211,7 +211,15 @@ class wallpaperswitcher(object):
                                 if not self._is_small(os.path.join(root,file_name)):
                                     if not self._is_excluded(os.path.join(root,file_name)):
                                         self._images.append(os.path.realpath(os.path.join(root,file_name)))
-
+                        else:
+                            break
+                    else:
+                        continue
+                    break
+                else:
+                    continue
+                break
+        
         self._images = list(set(self._images)) #removing duplicates
         
         if len(self._images) == 0:
