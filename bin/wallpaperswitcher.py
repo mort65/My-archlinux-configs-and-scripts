@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-#This script changes _desktop wallpaper
+#This script changes desktop wallpaper
 
 import os
 import re
