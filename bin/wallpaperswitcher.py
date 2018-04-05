@@ -35,6 +35,7 @@ class wallpaperswitcher(object):
         self._min_size = []
         self._interval = None
         self._fh = None
+        self._images_limit = 1000000
         
         try:
             if type(Image_Dirs) == type(self._image_dirs):
@@ -205,10 +206,11 @@ class wallpaperswitcher(object):
             if os.path.exists(os.path.realpath(image_dir)):
                 for root, directories, file_names in os.walk(os.path.realpath(image_dir)):
                     for file_name in file_names:
-                        if self._is_image(os.path.join(root,file_name)):
-                            if not self._is_small(os.path.join(root,file_name)):
-                                if not self._is_excluded(os.path.join(root,file_name)):
-                                    self._images.append(os.path.realpath(os.path.join(root,file_name)))
+                        if len(self._images) < self._images_limit:
+                            if self._is_image(os.path.join(root,file_name)):
+                                if not self._is_small(os.path.join(root,file_name)):
+                                    if not self._is_excluded(os.path.join(root,file_name)):
+                                        self._images.append(os.path.realpath(os.path.join(root,file_name)))
 
         self._images = list(set(self._images)) #removing duplicates
         
@@ -297,7 +299,7 @@ class wallpaperswitcher(object):
             with open(self._log_path , 'r+') as log:
                 previous_images = self._get_trimmed(log)
                 if len(previous_images) > 0:
-                    if len(previous_images) < 10001 and len(set(self._images) - set(previous_images)) > 0:
+                    if len(set(self._images) - set(previous_images)) > 0:
                         for image in previous_images:
                             self._images.remove(image)
                     else:
