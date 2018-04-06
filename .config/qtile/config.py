@@ -37,7 +37,7 @@ term = "/usr/bin/urxvt"
 home = os.path.expanduser('~')
 client=Client()
 
-wm_class_groups = {
+cls_grp_dict = {
     "luakit" : "2", "Firefox" : "2","Opera" : "2","Google-chrome" : "2",
     "Chromium" : "2","Vivaldi-stable" : "2","Midori" : "2", "Dillo" : "2",
     "Netsurf-gtk3" : "2","QupZilla" : "2", "Uget-gtk" : "2","Tor Browser" : "2",
@@ -56,7 +56,7 @@ wm_class_groups = {
     "octopi" : "9", "Pamac-updater" : "9", "Pamac-manager" : "9", "Lxtask" : "9", 
     "Dukto" : "9","QuiteRss" : "9", "Filezilla" : "9",
 }
-wm_role_groups = {
+role_grp_dict = {
     "browser" : "2", "gimp-image-window":"5",
 }
 
@@ -225,29 +225,30 @@ def go_to_prev_group():
             qtile.groups[len(qtile.groups) - 2].cmd_toscreen()
     return __inner
 
-def find_or_run(app,wm_classes=[],group="",processes=[]):
+def find_or_run(app,classes=[],group="",processes=[]):
     if not processes:
         processes = [regex(app.split('/')[-1])]
     def __inner(qtile):
-        is_running = False
-        if wm_classes or group:
-            lines = subprocess.check_output(["ps", "axw"]).decode("utf-8").splitlines()
-            ls = [line.split()[4:] for line in lines][1:]
-            ps = [' '.join(l) for l in ls]
-            for s in ps:
-                for process in processes:
-                    if re.match(process, s):
-                        is_running = True
-            if wm_classes and is_running:
+        if classes or group:
+            if classes:
                 for window in qtile.windowMap.values():
-                    for wm_class in wm_classes:
-                        if (window.group and window.match(wmclass=wm_class)):
+                    for cls in classes:
+                        if (window.group and window.match(wmclass=cls)):
                             qtile.currentScreen.setGroup(window.group)
                             window.group.focus(window, False)
                             return
-            if group and is_running:
-                qtile.groupMap[group].cmd_toscreen()
-                return
+            if group:
+                lines = subprocess.check_output(["ps", "axw"]).decode("utf-8").splitlines()
+                ls = [line.split()[4:] for line in lines][1:]
+                ps = [' '.join(l) for l in ls]
+                is_running = False
+                for s in ps:
+                    for process in processes:
+                        if re.match(process, s):
+                            is_running = True
+                if is_running:
+                    qtile.groupMap[group].cmd_toscreen()
+                    return
         subprocess.Popen(app.split())
     return __inner
     
@@ -262,7 +263,7 @@ def to_urgent():
                 break
     return __inner
     
-def get_cur_group_name():
+def get_cur_grp_name():
     return client.group.info()['name']
 
 keys = [
@@ -357,30 +358,30 @@ keys = [
     # Applications
     Key([mod], "d", lazy.spawn("/usr/bin/rofi -modi run,drun -show drun run")),
     Key([mod], "Delete", lazy.function(find_or_run("/usr/bin/lxtask",["Lxtask"],
-    wm_class_groups["Lxtask"]))),
+    cls_grp_dict["Lxtask"]))),
     Key([mod], "f", lazy.function(find_or_run("/usr/bin/catfish",["Catfish"],
-    wm_class_groups["Catfish"],["^/usr/bin/python /usr/bin/catfish$"]))),
+    cls_grp_dict["Catfish"],["^/usr/bin/python /usr/bin/catfish$"]))),
     Key([mod], "e", lazy.function(find_or_run("/usr/bin/leafpad",
-    ["Leafpad","Mousepad","Pluma"],wm_class_groups["Leafpad"], [regex("leafpad"),
+    ["Leafpad","Mousepad","Pluma"],cls_grp_dict["Leafpad"], [regex("leafpad"),
     regex("mousepad"),regex("pluma")] ))),
     Key([mod, "shift"], "e", lazy.function(find_or_run("/usr/bin/geany",["Geany","kate"],
-    wm_class_groups["Geany"],[regex("geany"),regex("kate")]))),
+    cls_grp_dict["Geany"],[regex("geany"),regex("kate")]))),
     Key([mod], "Home", lazy.function(find_or_run("/usr/bin/pcmanfm",["Pcmanfm","Thunar","dolphin"],
-    wm_class_groups["Pcmanfm"], [regex("pcmanfm"),regex("thunar"), regex("dolphin")]))),
+    cls_grp_dict["Pcmanfm"], [regex("pcmanfm"),regex("thunar"), regex("dolphin")]))),
     Key([mod, "shift"], "Home", lazy.function(find_or_run(term + " -e /usr/bin/ranger",[],
-    wm_class_groups["Urxvt"]))),
+    cls_grp_dict["Urxvt"]))),
     Key([mod], "p", lazy.function(find_or_run("/usr/bin/pragha",["Pragha","Clementine"],
-    wm_class_groups["Pragha"],[regex("pragha"),regex("clementine")]))),
+    cls_grp_dict["Pragha"],[regex("pragha"),regex("clementine")]))),
     Key([mod], "c", lazy.function(find_or_run(term + " -e /usr/bin/cmus",[],
-    wm_class_groups["Urxvt"]))),
+    cls_grp_dict["Urxvt"]))),
     Key([mod], "w", lazy.function(find_or_run("/usr/bin/firefox",["Firefox","Chromium","Vivaldi-stable"],
-    wm_class_groups["Firefox"],["/usr/lib/firefox/firefox","/usr/lib/chromium/chromium",
+    cls_grp_dict["Firefox"],["/usr/lib/firefox/firefox","/usr/lib/chromium/chromium",
     "/opt/vivaldi/vivaldi-bin"]))),
     Key([mod, "shift"], "w", lazy.function(find_or_run(home + 
     "/Apps/Internet/tor-browser_en-US/Browser/start-tor-browser --detach"
-    ,["Tor Browser"],wm_class_groups["Tor Browser"],["\./firefox"]))),
+    ,["Tor Browser"],cls_grp_dict["Tor Browser"],["\./firefox"]))),
     Key([mod], "i", lazy.function(find_or_run("/usr/bin/pamac-manager",["Pamac-manager"],
-    wm_class_groups["Pamac-manager"]))),
+    cls_grp_dict["Pamac-manager"]))),
     Key([], "F10", lazy.function(to_urgent())),
 
     #Media player controls
@@ -503,7 +504,7 @@ screens = [
         top=bar.Bar(
             [
                 widget.CurrentLayoutIcon(scale=0.9,foreground="EFEFEF",),
-                widget.GenPollText(func=get_cur_group_name, update_interval=0.5, foreground='EFEFEF',padding=1,),
+                widget.GenPollText(func=get_cur_grp_name, update_interval=0.5, foreground='EFEFEF',padding=1,),
                 widget.GroupBox(active='F6F6F6',inactive='968F92',
                                 this_current_screen_border='00BCD4',
                                 this_screen_border='00BCD4',
@@ -633,8 +634,8 @@ def set_floating(window):
 
 @hook.subscribe.client_managed
 def go_to_group(window):
-    if (window.window.get_wm_class()[1] in wm_class_groups.keys()
-    or window.window.get_wm_window_role() in wm_role_groups.keys()):
+    if (window.window.get_wm_class()[1] in cls_grp_dict.keys()
+    or window.window.get_wm_window_role() in role_grp_dict.keys()):
         window.group.cmd_toscreen()
 
 # Qtile startup commands, not repeated at qtile restart
