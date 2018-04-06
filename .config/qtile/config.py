@@ -232,8 +232,8 @@ def find_or_run(app,classes=[],group="",processes=[]):
         if classes or group:
             if classes:
                 for window in qtile.windowMap.values():
-                    for cls in classes:
-                        if (window.group and window.match(wmclass=cls)):
+                    for c in classes:
+                        if (window.group and window.match(wmclass=c)):
                             qtile.currentScreen.setGroup(window.group)
                             window.group.focus(window, False)
                             return
