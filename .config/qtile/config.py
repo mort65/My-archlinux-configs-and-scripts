@@ -242,9 +242,9 @@ def find_or_run(app,classes=[],group="",processes=[]):
                 ls = [line.split()[4:] for line in lines][1:]
                 ps = [' '.join(l) for l in ls]
                 is_running = False
-                for s in ps:
+                for p in ps:
                     for process in processes:
-                        if re.match(process, s):
+                        if re.match(process, p):
                             is_running = True
                 if is_running:
                     qtile.groupMap[group].cmd_toscreen()
