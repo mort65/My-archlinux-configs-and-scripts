@@ -229,26 +229,22 @@ def find_or_run(app,classes=[],group="",processes=[]):
     if not processes:
         processes = [regex(app.split('/')[-1])]
     def __inner(qtile):
-        if classes or group:
-            if classes:
-                for window in qtile.windowMap.values():
-                    for c in classes:
-                        if (window.group and window.match(wmclass=c)):
-                            qtile.currentScreen.setGroup(window.group)
-                            window.group.focus(window, False)
-                            return
-            if group:
-                lines = subprocess.check_output(["ps", "axw"]).decode("utf-8").splitlines()
-                ls = [line.split()[4:] for line in lines][1:]
-                ps = [' '.join(l) for l in ls]
-                is_running = False
-                for p in ps:
-                    for process in processes:
-                        if re.match(process, p):
-                            is_running = True
-                if is_running:
-                    qtile.groupMap[group].cmd_toscreen()
-                    return
+        if classes:
+            for window in qtile.windowMap.values():
+                for c in classes:
+                    if (window.group and window.match(wmclass=c)):
+                        qtile.currentScreen.setGroup(window.group)
+                        window.group.focus(window, False)
+                        return
+        if group:
+            lines = subprocess.check_output(["/usr/bin/ps", "axw"]).decode("utf-8").splitlines()
+            ls = [line.split()[4:] for line in lines][1:]
+            ps = [' '.join(l) for l in ls]
+            for p in ps:
+                for process in processes:
+                    if re.match(process, p):
+                        qtile.groupMap[group].cmd_toscreen()
+                        return
         subprocess.Popen(app.split())
     return __inner
     
@@ -265,6 +261,31 @@ def to_urgent():
     
 def get_cur_grp_name():
     return client.group.info()['name']
+    
+def get_jdate():
+    return '📆 ' + subprocess.check_output(date_command).decode('utf-8').strip()
+def get_time():
+    return ' ⏰ ' + subprocess.check_output(['/usr/bin/date', '+%I:%M %p']).decode('utf-8').strip()
+
+def get_jdatetime():
+    return (get_jdate() + get_time())
+
+def get_updates():
+    return subprocess.check_output([home + '/.script/qtile-totalupdatesavail']).decode('utf-8').strip()
+
+def get_keyboardlayout():
+    return '⌨ ' + subprocess.check_output([home + '/.script/qtile-keyboardlayout']).decode('utf-8').strip()
+
+def get_freemem():
+    return '🎫 ' + subprocess.check_output([home + '/bin/totalfreemem','-g','2']).decode('utf-8').strip()
+
+def get_freeswap():
+    return '🔃 ' + subprocess.check_output([home + '/bin/totalfreeswap','-g','2']).decode('utf-8').strip()
+
+def get_ctemp():
+    return '🅒 ' + subprocess.check_output([home + '/bin/ctemp','--max']).decode('utf-8').strip()
+def get_gtemp():
+    return '🅖 ' + subprocess.check_output([home + '/bin/gtemp']).decode('utf-8').strip()
 
 keys = [
     # Switch between windows in current stack pane
@@ -424,7 +445,6 @@ layouts = [
 
 groups = []
 
-
 for i in range(len(group_names)):
     groups.append(
     Group(
@@ -473,31 +493,6 @@ widget_defaults = dict(
     padding=3,
 )
 extension_defaults = widget_defaults.copy()
-
-def get_jdate():
-    return '📆 ' + subprocess.check_output(date_command).decode('utf-8').strip()
-def get_time():
-    return ' ⏰ ' + subprocess.check_output(['/usr/bin/date', '+%I:%M %p']).decode('utf-8').strip()
-
-def get_jdatetime():
-    return (get_jdate() + get_time())
-
-def get_updates():
-    return subprocess.check_output([home + '/.script/qtile-totalupdatesavail']).decode('utf-8').strip()
-
-def get_keyboardlayout():
-    return '⌨ ' + subprocess.check_output([home + '/.script/qtile-keyboardlayout']).decode('utf-8').strip()
-
-def get_freemem():
-    return '🎫 ' + subprocess.check_output([home + '/bin/totalfreemem','-g','2']).decode('utf-8').strip()
-
-def get_freeswap():
-    return '🔃 ' + subprocess.check_output([home + '/bin/totalfreeswap','-g','2']).decode('utf-8').strip()
-
-def get_ctemp():
-    return '🅒 ' + subprocess.check_output([home + '/bin/ctemp','--max']).decode('utf-8').strip()
-def get_gtemp():
-    return '🅖 ' + subprocess.check_output([home + '/bin/gtemp']).decode('utf-8').strip()
 
 screens = [
     Screen(
@@ -619,6 +614,7 @@ floating_layout = layout.Floating(float_rules=[
     {"wmclass" : "Mlconfig"},
     {"wmclass" : "Termite"},
 ])
+
 auto_fullscreen = True
 focus_on_window_activation = "smart"
 
