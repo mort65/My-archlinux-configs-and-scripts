@@ -18,7 +18,7 @@ class wallpaperswitcher(object):
     cleanedup = False
             
     def __init__(self,Image_Dirs=[os.path.join(_home_dir,'Pictures'),],
-                 Exclusions = [], Min_Size=10.0,Image_Order=("Random",None),Interval=None):
+    Exclusions = [], Min_Size=10.0,Image_Order=("Random",None),Interval=None):
         
         self._patterns = [r'^.*\.[Jj][Pp][Ee]?[Gg]$', r'^.*\.[Pp][Nn][Gg]$', r'^.*\.[Bb][Mm][Pp]$']
         self._log_path = os.path.join(self._home_dir,'.wallpaperswitcher', '.prev_wallpapers')
@@ -383,11 +383,11 @@ class wallpaperswitcher(object):
                 self._clean_up()
             
 if __name__ == "__main__":
-    image_dirs = []
+    image_dirs = ["//home//mohsen//Pictures//Desktop",]
     exclusions = []
     min_size_in_kb = 10.0
     image_order = ("random",None)
-    interval_in_sec = None
+    interval_in_sec = 60 * 60 * 2
     
     w = wallpaperswitcher( Image_Dirs = image_dirs, Exclusions = exclusions, 
     Min_Size = min_size_in_kb, Image_Order = image_order, Interval = interval_in_sec )
