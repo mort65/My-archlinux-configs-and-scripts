@@ -29,6 +29,7 @@ from libqtile.config import ScratchPad, DropDown
 from libqtile.command import lazy, Client
 from libqtile import layout, bar, widget, hook
 import os
+import re
 import subprocess
 
 mod = "mod4"
@@ -152,6 +153,9 @@ group_matches = [
     None,
 ]
 
+def regex(name):
+    return ( r'.*(^|\s|\t|\/)' + name + r'(\s|\t|$).*' )
+
 date_command = ["/usr/bin/date", "+%a %D"]
 if os.path.exists("/usr/bin/jdate"):
     date_command = ["/usr/bin/jdate", "+%h %D"]
@@ -219,6 +223,43 @@ def go_to_prev_group():
             qtile.groups[i - 1].cmd_toscreen()
         else:
             qtile.groups[len(qtile.groups) - 2].cmd_toscreen()
+    return __inner
+
+def find_or_run(app,wm_classes=[],group="",processes=[]):
+    if not processes:
+        processes = [regex(app.split('/')[-1])]
+    def __inner(qtile):
+        is_running = False
+        if wm_classes or group:
+            lines = subprocess.check_output(["ps", "axw"]).decode("utf-8").splitlines()
+            ls = [line.split()[4:] for line in lines][1:]
+            ps = [' '.join(l) for l in ls]
+            for s in ps:
+                for process in processes:
+                    if re.match(process, s):
+                        is_running = True
+            if wm_classes and is_running:
+                for window in qtile.windowMap.values():
+                    for wm_class in wm_classes:
+                        if (window.group and window.match(wmclass=wm_class)):
+                            qtile.currentScreen.setGroup(window.group)
+                            window.group.focus(window, False)
+                            return
+            if group and is_running:
+                qtile.groupMap[group].cmd_toscreen()
+                return
+        subprocess.Popen(app.split())
+    return __inner
+    
+def to_urgent():
+    def __inner(qtile):
+        cg = qtile.currentGroup
+        for group in qtile.groupMap.values():
+            if group == cg:
+                continue
+            if len([w for w in group.windows if w.urgent]) > 0:
+                qtile.currentScreen.setGroup(group)
+                break
     return __inner
     
 def get_cur_group_name():
@@ -315,14 +356,32 @@ keys = [
     
     # Applications
     Key([mod], "d", lazy.spawn("/usr/bin/rofi -modi run,drun -show drun run")),
-    Key([mod], "e", lazy.spawn("/usr/bin/leafpad")),
-    Key([mod, "shift"], "e", lazy.spawn("/usr/bin/geany")),
-    Key([mod], "Home", lazy.spawn("/usr/bin/pcmanfm")),
-    Key([mod, "shift"], "Home", lazy.spawn(term + " -e '/usr/bin/ranger'")),
-    Key([mod], "p", lazy.spawn("/usr/bin/pragha")),
-    Key([mod], "c", lazy.spawn(term + " -e '/usr/bin/cmus'")),
-    Key([mod], "w", lazy.spawn("/usr/bin/firefox")),
-    Key([mod], "i", lazy.spawn("/usr/bin/pamac-manager")),
+    Key([mod], "Delete", lazy.function(find_or_run("/usr/bin/lxtask",["Lxtask"],
+    wm_class_groups["Lxtask"]))),
+    Key([mod], "f", lazy.function(find_or_run("/usr/bin/catfish",["Catfish"],
+    wm_class_groups["Catfish"],["^/usr/bin/python /usr/bin/catfish$"]))),
+    Key([mod], "e", lazy.function(find_or_run("/usr/bin/leafpad",
+    ["Leafpad","Mousepad","Pluma"],wm_class_groups["Leafpad"], [regex("leafpad"),
+    regex("mousepad"),regex("pluma")] ))),
+    Key([mod, "shift"], "e", lazy.function(find_or_run("/usr/bin/geany",["Geany","kate"],
+    wm_class_groups["Geany"],[regex("geany"),regex("kate")]))),
+    Key([mod], "Home", lazy.function(find_or_run("/usr/bin/pcmanfm",["Pcmanfm","Thunar","dolphin"],
+    wm_class_groups["Pcmanfm"], [regex("pcmanfm"),regex("thunar"), regex("dolphin")]))),
+    Key([mod, "shift"], "Home", lazy.function(find_or_run(term + " -e /usr/bin/ranger",[],
+    wm_class_groups["Urxvt"]))),
+    Key([mod], "p", lazy.function(find_or_run("/usr/bin/pragha",["Pragha","Clementine"],
+    wm_class_groups["Pragha"],[regex("pragha"),regex("clementine")]))),
+    Key([mod], "c", lazy.function(find_or_run(term + " -e /usr/bin/cmus",[],
+    wm_class_groups["Urxvt"]))),
+    Key([mod], "w", lazy.function(find_or_run("/usr/bin/firefox",["Firefox","Chromium","Vivaldi-stable"],
+    wm_class_groups["Firefox"],["/usr/lib/firefox/firefox","/usr/lib/chromium/chromium",
+    "/opt/vivaldi/vivaldi-bin"]))),
+    Key([mod, "shift"], "w", lazy.function(find_or_run(home + 
+    "/Apps/Internet/tor-browser_en-US/Browser/start-tor-browser --detach"
+    ,["Tor Browser"],wm_class_groups["Tor Browser"],["\./firefox"]))),
+    Key([mod], "i", lazy.function(find_or_run("/usr/bin/pamac-manager",["Pamac-manager"],
+    wm_class_groups["Pamac-manager"]))),
+    Key([], "F10", lazy.function(to_urgent())),
 
     #Media player controls
     Key([], "XF86AudioPlay", lazy.spawn("/usr/bin/playerctl play")),
@@ -393,16 +452,16 @@ groups.append(
         DropDown("term", "/usr/bin/termite", opacity=0.88,height=0.55,width=0.80, ),
 
         # define another terminal exclusively for qshell at different position
-        #DropDown("qshell", "/usr/bin/termite -e qshell",
-        #         x=0.05, y=0.4, width=0.9, height=0.6, opacity=0.9,
-        #         on_focus_lost_hide=True) 
+        DropDown("qshell", "/usr/bin/termite -e qshell",
+                 x=0.05, y=0.4, width=0.9, height=0.6, opacity=0.9,
+                 on_focus_lost_hide=True) 
 ]),)
 
 keys.extend ([
     # Scratchpad
     # toggle visibiliy of above defined DropDown named "term"
     Key([], 'F12', lazy.group['scratchpad'].dropdown_toggle('term')),
-    #Key([], 'F11', lazy.group['scratchpad'].dropdown_toggle('qshell')),
+    Key([], 'F11', lazy.group['scratchpad'].dropdown_toggle('qshell')),
 ])
 
 
@@ -505,7 +564,7 @@ floating_layout = layout.Floating(float_rules=[
     {"role" : "Preferences"}, 
     {"role" : "pop-up" },
     {"role" : "prefwindow"}, 
-    { "role" : "task_dialog"},
+    {"role" : "task_dialog"},
     {"role"  : "browser"}, 
     {"wname" : "Module"}, 
     {"wname" : "Terminator Preferences"}, 
@@ -573,7 +632,7 @@ def set_floating(window):
         window.floating = True
 
 @hook.subscribe.client_managed
-def goto_group(window):
+def go_to_group(window):
     if (window.window.get_wm_class()[1] in wm_class_groups.keys()
     or window.window.get_wm_window_role() in wm_role_groups.keys()):
         window.group.cmd_toscreen()
