@@ -412,13 +412,12 @@ class WallpaperSwitcher(object):
         finally:
             if not self.cleaned_up:
                 self._clean_up()
-
-
+            
 if __name__ == "__main__":
     Image_Dirs = ()
     Exclusions = ()
     Min_Size_In_Kb = 10.0
-    Image_Order = ("random", None)
+    Image_Order = ("Random", None)
     Interval_In_Sec = None
 
     w = WallpaperSwitcher(image_dirs=Image_Dirs, exclusions=Exclusions,
