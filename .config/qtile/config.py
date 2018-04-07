@@ -159,6 +159,11 @@ def regex(name):
     return r'.*(^|\s|\t|\/)' + name + r'(\s|\t|$).*'
 
 
+date_command = ["/usr/bin/date", "+%a %D"]
+if os.path.exists("/usr/bin/jdate"):
+    date_command = ["/usr/bin/jdate", "+%h %D"]
+
+
 def window_to_prev_group():
     @lazy.function
     def __inner(qtile):
@@ -278,10 +283,7 @@ def get_cur_grp_name():
     return client.group.info()['name']
 
 
-date_command = ["/usr/bin/date", "+%a %D"]
-
-
-def get_date():
+def get_jdate():
     return '📆 ' + subprocess.check_output(date_command).decode('utf-8').strip()
 
 
@@ -289,8 +291,32 @@ def get_time():
     return ' ⏰ ' + subprocess.check_output(['/usr/bin/date', '+%I:%M %p']).decode('utf-8').strip()
 
 
-def get_datetime():
-    return get_date() + get_time()
+def get_jdatetime():
+    return get_jdate() + get_time()
+
+
+def get_updates():
+    return subprocess.check_output([home + '/.script/qtile-totalupdatesavail']).decode('utf-8').strip()
+
+
+def get_keyboardlayout():
+    return '⌨ ' + subprocess.check_output([home + '/.script/qtile-keyboardlayout']).decode('utf-8').strip()
+
+
+def get_freemem():
+    return '🎫 ' + subprocess.check_output([home + '/bin/totalfreemem', '-g', '2']).decode('utf-8').strip()
+
+
+def get_freeswap():
+    return '🔃 ' + subprocess.check_output([home + '/bin/totalfreeswap', '-g', '2']).decode('utf-8').strip()
+
+
+def get_ctemp():
+    return '🅒 ' + subprocess.check_output([home + '/bin/ctemp', '--max']).decode('utf-8').strip()
+
+
+def get_gtemp():
+    return '🅖 ' + subprocess.check_output([home + '/bin/gtemp']).decode('utf-8').strip()
 
 
 keys = [
@@ -519,8 +545,18 @@ screens = [
                                 ),
                 widget.Prompt(fontsize=12, cursor_color='FFFFFF', foreground='FDF3A9', background='271B1B'),
                 widget.WindowName(foreground='7AA0BC', ),
-                widget.GenPollText(func=get_datetime, update_interval=1, foreground='B1D0FF', ),
+                widget.Net(interface='enp3s0', foreground='FFAAFF', ),
+                widget.GenPollText(func=get_ctemp, update_interval=5, foreground="88D2FF", ),
+                widget.GenPollText(func=get_gtemp, update_interval=5, foreground="88D2FF", ),
+                widget.GenPollText(func=get_freemem, update_interval=5, foreground='00FFBB', ),
+                widget.GenPollText(func=get_freeswap, update_interval=5, foreground='00FFBB', ),
+                widget.GenPollText(func=get_updates, update_interval=5, foreground='FFFF7F', ),
+                widget.GenPollText(func=get_keyboardlayout, update_interval=1, foreground='FFAA7F', ),
+                widget.GenPollText(func=get_jdatetime, update_interval=1, foreground='B1D0FF', ),
                 widget.Systray(),
+                widget.LaunchBar(progs=[('oblogout', '/usr/bin/oblogout', 'logout'), ],
+                                 default_icon=home + "/.config/qtile/shutdown.png", ),
+                # Change logout command in "/etc/oblogout.conf" to ~/bin/logoff
             ],
             20,
             background=['1A2024', '060A0F'],
@@ -615,6 +651,7 @@ floating_layout = layout.Floating(float_rules=[
     {"wmclass": "Mlconfig"},
     {"wmclass": "Termite"},
 ])
+
 auto_fullscreen = True
 focus_on_window_activation = "smart"
 
@@ -643,6 +680,7 @@ def autostart():
     from datetime import datetime
     try:
         subprocess.call([home + '/.config/qtile/autostart.sh'])
+        subprocess.Popen(["/usr/bin/setxkbmap", "us,ir", "-option", "'grp:alt_shift_toggle'"])
     except Exception as e:
         with open('qtile_log', 'a+') as f:
             f.write(
