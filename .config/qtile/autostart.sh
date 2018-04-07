@@ -6,7 +6,7 @@ exec /usr/bin/setxkbmap us,ir -option 'grp:alt_shift_toggle' &
 exec /usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1 &
 
 # Start compositor
-exec /usr/bin/compton &
+exec /usr/bin/compton -b &
 
 # Start network manager applet
 exec /usr/bin/nm-applet &
