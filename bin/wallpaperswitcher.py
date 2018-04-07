@@ -417,7 +417,7 @@ if __name__ == "__main__":
     Image_Dirs = ()
     Exclusions = ()
     Min_Size_In_Kb = 10.0
-    Image_Order = ("Random", None)
+    Image_Order = ("random", None)
     Interval_In_Sec = None
 
     w = WallpaperSwitcher(image_dirs=Image_Dirs, exclusions=Exclusions,
