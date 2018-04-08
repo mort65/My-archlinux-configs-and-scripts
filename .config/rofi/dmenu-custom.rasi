@@ -41,6 +41,6 @@ configuration {
     padding: 0px 8px;
 }
 #element selected {
-    background-color: yellow;
+    background-color: #FDF3A9;
     text-color: Black;
 }
