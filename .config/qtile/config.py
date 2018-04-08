@@ -56,6 +56,7 @@ cls_grp_dict = {
     "PlayOnLinux": "8", "VirtualBox": "9", "okular": "9", "calibre": "9",
     "octopi": "9", "Pamac-updater": "9", "Pamac-manager": "9", "Lxtask": "9",
     "Dukto": "9", "QuiteRss": "9", "Filezilla": "9",
+    "jetbrains-pycharm-ce": "5",
 }
 role_grp_dict = {
     "browser": "2", "gimp-image-window": "5",
@@ -125,6 +126,7 @@ group_matches = [
         "Zathura", "libreoffice-writer", "libreoffice",
         "Leafpad", "kate", "Pluma", "Mousepad", "kwrite",
         "Geany", "Gedit", "Code", "Atom",
+        "jetbrains-pycharm-ce",
     ], ), ],
 
     [Match(wm_class=[
@@ -267,6 +269,7 @@ def find_or_run(app, classes=(), group="", processes=()):
 
 
 def to_urgent():
+    @lazy.function
     def __inner(qtile):
         cg = qtile.currentGroup
         for group in qtile.groupMap.values():
@@ -276,6 +279,13 @@ def to_urgent():
                 qtile.currentScreen.setGroup(group)
                 break
 
+    return __inner
+
+
+def exit_menu():
+    @lazy.function
+    def __inner(qtile):
+        subprocess.Popen(["/usr/bin/sh", home + "/.script/qtile-rofi_exit_menu"])
     return __inner
 
 
@@ -296,11 +306,11 @@ def get_jdatetime():
 
 
 def get_updates():
-    return subprocess.check_output([home + '/.script/qtile-totalupdatesavail']).decode('utf-8').strip()
+    return subprocess.check_output([home + '/.script/qtile-total_updates_avail']).decode('utf-8').strip()
 
 
 def get_keyboardlayout():
-    return '⌨ ' + subprocess.check_output([home + '/.script/qtile-keyboardlayout']).decode('utf-8').strip()
+    return '⌨ ' + subprocess.check_output([home + '/.script/qtile-keyboard_layout']).decode('utf-8').strip()
 
 
 def get_freemem():
@@ -400,9 +410,9 @@ keys = [
     Key([mod], "Tab", lazy.next_layout()),
     Key([mod], "space", lazy.prev_layout()),
     Key([mod], "x", lazy.window.kill()),
-
     Key([mod, "shift"], "r", lazy.restart()),
-    Key([mod, "shift"], "Pause", lazy.shutdown()),
+    Key([mod, "shift"], "q", lazy.shutdown()),
+    Key([mod, "shift"], "Pause", exit_menu()),
     Key([mod, "shift"], "Scroll_Lock", lazy.spawn("/usr/bin/slock")),
     Key([mod, "shift", "control"], "Print", lazy.spawn("/usr/bin/systemctl -i suspend")),
     Key([mod], "r", lazy.spawncmd()),
@@ -439,7 +449,7 @@ keys = [
                                                        ("\./firefox",)))),
     Key([mod], "i", lazy.function(find_or_run("/usr/bin/pamac-manager", ["Pamac-manager"],
                                               cls_grp_dict["Pamac-manager"]))),
-    Key([], "F10", lazy.function(to_urgent())),
+    Key([], "F10", to_urgent()),
 
     # Media player controls
     Key([], "XF86AudioPlay", lazy.spawn("/usr/bin/playerctl play")),
