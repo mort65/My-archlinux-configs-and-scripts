@@ -42,5 +42,5 @@ configuration {
 }
 #element selected {
     background-color: #FDF3A9;
-    text-color: Black;
+    text-color: #271B1B;
 }
