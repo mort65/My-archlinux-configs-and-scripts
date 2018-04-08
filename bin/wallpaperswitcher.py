@@ -11,7 +11,7 @@ import time
 import sys
 
 
-class WallpaperSwitcher(object):
+class WallpaperSwitcher:
     """This class changes desktop wallpaper."""
     _home_dir = os.path.expanduser('~')
     initialized = False
