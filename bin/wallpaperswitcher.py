@@ -13,7 +13,6 @@ import sys
 
 class WallpaperSwitcher(object):
     """This class changes desktop wallpaper."""
-    _interval = None
     _home_dir = os.path.expanduser('~')
     initialized = False
     cleaned_up = False
@@ -412,7 +411,8 @@ class WallpaperSwitcher(object):
         finally:
             if not self.cleaned_up:
                 self._clean_up()
-            
+
+
 if __name__ == "__main__":
     Image_Dirs = ()
     Exclusions = ()
