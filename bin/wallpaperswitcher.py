@@ -11,7 +11,7 @@ import time
 import sys
 
 
-class WallpaperSwitcher:
+class WallpaperSwitcher(object):
     """This class changes desktop wallpaper."""
     _home_dir = os.path.expanduser('~')
     initialized = False
@@ -79,10 +79,6 @@ class WallpaperSwitcher:
                 os.makedirs(os.path.dirname(self._log_path))
 
             self._fh = os.path.join(self._home_dir, '.wallpaper-switcher', '.lock')
-
-            if not self._check_single_instance():
-                print("Another instance is already running, quitting.")
-                exit(0)
 
             self.initialized = True
         except ValueError as err:
@@ -394,6 +390,10 @@ class WallpaperSwitcher:
 
     def start(self):
         try:
+            if not self._check_single_instance():
+                print("Another instance is already running, quitting.")
+                exit(0)
+
             if not self._interval:
                 self._run()
             elif self._interval < 0 or (0 < self._interval < 1):
@@ -411,8 +411,7 @@ class WallpaperSwitcher:
         finally:
             if not self.cleaned_up:
                 self._clean_up()
-
-
+            
 if __name__ == "__main__":
     Image_Dirs = ()
     Exclusions = ()
