@@ -379,10 +379,10 @@ if [[ ! $PacOff == "Yes" ]]; then
     echo
     echo -e $blue"===>$reset Checking for pacnew files..."
     echo
-    if [[ $($SUDO find /etc -regextype posix-extended -regex ".+\.pac(new|save)" 2> /dev/null) ]]; then
+    if [[ $($SUDO find /etc -regextype posix-extended -regex ".+\.pacnew" 2> /dev/null) ]]; then
         echo -e $red"Error:$reset Pacnew file(s) found! (Use pacdiff to deal with them):"
         echo
-        $SUDO find /etc -regextype posix-extended -regex ".+\.pacnew" 2> /dev/null
+        $SUDO find /etc -regextype posix-extended -regex ".+\.pac(new|save)" 2> /dev/null
         echo
         read -p "Press enter to exit..."
         exit 1
