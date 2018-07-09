@@ -660,6 +660,7 @@ floating_layout = layout.Floating(float_rules=[
     {"wmclass": 'ssh-askpass'},
     {"wmclass": "Mlconfig"},
     {"wmclass": "Termite"},
+    {"wmclass": "Orage"},
 ])
 
 auto_fullscreen = True
