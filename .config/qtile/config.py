@@ -52,7 +52,7 @@ cls_grp_dict = {
     "Ristretto": "6", "lximage-qt": "6", "Eom": "6", "Gpicview": "6",
     "vlc": "7", "xv/mplayer": "7", "Clementine": "7", "MPlayer": "7",
     "smplayer": "7", "mpv": "7", "Gnome-mpv": "7", "Rhythmbox": "7",
-    "Pragha": "7", "Steam": "8", "Wine": "8", "Zenity": "8",
+    "Pragha": "7", "Gnome-mplayer":"7", "Steam": "8", "Wine": "8", "Zenity": "8",
     "PlayOnLinux": "8", "VirtualBox": "9", "okular": "9", "calibre": "9",
     "octopi": "9", "Pamac-updater": "9", "Pamac-manager": "9", "Lxtask": "9",
     "Dukto": "9", "QuiteRss": "9", "Filezilla": "9",
@@ -137,8 +137,8 @@ group_matches = [
 
     [Match(wm_class=[
         "vlc", "xv/mplayer", "Clementine",
-        "MPlayer", "smplayer", "mpv",
-        "Gnome-mpv", "Rhythmbox", "Pragha",
+        "MPlayer", "mpv", "Gnome-mplayer",
+        "Gnome-mpv", "Rhythmbox", "Pragha", "smplayer",
     ]), ],
 
     [Match(wm_class=[
