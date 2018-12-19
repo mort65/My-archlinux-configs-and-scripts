@@ -1,0 +1,264 @@
+<?xml version="1.0"?>
+<JWM>
+
+    <!-- The root menu. -->
+    <RootMenu height="15" onroot="123">
+        <Include>$HOME/.jwmrc-mjwm</Include>
+        <Separator/>
+        <Program icon="web-browser" label="Web Browser">xdg-open https://www.archlinux.org/</Program>
+        <Program icon="system-file-manager" label="File Manager">Thunar</Program>
+        <Program icon="terminal.png" label="Terminal">urxvt</Program>
+        <Separator/>
+        <Program label="Run" icon="system-run">gmrun</Program>
+        <Menu label="Reload" icon="refresh">
+            <Restart label="Reload JWM" icon="view-refresh"/>
+            <Program label="Reload Menu" icon="view-refresh">mjwm</Program>
+        </Menu>
+        <Menu icon="system-log-out" label="Exit">
+            <Program icon="lock" label="Lock" >
+                slock
+            </Program>
+            <Exit label="Exit" confirm="true" icon="system-log-out"/>
+            <Program label="Restart" icon="system-reboot">systemctl reboot</Program>
+            <Program label="Suspend" icon="system-suspend">systemctl suspend</Program>
+            <Program label="Poweroff" icon="system-shutdown">systemctl poweroff</Program>
+	</Menu>
+    </RootMenu>
+
+    <!-- Options for program groups. -->
+    <Group>
+        <Option>tiled</Option>
+        <Option>aerosnap</Option>
+    </Group>
+    <Group>
+        <Class>Pidgin</Class>
+        <Option>sticky</Option>
+    </Group>
+    <Group>
+        <Name>xterm</Name>
+        <Option>vmax</Option>
+    </Group>
+    <Group>
+        <Name>xclock</Name>
+        <Option>drag</Option>
+        <Option>notitle</Option>
+    </Group>
+    <Group>
+        <Class>URxvt</Class>
+        <Class>Lxterminal</Class>
+        <Class>LilyTerm</Class>
+        <Class>Xfce4-terminal</Class>
+        <Option>iignore</Option>
+    </Group>
+
+    <!-- Tray at the bottom. -->
+    <Tray x="0" y="-1" height="26" autohide="off">
+
+        <TrayButton icon="arch">root:1</TrayButton>
+
+        <Spacer width="2"/>
+        
+        <TrayButton label="" icon="user-desktop">showdesktop</TrayButton>
+        
+        <Spacer width="2"/>
+
+        <Pager labeled="true" icon=""/>
+        
+        <Spacer width="2"/>
+        
+        <TaskList maxwidth="256"/>
+        
+        <Spacer width="2"/>
+        
+        <Dock/>
+        
+        <Spacer width="2"/>
+
+        <Clock format="%a %b %d %H:%M %P"><Button mask="123">exec:orage</Button></Clock>
+
+    </Tray>
+
+    <!-- Visual Styles -->
+    <WindowStyle>
+        <Font>Sans-8</Font>
+        <Width>4</Width>
+        <Height>21</Height>
+        <Corner>3</Corner>
+        <Foreground>#FFFFFF</Foreground>
+        <Background>#555555</Background>
+        <Outline>#000000</Outline>
+        <Opacity>1.0</Opacity>
+        <Active>
+            <Foreground>#FFFFFF</Foreground>
+            <Background>#202020</Background>
+            <Outline>#000000</Outline>
+            <Opacity>1.0</Opacity>
+        </Active>
+    </WindowStyle>
+    <TrayStyle group="true" list="all">
+        <Font>Sans-9</Font>
+        <Background>#222222</Background>
+        <Foreground>#FFFFFF</Foreground>
+        <Outline>#000000</Outline>
+        <Opacity>1.0</Opacity>
+    </TrayStyle>
+    <TaskListStyle>
+      <Font>Sans-9</Font>
+      <Active>
+        <Foreground>#FFFFFF</Foreground>
+        <Background>#60748d:#2e3a67</Background>
+      </Active>
+      <Foreground>#FFFFFF</Foreground>
+      <Background>#303030</Background>
+    </TaskListStyle>
+    <PagerStyle>
+        <Outline>#999999</Outline>
+        <Foreground>#555555</Foreground>
+        <Background>#505050</Background>
+        <Text>#FFFFFF</Text>
+        <Active>
+            <Foreground>#0077CC</Foreground>
+            <Background>#004488</Background>
+        </Active>
+    </PagerStyle>
+    <MenuStyle>
+        <Font>Sans-8:bold</Font>
+        <Foreground>#FFFFFF</Foreground>
+        <Background>#333333</Background>
+        <Outline>#000000</Outline>
+        <Active>
+            <Foreground>#FFFFFF</Foreground>
+            <Background>#0077CC</Background>
+        </Active>
+        <Opacity>1.0</Opacity>
+    </MenuStyle>
+    <PopupStyle>
+        <Font>Sans-9</Font>
+        <Foreground>#FFFFFF</Foreground>
+        <Background>#000000</Background>
+    </PopupStyle>
+    <ClockStyle>
+        <Font>sans-8:bold</Font>
+    </ClockStyle>
+
+    <!-- Path where icons can be found.
+         IconPath can be listed multiple times to allow searching
+         for icons in multiple paths.
+      -->
+    <!--
+    <IconPath>
+        /usr/share/jwm
+    </IconPath>
+      -->
+    <IconPath>
+        /usr/share/icons/jwm
+    </IconPath>
+
+    <!-- Virtual Desktops -->
+    <!-- Desktop tags can be contained within Desktops for desktop names. -->
+    <Desktops width="2" height="1">
+        <!-- Default background. Note that a Background tag can be
+              contained within a Desktop tag to give a specific background
+              for that desktop.
+         -->
+        <Background type="command">nitrogen --restore</Background>
+    </Desktops>
+
+    <!-- Double click speed (in milliseconds) -->
+    <DoubleClickSpeed>400</DoubleClickSpeed>
+
+    <!-- Double click delta (in pixels) -->
+    <DoubleClickDelta>2</DoubleClickDelta>
+
+    <!-- The focus model (sloppy or click) -->
+    <FocusModel>sloppy</FocusModel>
+
+    <!-- The snap mode (none, screen, or border) -->
+    <SnapMode distance="10">border</SnapMode>
+
+    <!-- The move mode (outline or opaque) -->
+    <MoveMode mask="4">opaque</MoveMode>
+
+    <!-- The resize mode (outline or opaque) -->
+    <ResizeMode>opaque</ResizeMode>
+
+    <!-- Key bindings -->
+    <Key key="Up">up</Key>
+    <Key key="Down">down</Key>
+    <Key key="Right">right</Key>
+    <Key key="Left">left</Key>
+    <Key key="h">left</Key>
+    <Key key="j">down</Key>
+    <Key key="k">up</Key>
+    <Key key="l">right</Key>
+    <Key key="Return">select</Key>
+    <Key key="Escape">escape</Key>
+
+    <Key mask="A" key="Tab">nextstacked</Key>
+    <Key mask="4" key="Tab">next</Key>
+    <Key mask="A" key="space">prevstacked</Key>
+    <Key mask="4" key="space">prev</Key>
+    <Key mask="4" key="F4">close</Key>
+    <Key mask="4" key="#">desktop#</Key>
+    <Key mask="4" key="F1">root:1</Key>
+    <Key mask="4" key="F2">window</Key>
+    <Key mask="4" key="F10">maximize</Key>
+    <Key mask="4" key="Right">rdesktop</Key>
+    <Key mask="4" key="Left">ldesktop</Key>
+    <Key mask="4" key="Up">udesktop</Key>
+    <Key mask="4" key="Down">ddesktop</Key>
+    
+    <!-- Custom hotkeys
+    
+    A - Alt (mod1)
+    C - Control
+    S - Shift
+    1 - mod1 - Alt
+    2 - mod2
+    3 - mod3
+    4 - mod4 - Super
+    5 - mod5
+    
+      -->
+    
+    <Key mask="4C" key="Right">sendr</Key>
+    <Key mask="4C" key="Left">sendl</Key>
+    <Key mask="4C" key="Down">sendd</Key>
+    <Key mask="4C" key="Up">sendu</Key>
+   
+   <!-- sliter.py options
+        simple 		- The basic tiling layout . 1 Main + all other at the side.
+        left,right 	- Does the new windows7 ish style of sticking to the sides.
+        swap 		- Will swap the active window to master column
+        cycle 		- Cycle all the windows in the master pane
+        vertical 	- Simple vertical tiling
+        horizontal 	- Simple horizontal tiling
+        maximize 	- Maximize the active window/ for openbox which doesn't permit resizing of max windows
+        max_all         - Maximize all windows 
+     -->
+    <Key mask="4S" key="Up">exec:$HOME/bin/stiler.py swap</Key>
+    <Key mask="4S" key="Down">exec:$HOME/bin/stiler.py cycle</Key>
+    <Key mask="4S" key="Left">exec:$HOME/bin/stiler.py left</Key>
+    <Key mask="4S" key="Right">exec:$HOME/bin/stiler.py right</Key>    
+
+    <Key mask="CA" key="r">exec:jwm -restart</Key>
+    <Key mask="CA" key="q">exec:jwm -exit</Key>
+    <Key mask="CA" key="t">exec:termite</Key>
+    <Key mask="4" key="t">exec:urxvt</Key>
+    <Key mask="4" key="Return">exec:xfce4-terminal</Key>
+    <Key mask="4" key="Home">exec:thunar</Key>
+    <Key mask="4" key="w">exec:firefox</Key>
+    <Key mask="4" key="e">exec:leafpad</Key>
+    <Key mask="4S" key="e">exec:geany</Key>
+    <Key mask="4" key="x">exec:xkill</Key>
+    <Key mask="4" key="d">exec:/usr/bin/rofi -modi run,drun -show drun run</Key>
+    <Key mask="4" key="r">exec:rofi -modi combi,window,run,drun -show combi -combi-modi window,run,drun</Key>
+    <Key mask="4S" key="r">exec:gksudo</Key>
+    <Key mask="4" key="m">exec:urxvt -e cmus</Key>
+    <Key mask="4S" key="m">exec:pragha</Key>
+    <Key key="Print">exec:scrot  ~/Pictures/Screenshots/screenshot_%Y_%m_%d_%H_%M_%S.png</Key>
+    
+    <!-- Autostart Applications -->
+    <StartupCommand>$HOME/.jwmrc-autostart</StartupCommand>
+
+</JWM>
