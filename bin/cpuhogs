@@ -1,3 +1,0 @@
-#!/bin/bash
-#Display the top ten running processes - sorted by cpu usage
-while [ 1 ]; do ps aux | head -n 1 ;ps aux | sort -r -nk +3 | head ;echo;sleep 10; done

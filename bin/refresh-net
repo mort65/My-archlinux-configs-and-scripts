@@ -1,7 +1,0 @@
-#!/bin/bash
-
-# Refresh Network connections
-/usr/bin/sudo /usr/bin/systemctl restart NetworkManager.service
-/usr/bin/sleep 5
-
-exit 0

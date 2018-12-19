@@ -1,7 +1,0 @@
-#!/bin/bash
-
-#This script show orphan packages
-
-/usr/bin/pacman -Qqddt
-
-exit 0

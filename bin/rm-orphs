@@ -1,7 +1,0 @@
-#!/bin/bash
-
-#This script removes all orphan packages
-
-/usr/bin/sudo pacman -Rs $(pacman -Qqddt)
-
-exit 0
