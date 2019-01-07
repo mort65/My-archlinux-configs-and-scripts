@@ -10,9 +10,6 @@
     font:            "ubuntu 12";
 }
 
-configuration {
-}
-
 #window {
     anchor:     north;
     location:   north;
