@@ -2,8 +2,7 @@
 ## my dwm startup script
 
 CDATE () {
-    #cdate=$(/usr/bin/date +"%a %b %d | %H:%M %P")
-    cdate=$(/usr/bin/jdate +"%h %b %d | %H:%M %P")
+    cdate=$(/usr/bin/date +"%a %b %d | %H:%M %P")
     echo "${cdate}"
 }
 

@@ -1,0 +1,6 @@
+#!/bin/bash
+
+export USERNAME=${SUDO_USER:-$(id -u -n)}
+export NNN_BMS="\`:~;d:~/Downloads;D:/mnt/data;H:/mnt/home1;R:/mnt/root1;M:/run/media/${USERNAME};p:~/Pictures;m:~/Music;v:~/Videos;N:/mnt;"
+
+/usr/bin/nnn

@@ -1,7 +1,6 @@
 #! /bin/bash
 ## dwm autostart script
 
-exec /usr/bin/setxkbmap us,ir -option 'grp:rctrl_rshift_toggle' &
 exec /usr/bin/numlockx &
 exec /usr/bin//nitrogen --restore &
 sleep 1
@@ -14,4 +13,3 @@ exec /usr/bin/udiskie -2 -s &
 exec /usr/bin/clipit &
 exec /usr/bin/nm-applet &
 sleep 1
-exec /usr/bin/setxkbmap us,ir -option 'grp:rctrl_rshift_toggle' &
