@@ -1,0 +1,71 @@
+# Maintainer: Mbani <>
+
+pkgname=dwm-patched
+pkgver=6.1
+pkgrel=3
+pkgdesc="A dynamic window manager for X"
+url="http://dwm.suckless.org"
+arch=('i686' 'x86_64')
+license=('MIT')
+conflicts=('dwm')
+options=(zipman)
+depends=('libx11' 'libxinerama' 'libxft' 'freetype2')
+optdepends=('st' 'dmenu')
+install=dwm.install
+source=(config.def.h config.h config.mk startdwm drw.c drw.h dwm.1 dwm.c dwm.desktop dwm.png LICENSE Makefile README selfrestart.c shiftview.c transient.c util.c util.h)
+
+prepare() {
+  mkdir -p "$pkgname-$pkgver"
+  cd "$srcdir/$pkgname-$pkgver"
+  cp "$srcdir/config.def.h" .
+  cp "$srcdir/config.h" .
+  cp "$srcdir/config.mk" .
+  cp "$srcdir/startdwm" .
+  cp "$srcdir/drw.c" .
+  cp "$srcdir/drw.h" .
+  cp "$srcdir/dwm.1" .
+  cp "$srcdir/dwm.c" .
+  cp "$srcdir/dwm.desktop" .
+  cp "$srcdir/dwm.png" .
+  cp "$srcdir/LICENSE" .
+  cp "$srcdir/Makefile" .
+  cp "$srcdir/README" .
+  cp "$srcdir/selfrestart.c" .
+  cp "$srcdir/shiftview.c" .
+  cp "$srcdir/transient.c" .
+  cp "$srcdir/util.c" .
+  cp "$srcdir/util.h" .
+}
+
+build() {
+  cd "$srcdir/$pkgname-$pkgver"
+  make X11INC=/usr/include/X11 X11LIB=/usr/lib/X11 FREETYPEINC=/usr/include/freetype2
+}
+
+package() {
+  cd "$srcdir"/"$pkgname-$pkgver"
+  make PREFIX=/usr DESTDIR="$pkgdir" install
+  install -m644 -D LICENSE "$pkgdir"/usr/share/licenses/"$pkgname"/LICENSE
+  install -m644 -D README "$pkgdir"/usr/share/doc/"$pkgname"/README
+  install -m644 -D "$srcdir"/dwm.desktop "$pkgdir"/usr/share/xsessions/dwm.desktop
+  install -m755 -D "$srcdir"/startdwm "$pkgdir"/usr/local/bin/startdwm
+}
+
+md5sums=('2c3b25e7a87ceba885c0dba7d2caf988'
+         '88cc8fdff9efadad2285de94c4ad75af'
+         '007fecea7a026dde17dbae253f756df1'
+         '8273836c871431496a26e26af71d12a7'
+         '8742b0e99c633724a73dcff43e521380'
+         '2170b6fe645068a2cad4be60d5ebbd84'
+         'da9a1a23c7caab2d8b1b735ed51b34e1'
+         '9bf277a83f58d66b06a80a938803d9e6'
+         '4d23917a18bfc2ef916d8b52866948da'
+         'b410e9a038520b0a117644dba003da62'
+         '8555b535ebdcbd0f153d5c9fabde7168'
+         '42ed84e27b95988d1a5ff35bc8a01c53'
+         'ad7413999e5ed8abc7747e52ec870a0f'
+         'aada803e6a681e3e3b383ee860578ef3'
+         'd27ffe45978d3aee241538b5d9c70805'
+         '1f002e4c3da39eed17c5581e8649daa1'
+         'e1d877b57636568ba579b1bc0ae42e8f'
+         '007c065ca60e3f3c56bf153f2f769a90')

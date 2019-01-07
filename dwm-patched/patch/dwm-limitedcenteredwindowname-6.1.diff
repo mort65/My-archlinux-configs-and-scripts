@@ -1,0 +1,39 @@
+Author: Mort65, https://github.com/mort65/
+Description: This patch puts the WM_NAME of the selected window
+on the center of the status bar and adds a limit to its length.
+
+diff -up ../dwm-6.1/config.def.h ./config.def.h
+--- ../dwm-6.1/config.def.h	2015-11-09 02:09:37.000000000 +0330
++++ ./config.def.h	2019-01-07 14:45:49.314964754 +0330
+@@ -13,6 +13,7 @@ static const char selbgcolor[]      = "#
+ static const char selfgcolor[]      = "#eeeeee";
+ static const unsigned int borderpx  = 1;        /* border pixel of windows */
+ static const unsigned int snap      = 32;       /* snap pixel */
++static const unsigned int maxwnln   = 64;       /* maximum length of windows names on the status bar */
+ static const int showbar            = 1;        /* 0 means no bar */
+ static const int topbar             = 1;        /* 0 means bottom bar */
+
+diff -up ../dwm-6.1/dwm.c ./dwm.c
+--- ../dwm-6.1/dwm.c	2015-11-09 02:09:37.000000000 +0330
++++ ./dwm.c	2019-01-07 14:53:17.944959157 +0330
+@@ -743,7 +743,19 @@ drawbar(Monitor *m)
+ 		x = xx;
+ 		if (m->sel) {
+ 			drw_setscheme(drw, m == selmon ? &scheme[SchemeSel] : &scheme[SchemeNorm]);
+-			drw_text(drw, x, 0, w, bh, m->sel->name, 0);
++			if (maxwnln > 0) {
++				int mid;
++				if (strlen(m->sel->name) > maxwnln) {
++					char wname[maxwnln + 1];
++					strncpy(wname, m->sel->name, maxwnln);
++					wname[maxwnln] = '\0';
++					mid = (m->ww - TEXTW(wname)) / 2 - x;
++					drw_text(drw, x, 0, w, bh, mid, wname, 0);
++				} else {
++					mid = (m->ww - TEXTW(m->sel->name)) / 2 - x;
++					drw_text(drw, x, 0, w, bh, mid, m->sel->name, 0);
++				}
++			}
+ 			drw_rect(drw, x + 1, 1, dx, dx, m->sel->isfixed, m->sel->isfloating, 0);
+ 		} else {
+ 			drw_setscheme(drw, &scheme[SchemeNorm]);

@@ -1,0 +1,97 @@
+diff -up dwm-6.1/config.def.h dwm-6.1_FSIGNAL/config.def.h
+--- dwm-6.1/config.def.h	2015-11-08 23:11:48.000000000 +0100
++++ dwm-6.1_FSIGNAL/config.def.h	2018-03-29 21:34:43.218114924 +0200
+@@ -111,3 +111,10 @@ static Button buttons[] = {
+ 	{ ClkTagBar,            MODKEY,         Button3,        toggletag,      {0} },
+ };
+ 
++/* signal definitions */
++/* signum must be greater than 0 */
++/* trigger signals using `xsetroot -name "fsignal:<signum>"` */
++static Signal signals[] = {
++	/* signum       function        argument  */
++	{ 1,            setlayout,      {.v = 0} },
++};
+Only in dwm-6.1_FSIGNAL/: config.h
+diff -up dwm-6.1/dwm.c dwm-6.1_FSIGNAL/dwm.c
+--- dwm-6.1/dwm.c	2015-11-08 23:11:48.000000000 +0100
++++ dwm-6.1_FSIGNAL/dwm.c	2018-03-29 21:22:07.697560231 +0200
+@@ -107,6 +107,12 @@ typedef struct {
+ } Key;
+ 
+ typedef struct {
++	unsigned int signum;
++	void (*func)(const Arg *);
++	const Arg arg;
++} Signal;
++
++typedef struct {
+ 	const char *symbol;
+ 	void (*arrange)(Monitor *);
+ } Layout;
+@@ -177,6 +183,7 @@ static void grabbuttons(Client *c, int f
+ static void grabkeys(void);
+ static void incnmaster(const Arg *arg);
+ static void keypress(XEvent *e);
++static int fake_signal(void);
+ static void killclient(const Arg *arg);
+ static void manage(Window w, XWindowAttributes *wa);
+ static void mappingnotify(XEvent *e);
+@@ -1013,6 +1020,47 @@ keypress(XEvent *e)
+ 			keys[i].func(&(keys[i].arg));
+ }
+ 
++int
++fake_signal(void)
++{
++	char fsignal[256];
++	char indicator[9] = "fsignal:";
++	char str_signum[16];
++	int i, v, signum;
++	size_t len_fsignal, len_indicator = strlen(indicator);
++
++	// Get root name property
++	if (gettextprop(root, XA_WM_NAME, fsignal, sizeof(fsignal))) {
++		len_fsignal = strlen(fsignal);
++
++		// Check if this is indeed a fake signal
++		if (len_indicator > len_fsignal ? 0 : strncmp(indicator, fsignal, len_indicator) == 0) {
++			memcpy(str_signum, &fsignal[len_indicator], len_fsignal - len_indicator);
++			str_signum[len_fsignal - len_indicator] = '\0';
++
++			// Convert string value into managable integer
++			for (i = signum = 0; i < strlen(str_signum); i++) {
++				v = str_signum[i] - '0';
++				if (v >= 0 && v <= 9) {
++					signum = signum * 10 + v;
++				}
++			}
++
++			// Check if a signal was found, and if so handle it
++			if (signum)
++				for (i = 0; i < LENGTH(signals); i++)
++					if (signum == signals[i].signum && signals[i].func)
++						signals[i].func(&(signals[i].arg));
++
++			// A fake signal was sent
++			return 1;
++		}
++	}
++
++	// No fake signal was sent, so proceed with update
++	return 0;
++}
++
+ void
+ killclient(const Arg *arg)
+ {
+@@ -1233,7 +1281,8 @@ propertynotify(XEvent *e)
+ 	XPropertyEvent *ev = &e->xproperty;
+ 
+ 	if ((ev->window == root) && (ev->atom == XA_WM_NAME))
+-		updatestatus();
++		if (!fake_signal())
++			updatestatus();
+ 	else if (ev->state == PropertyDelete)
+ 		return; /* ignore */
+ 	else if ((c = wintoclient(ev->window))) {

@@ -1,0 +1,21 @@
+#! /bin/bash
+## my dwm startup script
+
+CDATE () {
+    #cdate=$(/usr/bin/date +"%a %b %d | %H:%M %P")
+    cdate=$(/usr/bin/jdate +"%h %b %d | %H:%M %P")
+    echo "${cdate}"
+}
+
+CTEMP () {
+    ctemp=$("$HOME/bin/ctemp" --max)
+    echo "${ctemp}"
+}
+
+GTEMP () {
+    gtemp=$("$HOME/bin/gtemp")
+    echo "${gtemp}"
+}
+
+/usr/bin/xsetroot -name " [ $(CTEMP) | $(GTEMP) | $(CDATE) ] "
+

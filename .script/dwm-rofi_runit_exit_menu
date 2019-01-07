@@ -1,0 +1,32 @@
+#!/bin/bash
+
+USERNAME=${SUDO_USER:-$(id -u -n)}
+HOMEDIR="/home/$USERNAME"
+ROFI="/usr/bin/rofi -dmenu -i -l \
+         -theme ~/.config/rofi/dmenu-custom.rasi"
+FIRST_MENU="Lock\nLogout\nSuspend\nReboot\nShutdown"
+SECOND_MENU="No\nYes"
+ACTION=""
+
+function choose {
+    CHOICE=$(echo -e $FIRST_MENU | $ROFI -p "")
+}
+
+function execute {
+  if [ "$CHOICE" == "Lock" ];then
+    ACTION="/usr/bin/slock"
+  elif [ "$CHOICE" == "Logout" ];then
+    ACTION="$HOME/bin/logoff"
+  elif [ "$CHOICE" == "Suspend" ];then
+    ACTION="/usr/bin/lxsudo /usr/bin/zzz"
+  elif [ "$CHOICE" == "Reboot" ];then
+    ACTION="/usr/bin/lxsudo /usr/bin/reboot"
+  elif [ "$CHOICE" == "Shutdown" ];then
+    ACTION="/usr/bin/lxsudo /usr/bin/poweroff"
+  fi
+  ${ACTION}
+}
+
+choose && execute
+
+exit 0

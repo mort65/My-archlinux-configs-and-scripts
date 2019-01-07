@@ -1,0 +1,22 @@
+#!/bin/bash
+
+USERNAME=${SUDO_USER:-$(id -u -n)}
+HOMEDIR="/home/$USERNAME"
+ROFI="/usr/bin/rofi -dmenu -i -l \
+         -theme ~/.config/rofi/dmenu-custom.rasi"
+SECOND_MENU="No\nYes"
+ACTION="xsetroot -name 'fsignal:9'; sleep 5s; killall dmstart; killall dwm;"
+
+function confirm {
+    CONFIRM=$(echo -e $SECOND_MENU | $ROFI -p "Are You Sure You Want to Logout?")
+}
+
+function execute {
+    if [ "$CONFIRM" == "Yes" ];then
+        eval ${ACTION}
+    fi
+}
+
+confirm && execute
+
+exit 0
