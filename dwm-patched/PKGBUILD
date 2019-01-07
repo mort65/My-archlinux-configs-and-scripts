@@ -48,7 +48,7 @@ package() {
   install -m644 -D LICENSE "$pkgdir"/usr/share/licenses/"$pkgname"/LICENSE
   install -m644 -D README "$pkgdir"/usr/share/doc/"$pkgname"/README
   install -m644 -D "$srcdir"/dwm.desktop "$pkgdir"/usr/share/xsessions/dwm.desktop
-  install -m755 -D "$srcdir"/startdwm "$pkgdir"/usr/local/bin/startdwm
+  install -m755 -D "$srcdir"/startdwm "$pkgdir"/usr/bin/startdwm
 }
 
 md5sums=('2c3b25e7a87ceba885c0dba7d2caf988'
