@@ -1,0 +1,4 @@
+#!/bin/bash
+#reload firefox after editing html.js,css file in a directory
+
+find "${1}" -maxdepth 1 -regex "^.+\.\([Hh][Tt][Mm][Ll]\|[Cc][Ss][Ss]\|[Jj][Ss]\)$" | entr ~/bin/reload-browser firefox

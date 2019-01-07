@@ -1,0 +1,12 @@
+#!/bin/bash
+#generates a qrcode image file from passed arguments or content of clipbord then opens it with feh
+
+if [[ -z "${1}" ]]; then
+	TEXT="$(/usr/bin/xclip -o)"
+else
+	TEXT="${*}"
+fi
+
+if [[ -n "${TEXT}" ]]; then
+	/usr/bin/qrencode -o ~/Pictures/Qrcode/Qrcode.png "${TEXT}" && /usr/bin/feh -F ~/Pictures/Qrcode/Qrcode.png && /usr/bin/rm ~/Pictures/Qrcode/Qrcode.png
+fi
