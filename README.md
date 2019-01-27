@@ -7,4 +7,4 @@ Applied Patches are in "dwm-patched/patch/".
 
 Installation
 ------------
-To install dwm, cd to dwm-patched directory and run "sudo make clean install" or if in archlinux run "makepkg -sicf".
+To install dwm, cd to the dwm-patched directory and run "sudo make clean install" or if in archlinux run "makepkg -sicf".
