@@ -1,6 +1,4 @@
-# my-arch-linux-configs-and-scripts
-# DWM
-
+# my-arch-linux-configs-and-scripts -> DWM
 DWM 6.1 with some patches for personal usage. 
 
 Patches
