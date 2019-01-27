@@ -1,20 +1,26 @@
 #! /bin/bash
-## my dwm startup script
+## my dwm status script
 
 CDATE () {
-    cdate=$(/usr/bin/date +"%a %b %d | %H:%M %P")
-    echo "${cdate}"
+	cdate=$(/usr/bin/date +"%a %b %d %H:%M")
+	echo "${cdate}"
+}
+
+CTIME () {
+	ctime=$(/usr/bin/date +"%a %H:%M")
+	echo "${ctime}"
 }
 
 CTEMP () {
-    ctemp=$("$HOME/bin/ctemp" --max)
-    echo "${ctemp}"
+	ctemp=$("$HOME/bin/ctemp" --max)
+	echo "${ctemp}"
 }
 
 GTEMP () {
-    gtemp=$("$HOME/bin/gtemp")
-    echo "${gtemp}"
+	gtemp=$("$HOME/bin/gtemp")
+	echo "${gtemp}"
 }
 
-/usr/bin/xsetroot -name " [ $(CTEMP) | $(GTEMP) | $(CDATE) ] "
+/usr/bin/xsetroot -name " [ $(CTEMP) $(GTEMP) $(CDATE) ] "
+#/usr/bin/xsetroot -name "[$(CTIME)]"
 

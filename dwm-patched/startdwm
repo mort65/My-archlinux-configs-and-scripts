@@ -7,21 +7,24 @@ STATUS=1
 sleep 1s
 
 #kill previous instance of this script
-/usr/bin/pgrep startdwm | /usr/bin/tac | /usr/bin/awk 'NR >= 2' | /usr/bin/xargs kill -9 &> /dev/null
+/usr/bin/pgrep startdwm | /usr/bin/tac | /usr/bin/awk 'NR > 1' | /usr/bin/xargs kill -9 &> /dev/null
 
 if [ ! -s "$HOME/.dwm-status" ]; then
-    STATUS=0
+	STATUS=0
 fi
 
 if [ -s "$HOME/.dwm-autostart" ]; then
-    exec "$HOME/.dwm-autostart" &> /dev/null &
+	exec "$HOME/.dwm-autostart" &> /dev/null &
 fi
 
 if [ $STATUS -eq 1 ]; then
-    while true; do
-        exec "$HOME/.dwm-status" &> /dev/null &
-        sleep 10s
-    done &
+	while true; do
+		"$HOME/.dwm-status" &> /dev/null
+		sleep 10s
+	done &
+else
+	/usr/bin/xsetroot -name " " &> /dev/null
+
 fi
 
 exec /usr/bin/dwm

@@ -18,11 +18,11 @@ function execute {
   elif [ "$CHOICE" == "Logout" ];then
     ACTION="$HOME/bin/logoff"
   elif [ "$CHOICE" == "Suspend" ];then
-    ACTION="/usr/bin/lxsudo /usr/bin/zzz"
+    ACTION="/usr/bin/gksudo /usr/bin/zzz"
   elif [ "$CHOICE" == "Reboot" ];then
-    ACTION="/usr/bin/lxsudo /usr/bin/reboot"
+    ACTION="/usr/bin/gksudo /usr/bin/reboot"
   elif [ "$CHOICE" == "Shutdown" ];then
-    ACTION="/usr/bin/lxsudo /usr/bin/poweroff"
+    ACTION="/usr/bin/gksudo /usr/bin/poweroff"
   fi
   ${ACTION}
 }

@@ -12,7 +12,7 @@ options=(zipman)
 depends=('libx11' 'libxinerama' 'libxft' 'freetype2')
 optdepends=('st' 'dmenu')
 install=dwm.install
-source=(config.def.h config.h config.mk startdwm drw.c drw.h dwm.1 dwm.c dwm.desktop dwm.png LICENSE Makefile README selfrestart.c shiftview.c transient.c util.c util.h)
+source=(config.def.h config.h config.mk startdwm drw.c drw.h dwm.1 dwm.c dwm.desktop dwm.png fibonacci.c gaplessgrid.c LICENSE layouts.c Makefile README selfrestart.c shiftview.c transient.c util.c util.h)
 
 prepare() {
   mkdir -p "$pkgname-$pkgver"
@@ -27,6 +27,9 @@ prepare() {
   cp "$srcdir/dwm.c" .
   cp "$srcdir/dwm.desktop" .
   cp "$srcdir/dwm.png" .
+  cp "$srcdir/fibonacci.c" .
+  cp "$srcdir/gaplessgrid.c" .
+  cp "$srcdir/layouts.c" .
   cp "$srcdir/LICENSE" .
   cp "$srcdir/Makefile" .
   cp "$srcdir/README" .
@@ -51,21 +54,24 @@ package() {
   install -m755 -D "$srcdir"/startdwm "$pkgdir"/usr/bin/startdwm
 }
 
-md5sums=('2c3b25e7a87ceba885c0dba7d2caf988'
-         '88cc8fdff9efadad2285de94c4ad75af'
-         '007fecea7a026dde17dbae253f756df1'
-         '8273836c871431496a26e26af71d12a7'
-         '8742b0e99c633724a73dcff43e521380'
-         '2170b6fe645068a2cad4be60d5ebbd84'
-         'da9a1a23c7caab2d8b1b735ed51b34e1'
-         '9bf277a83f58d66b06a80a938803d9e6'
-         '4d23917a18bfc2ef916d8b52866948da'
-         'b410e9a038520b0a117644dba003da62'
-         '8555b535ebdcbd0f153d5c9fabde7168'
-         '42ed84e27b95988d1a5ff35bc8a01c53'
-         'ad7413999e5ed8abc7747e52ec870a0f'
-         'aada803e6a681e3e3b383ee860578ef3'
-         'd27ffe45978d3aee241538b5d9c70805'
-         '1f002e4c3da39eed17c5581e8649daa1'
-         'e1d877b57636568ba579b1bc0ae42e8f'
-         '007c065ca60e3f3c56bf153f2f769a90')
+md5sums=(SKIP
+         SKIP
+         SKIP
+         SKIP
+         SKIP
+         SKIP
+         SKIP
+         SKIP
+         SKIP
+         SKIP
+         SKIP
+         SKIP
+         SKIP
+         SKIP
+         SKIP
+         SKIP
+         SKIP
+         SKIP
+         SKIP
+         SKIP
+         SKIP)
