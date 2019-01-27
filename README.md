@@ -4,4 +4,5 @@
 
 # DWM 6.1 with some patches for personal usage.
 
-# Applied Patches are in patch directory.
+# Applied Patches are in "dwm-patched/patch/".
+.
