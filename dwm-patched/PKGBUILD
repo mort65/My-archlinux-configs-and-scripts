@@ -54,24 +54,24 @@ package() {
   install -m755 -D "$srcdir"/startdwm "$pkgdir"/usr/bin/startdwm
 }
 
-md5sums=(SKIP
-         SKIP
-         SKIP
-         SKIP
-         SKIP
-         SKIP
-         SKIP
-         SKIP
-         SKIP
-         SKIP
-         SKIP
-         SKIP
-         SKIP
-         SKIP
-         SKIP
-         SKIP
-         SKIP
-         SKIP
-         SKIP
-         SKIP
-         SKIP)
+md5sums=('98099c346e5ed3cce4781988e4814634'
+         'ca28c1ac928e9ad1892c5d3ba9280c37'
+         '007fecea7a026dde17dbae253f756df1'
+         '9a4b2491e9bc1c0a58501e9d2a1a0dee'
+         '8742b0e99c633724a73dcff43e521380'
+         '2170b6fe645068a2cad4be60d5ebbd84'
+         'da9488d56f433adbe317c6185bf4771b'
+         'e3133664af0c97d77baf55566f336009'
+         '4d23917a18bfc2ef916d8b52866948da'
+         'b410e9a038520b0a117644dba003da62'
+         'e3923d63de491ed6d1216cacf1ae9c1a'
+         '907b5e290ac4bc41bd250837bf5343a9'
+         '8555b535ebdcbd0f153d5c9fabde7168'
+         '08196cb38741a3c758892b1420f7e8c5'
+         '42ed84e27b95988d1a5ff35bc8a01c53'
+         'ad7413999e5ed8abc7747e52ec870a0f'
+         'aada803e6a681e3e3b383ee860578ef3'
+         'd27ffe45978d3aee241538b5d9c70805'
+         '1f002e4c3da39eed17c5581e8649daa1'
+         'e1d877b57636568ba579b1bc0ae42e8f'
+         '007c065ca60e3f3c56bf153f2f769a90')
