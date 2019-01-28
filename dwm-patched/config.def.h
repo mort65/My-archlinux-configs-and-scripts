@@ -20,11 +20,11 @@ static const char col_gray3[]       = "#bbbbbb";
 static const char col_gray4[]       = "#eeeeee";
 static const char col_red[]         = "#ff0000";
 static const char col_cyan[]        = "#005577";
-static const char *colors[][3]      = {
-	/*               fg         bg         border   */
-	[SchemeNorm] = { col_gray3, col_gray1, col_gray2 },
-	[SchemeSel]  = { col_gray4, col_cyan,  col_cyan  },
-	[SchemeUrg] = { col_gray3, col_gray1, col_red },
+static const char *colors[][6]      = {
+	/*             fg       bg       border       float       sticky       permanent */
+	[SchemeNorm] = { col_gray3, col_gray1, col_gray2, col_gray2, col_gray2, col_gray2 },
+	[SchemeSel]  = { col_gray4, col_cyan,  col_cyan, col_cyan, col_cyan, col_cyan },
+	[SchemeUrg] = { col_gray3, col_gray1, col_red, col_red, col_red, col_red },
 };
 
 /* tagging */
@@ -35,10 +35,10 @@ static const Rule rules[] = {
 	 *	WM_CLASS(STRING) = instance, class
 	 *	WM_NAME(STRING) = title
 	 */
-	/* class      instance    title       tags mask     isfloating   isterminal noswallow monitor */
-	{ "Gimp",     NULL,       NULL,       0,            1,           0,         0,        -1 },
-	{ "Firefox",  NULL,       NULL,       1 << 8,       0,           0,         0,        -1 },
-	{ "st",       NULL,       NULL,       0,            0,           1,         1,        -1 },
+	/* class      instance    title       tags mask     isfloating   ispermanent    isterminal noswallow monitor */
+	{ "Gimp",     NULL,       NULL,       0,            1,           0,            0,         0,        -1 },
+	{ "Firefox",  NULL,       NULL,       1 << 8,       0,           0,            0,         0,        -1 },
+	{ "st",       NULL,       NULL,       0,            0,           0,            1,         1,        -1 },
 };
 
 /* layout(s) */
@@ -50,12 +50,14 @@ static const int resizehints = 1;    /* 1 means respect size hints in tiled resi
 #include "fibonacci.c"
 #include "gaplessgrid.c"
 #include "layouts.c"
+#include "tcl.c"
 static const Layout layouts[] = {
 	/* symbol     arrange function */
 	{ "[]=",      tile },    /* first entry is default */
 	{ "><>",      NULL },    /* no layout function means floating behavior */
 	{ "[M]",      monocle },
 	{ "|||",      col },
+	{ "H|H",     tcl },
 	{ "H[]",      deck },
 	{ "TTT",      bstack },
 	{ "===",      bstackhoriz },
@@ -85,6 +87,7 @@ static const char *scratchpadcmd[] = { "st", "-t", scratchpadname, "-g", "120x34
 
 #include "selfrestart.c"
 #include "shiftview.c"
+#include "zoomswap.c"
 
 static Key keys[] = {
 	/* modifier                     key        function        argument */
@@ -132,7 +135,7 @@ static Key keys[] = {
 	TAGKEYS(                        XK_9,                      8)
     { MODKEY|ShiftMask,             XK_r,      self_restart,   {0} },
 	{ MODKEY|ShiftMask,             XK_q,      quit,           {0} },
-	{ MODKEY|ControlMask|ShiftMask, XK_q,      quit,           {1} }, 
+	{ MODKEY|ControlMask|ShiftMask, XK_q,      quit,           {1} },
 };
 
 /* button definitions */

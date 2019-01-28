@@ -33,49 +33,51 @@ static const char col_gray2[]       = "#444444";
 static const char col_gray3[]       = "#bbbbbb";
 static const char col_gray4[]       = "#eeeeee";
 static const char col_white[]       = "#fcfcfc";
-static const char col_red[]         = "#ff0000";
+static const char col_red[]         = "#770010";
 static const char col_cyan[]        = "#005577";
-static const char col_green[]       = "#557700";
-static const char col_pink[]        = "#770055";
-static const char *colors[][3]      = {
-	/*               fg         bg         border   */
-	[SchemeNorm] = { col_gray3, col_gray1, col_gray2 },
-	[SchemeSel]  = { col_white, col_gray1, col_cyan  },
-	[SchemeUrg] = { col_gray3, col_gray1, col_red },
+static const char col_green[]       = "#4b7700";
+static const char col_yellow[]      = "#775400";
+static const char col_purple[]      = "#5d0077";
+static const char *colors[][6]      = {
+	/*               fg   bg   border   float   sticky   permanent*/
+	[SchemeNorm] = { col_gray3, col_gray1, col_gray2, col_gray2, col_gray2, col_gray2 },
+	[SchemeSel]  = { col_white, col_gray1,  col_cyan, col_green, col_yellow, col_purple },
+	[SchemeUrg] = { col_gray3, col_gray1, col_red, col_red, col_red, col_red },
 };
 
 /* tagging */
 static const char *tags[] = { "1", "2", "3", "4", "5", "6", "7", "8", "9" };
+
 
 static const Rule rules[] = {
 	/* xprop(1):
 	 *	WM_CLASS(STRING) = instance, class
 	 *	WM_NAME(STRING) = title
 	 */
-	/*Match condition   Tags   Float   Terminal   Swallow   Monitor*/
-	{ CLASS("Firefox|Chromium|Google-chrome|Vivaldi-stable"),   TAG(2),   0,   0 },
+	/*Match condition   Tags   Float   Permanent   Terminal   Swallow   Monitor*/
+	{ CLASS("Firefox|Chromium|Google-chrome|Vivaldi-stable"),   TAG(2),   0,   0,   0 },
         { CLASS("VirtualBox"),   TAG(5),   0,   0 },
-        { CLASS("St|UXTerm|XTerm|rxvt|URxvt|Urxvt-tabbed|Lxterminal"),   TAG(1),   0,   1,   1,   0 },
+        { CLASS("St|UXTerm|XTerm|rxvt|URxvt|Urxvt-tabbed|Lxterminal"),   TAG(1),   0,   0,   1,   1,   0 },
         { CLASS("Thunar|Pcmanfm|pcmanfm-qt"),   TAG(3),   0,   0 },
-	{ CLASS("vlc|smplayer|mpv|smplayer"),   TAG(1)|TAG(3)|TAG(4),   0,   0 },
+	{ CLASS("vlc|smplayer|mpv|smplayer"),   TAG(1)|TAG(3)|TAG(4),   0,   0,   0,   0 },
 	{ CLASS("Steam"),  TAG(6) ,   0,   0 },
 
         /*Floating windows*/
-	{ CLASS("Nitrogen|Dukto|Galculator|lxsu|lxsudo|gpick"),   0,   1,   0 },
+	{ CLASS("Nitrogen|Dukto|Galculator|lxsu|lxsudo|Gpick"),   0,   1,   0,   0,   0 },
 	{ CLASS("Pragha"),  TAG(4) ,   1,   0 },
-        { TITLE("File Operation Progress"),   0,   1,   0 },
+        { TITLE("File Operation Progress"),   0,   1,   0,   0 },
         { TITLE("Module"),   0,   1,   0 },
-        { TITLE("Search Dialog"),   0,   1,   0 },
-        { TITLE("Goto"),   0,   1,   0 },
-        { TITLE("IDLE Preferences"),   0,   1,   0 },
-        { TITLE("Preferences"),   0,   1,   0 },
-        { TITLE("File Transfer"),   0,   1,   0 },
-        { TITLE("branchdialog"),   0,   1,   0 },
-        { TITLE("pinentry"),   0,   1,   0 },
-        { TITLE("confirm"),   0,   1,   0 },
-        { INSTANCE("eog"),   0,   1,    0 },
-	{ CLASS_W_TITLE("Firefox","Firefox Preferences"),   TAG(2),   1,   0 },
-	{ CLASS_W_TITLE("Firefox","Library"),   TAG(2),   1,   0 },
+        { TITLE("Search Dialog"),   0,   1,   0,   0 },
+        { TITLE("Goto"),   0,   1,   0,   0 },
+        { TITLE("IDLE Preferences"),   0,   1,   0,   0 },
+        { TITLE("Preferences"),   0,   1,   0,   0 },
+        { TITLE("File Transfer"),   0,   1,   0,   0 },
+        { TITLE("branchdialog"),   0,   1,   0,   0 },
+        { TITLE("pinentry"),   0,   1,   0,   0 },
+        { TITLE("confirm"),   0,   1,   0,   0 },
+        { INSTANCE("eog"),   0,   1,    0,   0 },
+	{ CLASS_W_TITLE("Firefox","Firefox Preferences"),   TAG(2),   1,   0,   0 },
+	{ CLASS_W_TITLE("Firefox","Library"),   TAG(2),   1,   0,   0 },
 };
 
 /* layout(s) */
@@ -87,12 +89,14 @@ static const int resizehints = 0;    /* 1 means respect size hints in tiled resi
 #include "fibonacci.c"
 #include "gaplessgrid.c"
 #include "layouts.c"
+#include "tcl.c"
 static const Layout layouts[] = {
 	/* symbol     arrange function */
 	{ "[]=",      tile },    /* first entry is default */
 	{ "><>",      NULL },    /* no layout function means floating behavior */
 	{ "[M]",      monocle },
 	{ "|||",      col },
+	{ "H|H",     tcl },
 	{ "H[]",      deck },
 	{ "TTT",      bstack },
 	{ "===",      bstackhoriz },
@@ -143,6 +147,7 @@ static const char *htop[] = { "st", "-e", "htop", NULL };
 
 #include "selfrestart.c"
 #include "shiftview.c"
+#include "zoomswap.c"
 
 static Key keys[] = {
 	/* modifier                     key        function        argument */
@@ -172,17 +177,19 @@ static Key keys[] = {
 	{ MODKEY,                       XK_f,      setlayout,      {.v = &layouts[1]} },
 	{ MODKEY,                       XK_m,      setlayout,      {.v = &layouts[2]} },
 	{ MODKEY,                       XK_c,      setlayout,      {.v = &layouts[3]} },
-	{ MODKEY,                       XK_v,      setlayout,      {.v = &layouts[4]} },
-	{ MODKEY,                       XK_y,      setlayout,      {.v = &layouts[5]} },
-	{ MODKEY,                       XK_u,      setlayout,      {.v = &layouts[6]} },
-	{ MODKEY,                       XK_g,      setlayout,      {.v = &layouts[7]} },
-	{ MODKEY,                       XK_s,      setlayout,      {.v = &layouts[8]} },
-	{ MODKEY,                       XK_w,      setlayout,      {.v = &layouts[9]} },
+	{ MODKEY,                       XK_e,      setlayout,      {.v = &layouts[4]} },
+	{ MODKEY,                       XK_v,      setlayout,      {.v = &layouts[5]} },
+	{ MODKEY,                       XK_y,      setlayout,      {.v = &layouts[6]} },
+	{ MODKEY,                       XK_u,      setlayout,      {.v = &layouts[7]} },
+	{ MODKEY,                       XK_g,      setlayout,      {.v = &layouts[8]} },
+	{ MODKEY,                       XK_s,      setlayout,      {.v = &layouts[9]} },
+	{ MODKEY,                       XK_w,      setlayout,      {.v = &layouts[10]} },
 	{ MODKEY,		        XK_comma,  cyclelayout,    {.i = -1 } },
 	{ MODKEY,                       XK_period, cyclelayout,    {.i = +1 } },
 	{ MODKEY,                       XK_space,  setlayout,      {0} },
 	{ MODKEY|ShiftMask,             XK_space,  togglefloating, {0} },
 	{ MODKEY,                       XK_n,      togglesticky,   {0} },
+	{ MODKEY|ShiftMask,             XK_n,      togglepermanent,{0} },
 	{ MODKEY,                       XK_0,      view,           {.ui = ~0 } },
 	{ MODKEY|ShiftMask,             XK_0,      tag,            {.ui = ~0 } },
 	{ MODKEY|ALTMODKEY,             XK_comma,  focusmon,       {.i = -1 } },
