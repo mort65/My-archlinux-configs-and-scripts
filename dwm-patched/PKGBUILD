@@ -56,14 +56,14 @@ package() {
   install -m755 -D "$srcdir"/startdwm "$pkgdir"/usr/bin/startdwm
 }
 
-md5sums=('88409d077baa41fa469f357ef3ae3149'
-         '0496105d7d90488d801d6c84afa2fed8'
+md5sums=('d5c7dd876eeee3bec7190b805623518d'
+         'ebf91ee56de13b54f9d8ad56dde41210'
          '007fecea7a026dde17dbae253f756df1'
-         '9a4b2491e9bc1c0a58501e9d2a1a0dee'
+         '3dd0b4d4783d968dbb3adf9e1bf05b17'
          '8742b0e99c633724a73dcff43e521380'
          '8f8287f3c6346eb4995c0daa3f450a73'
          'da9488d56f433adbe317c6185bf4771b'
-         'a5137ac7c7c389bebf263fd8c00919d6'
+         '5636405b95807100bbaa9c3a0bd3af71'
          '4d23917a18bfc2ef916d8b52866948da'
          'b410e9a038520b0a117644dba003da62'
          'e3923d63de491ed6d1216cacf1ae9c1a'

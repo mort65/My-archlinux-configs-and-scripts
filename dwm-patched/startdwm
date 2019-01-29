@@ -2,7 +2,7 @@
 ## my dwm startup script
 
 #status toggle
-STATUS=1
+STATUS=0
 
 sleep 1s
 

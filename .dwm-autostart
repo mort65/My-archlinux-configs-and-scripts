@@ -12,3 +12,4 @@ exec /usr/bin/volumeicon &
 exec /usr/bin/udiskie -2 -s &
 exec /usr/bin/clipit &
 exec /usr/bin/nm-applet &
+exec ~/.script/dwm-status_dzen &

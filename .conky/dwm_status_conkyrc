@@ -1,0 +1,10 @@
+conky.config = {
+      background = false
+    , out_to_console = true
+    , out_to_x = false
+    , update_interval = 10.0
+    , total_run_times = 0
+    , use_spacer = none
+}
+
+conky.text = [[ [ ^fg(\#0088aa)HDD ^fg()${fs_used_perc /}% ${fs_used_perc /data}% ^fg(\#a48400) MEM ^fg()${memperc}% ${swapperc}% ^fg(\#8d00aa) TEMP ^fg()${execi 10 ~/bin/ctemp --max} ${execi 10 ~/bin/gtemp} ^fg(\#7baa00) TIME ^fg()${time %a %d %b %H:%M} ] ]]
