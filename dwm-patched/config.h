@@ -29,18 +29,20 @@ static const char *fonts[]          = { "monospace:size=10" };
 static const char dmenufont[]       = "monospace:size=10";
 static const char col_gray1[]       = "#222222";
 static const char col_gray2[]       = "#444444";
-static const char col_gray3[]       = "#bbbbbb";
+static const char col_gray3[]       = "#bfbfbf";
 static const char col_gray4[]       = "#eeeeee";
 static const char col_white[]       = "#fcfcfc";
 static const char col_red[]         = "#770010";
 static const char col_cyan[]        = "#005577";
+static const char col_cyan2[]        = "#00ffb3";
 static const char col_green[]       = "#4b7700";
 static const char col_yellow[]      = "#775400";
+static const char col_yellow2[]      = "#ffff00";
 static const char col_purple[]      = "#5d0077";
 static const char *colors[][6]      = {
 	/*               fg   bg   border   float   sticky   permanent*/
 	[SchemeNorm] = { col_gray3, col_gray1, col_gray2, col_gray2, col_gray2, col_gray2 },
-	[SchemeSel]  = { col_white, col_gray1,  col_green, col_cyan, col_yellow, col_purple },
+	[SchemeSel]  = { col_cyan2, col_gray1,  col_green, col_cyan, col_yellow, col_purple },
 	[SchemeUrg] = { col_gray3, col_gray1, col_red, col_red, col_red, col_red },
 };
 

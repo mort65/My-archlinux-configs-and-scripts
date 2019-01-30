@@ -7,4 +7,4 @@ conky.config = {
     , use_spacer = none
 }
 
-conky.text = [[ [ ^fg(\#0088aa)HDD ^fg()${fs_used_perc /}% ${fs_used_perc /data}% ^fg(\#a48400) MEM ^fg()${memperc}% ${swapperc}% ^fg(\#9d00bb) TEMP ^fg()${execi 5 ~/bin/ctemp --max} ${execi 5 ~/bin/gtemp} ^fg(\#7baa00) TIME ^fg()${time %a %d %b %H:%M} ] ]]
+conky.text = [[ [ ^fg(\#0097bd)HDD ^fg()${fs_used_perc /}% ${fs_used_perc /data}% ^fg(\#bd9800) MEM ^fg()${memperc}% ${swapperc}% ^fg(\#a700c7) TEMP ^fg()${execi 5 ~/bin/ctemp --max} ${execi 5 ~/bin/gtemp} ^fg(\#7baa00) TIME ^fg()${execi 5 jdate '+%h %d %b'} ${time %H:%M} ] ]]
