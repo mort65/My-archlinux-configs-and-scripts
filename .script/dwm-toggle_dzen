@@ -1,0 +1,12 @@
+#!/bin/bash
+
+sleep 1s
+
+if [ -n "$(pgrep -x conky)" ] || [ -n "$(pgrep -x dzen2)" ];then
+	killall dzen2
+	killall conky
+else
+	exec ~/.script/dwm-status_dzen &
+fi
+
+exit 0
