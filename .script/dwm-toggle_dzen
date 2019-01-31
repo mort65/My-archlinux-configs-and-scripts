@@ -1,10 +1,5 @@
 #!/bin/bash
 
-if [ -n "$(pgrep -x conky)" ] || [ -n "$(pgrep -x dzen2)" ];then
-	killall dzen2
-	killall conky
-else
-	exec ~/.script/dwm-status_dzen &
-fi
+pkill -x --signal=SIGTERM 'conky|dzen2' || exec ~/.script/dwm-status_dzen &
 
 exit 0
