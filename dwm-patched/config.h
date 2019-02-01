@@ -31,7 +31,7 @@ static const char col_gray1[]       = "#222222";
 static const char col_gray2[]       = "#444444";
 static const char col_gray3[]       = "#bfbfbf";
 static const char col_gray4[]       = "#eeeeee";
-static const char col_white[]       = "#fcfcfc";
+static const char col_black[]       = "#000000";
 static const char col_red[]         = "#770010";
 static const char col_cyan[]        = "#005577";
 static const char col_cyan2[]        = "#00ffb3";
@@ -121,7 +121,7 @@ static const Layout layouts[] = {
 
 /* commands */
 static char dmenumon[2] = "0"; /* component of dmenucmd, manipulated in spawn() */
-static const char *dmenucmd[] = { "dmenu_run", "-m", dmenumon, "-fn", dmenufont, "-nb", col_gray1, "-nf", col_gray3, "-sb", col_cyan, "-sf", col_gray4, NULL };
+static const char *dmenucmd[] = { "dmenu_run", "-m", dmenumon, "-fn", dmenufont, "-nb", col_gray1, "-nf", col_gray3, "-sb", col_cyan2, "-sf", col_black, NULL };
 static const char *roficmd[] = { "rofi", "-modi", "combi#window#run#drun", "-show", "combi", "-combi-modi", "window#run#drun", NULL };
 static const char *termcmd[]  = { "st", NULL };
 static const char *termcmd1[]  = { "urxvt", NULL };
