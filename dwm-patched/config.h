@@ -32,17 +32,17 @@ static const char col_gray1[]       = "#222222";
 static const char col_gray2[]       = "#444444";
 static const char col_gray3[]       = "#bfbfbf";
 static const char col_white[]       = "#ffffff";
-static const char col_red[]        = "#ff0066";
-static const char col_pink[]      = "#a53076";
-static const char col_orange[]      = "#ff6600";
+static const char col_red[]         = "#ff0066";
+static const char col_pink[]        = "#a53076";
 static const char col_blue[]        = "#305fa5";
 static const char col_blue2[]       = "#0066ff";
 static const char col_green[]       = "#66ff00";
 static const char col_yellow[]      = "#ffff00";
+static const char col_purple[]      = "#6600ff";
 static const char *colors[][6]      = {
 	/*               fg         bg          border     float      sticky      permanent */
 	[SchemeNorm] = { col_gray3, col_gray1,  col_gray2, col_gray2, col_gray2,  col_gray2 },
-	[SchemeSel]  = { col_white, col_blue,  col_blue2, col_green,  col_yellow, col_orange },
+	[SchemeSel]  = { col_white, col_blue,  col_blue2, col_green,  col_yellow, col_purple },
 	[SchemeUrg]  = { col_white, col_pink, col_red,   col_red,   col_red,    col_red },
 };
 
