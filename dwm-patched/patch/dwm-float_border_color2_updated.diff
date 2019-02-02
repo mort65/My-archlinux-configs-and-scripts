@@ -16,7 +16,7 @@ diff -up ../../dwm.bk/dwm/config.def.h ./config.def.h
 +	[SchemeNorm] = { col_gray3, col_gray1, col_gray2, col_gray2 },
 +	[SchemeSel] =  { col_gray4, col_cyan,  col_gray2, col_cyan },
 + };
- 
+
  /* tagging */
  static const char *tags[] = { "1", "2", "3", "4", "5", "6", "7", "8", "9" };
 diff -up ../../dwm.bk/dwm/drw.h ./drw.h
@@ -25,11 +25,11 @@ diff -up ../../dwm.bk/dwm/drw.h ./drw.h
 @@ -12,7 +12,7 @@ typedef struct Fnt {
  	struct Fnt *next;
  } Fnt;
- 
+
 -enum { ColFg, ColBg, ColBorder }; /* Clr scheme index */
 +enum { ColFg, ColBg, ColBorder, ColFloat }; /* Clr scheme index */
  typedef XftColor Clr;
- 
+
  typedef struct {
 diff -up ../../dwm.bk/dwm/dwm.c ./dwm.c
 --- ../../dwm.bk/dwm/dwm.c	2019-01-28 17:53:05.693891902 +0330
@@ -40,7 +40,7 @@ diff -up ../../dwm.bk/dwm/dwm.c ./dwm.c
  		grabbuttons(c, 1);
 -		XSetWindowBorder(dpy, c->win, scheme[SchemeSel][ColBorder].pixel);
 -		setfocus(c);
-+		if(c->isfloating)
++		if(c->isfloating || !selmon->lt[selmon->sellt]->arrange)
 +			XSetWindowBorder(dpy, c->win, scheme[SchemeSel][ColFloat].pixel);
 +		else
 +			XSetWindowBorder(dpy, c->win, scheme[SchemeSel][ColBorder].pixel);
@@ -49,11 +49,11 @@ diff -up ../../dwm.bk/dwm/dwm.c ./dwm.c
  		XSetInputFocus(dpy, root, RevertToPointerRoot, CurrentTime);
  		XDeleteProperty(dpy, root, netatom[NetActiveWindow]);
 @@ -1051,7 +1054,10 @@ manage(Window w, XWindowAttributes *wa)
- 
+
  	wc.border_width = c->bw;
  	XConfigureWindow(dpy, w, CWBorderWidth, &wc);
 -	XSetWindowBorder(dpy, w, scheme[SchemeNorm][ColBorder].pixel);
-+	if(c->isfloating)
++	if(c->isfloating || !selmon->lt[selmon->sellt]->arrange)
 +		XSetWindowBorder(dpy, w, scheme[SchemeNorm][ColFloat].pixel);
 +	else
 +		XSetWindowBorder(dpy, w, scheme[SchemeNorm][ColBorder].pixel);
@@ -64,7 +64,7 @@ diff -up ../../dwm.bk/dwm/dwm.c ./dwm.c
  		c->isfloating = c->oldstate = trans != None || c->isfixed;
  	if (c->isfloating)
  		XRaiseWindow(dpy, c->win);
-+	if(c->isfloating)
++	if(c->isfloating || !selmon->lt[selmon->sellt]->arrange)
 +		XSetWindowBorder(dpy, w, scheme[SchemeNorm][ColFloat].pixel);
  	attach(c);
  	attachstack(c);
@@ -81,7 +81,8 @@ diff -up ../../dwm.bk/dwm/dwm.c ./dwm.c
 @@ -1714,6 +1722,10 @@ togglefloating(const Arg *arg)
  		return;
  	selmon->sel->isfloating = !selmon->sel->isfloating || selmon->sel->isfixed;
- 	if (selmon->sel->isfloating)
+-	if (selmon->sel->isfloating)
++	if (selmon->sel->isfloating || !selmon->lt[selmon->sellt]->arrange)
 +		XSetWindowBorder(dpy, selmon->sel->win, scheme[SchemeSel][ColFloat].pixel);
 +	else
 +		XSetWindowBorder(dpy, selmon->sel->win, scheme[SchemeSel][ColBorder].pixel);

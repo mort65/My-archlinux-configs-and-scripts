@@ -154,8 +154,10 @@ diff -up ../../dwm.bk/dwm/dwm.c ./dwm.c
 +	selmon->sel->ispermanent = !selmon->sel->ispermanent;
 +	if (selmon->sel->ispermanent)
 +		XSetWindowBorder(dpy, selmon->sel->win, scheme[SchemeSel][ColPermanent].pixel);
-+	else
++	else {
 +		XSetWindowBorder(dpy, selmon->sel->win, scheme[SchemeSel][ColBorder].pixel);
++		resizeclient(selmon->sel, selmon->sel->x, selmon->sel->y, selmon->sel->w, selmon->sel->h);
++	}
 +	arrange(selmon);
 +}
 +

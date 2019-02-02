@@ -87,25 +87,67 @@ static const float smfact     = 0.00; /* factor of tiled clients [0.00..0.95] */
 static const int nmaster     = 1;    /* number of clients in master area */
 static const int resizehints = 0;    /* 1 means respect size hints in tiled resizals */
 
+/**
+ * Layout variable names
+ *
+ * These enum elements can be re-arranged to change the default layout.
+ * Deletions from or additions to this list should be accompanied with changes
+ * to the "layouts" variable.
+ */
+enum {
+    tile_layout,
+    floating_layout,
+    monocle_layout,
+    col_layout,
+    tcl_layout,
+    deck_layout,
+    bstack_layout,
+    bstackh_layout,
+    gaplessg_layout,
+    spiral_layout,
+    dwindle_layout,
+};
+
 #include "fibonacci.c"
 #include "gaplessgrid.c"
 #include "layouts.c"
 #include "tcl.c"
 static const Layout layouts[] = {
 	/* symbol     arrange function */
-	{ "[]=",      tile },    /* first entry is default */
-	{ "><>",      NULL },    /* no layout function means floating behavior */
-	{ "[M]",      monocle },
-	{ "|||",      col },
-	{ "H^H",      tcl },
-	{ "H[]",      deck },
-	{ "TTT",      bstack },
-	{ "===",      bstackhoriz },
-	{ "HHH",      gaplessgrid },
- 	{ "[@]",      spiral },
- 	{ "[\\]",      dwindle },
-	{ NULL,       NULL },
+	[tile_layout]     = { "[]=",      tile },    /* first entry is default */
+	[floating_layout] = { "><>",      NULL },    /* no layout function means floating behavior */
+	[monocle_layout]  = { "[M]",      monocle },
+	[col_layout]      = { "|||",      col },
+	[tcl_layout]      = { "H^H",      tcl },
+	[deck_layout]     = { "H[]",      deck },
+	[bstack_layout]   = { "TTT",      bstack },
+        [bstackh_layout]  = { "===",      bstackhoriz },
+	[gaplessg_layout] = { "HHH",      gaplessgrid },
+ 	[spiral_layout]   = { "[@]",      spiral },
+ 	[dwindle_layout]  = { "[\\]",      dwindle },
+	                    { NULL,       NULL },
 };
+
+/**
+ * Rules hook
+ *
+ * This function is called once applyrules is done processing a client with the
+ * client in question passed as an argument.
+ */
+void ruleshook(Client *c)
+{
+    // Certain floating Wine windows always get positioned off-screen. When
+    // that happens, this code will center them.
+    if (!strcmp(c->class, "Wine") && c->x < 1) {
+        c->x = c->mon->mx + (c->mon->mw / 2 - WIDTH(c) / 2);
+        c->y = c->mon->my + (c->mon->mh / 2 - HEIGHT(c) / 2);
+    }
+
+    // Mark windows that get created offscreen as urgent.
+    if (!scanning && !ISVISIBLE(c)) {
+        seturgent(c, 1);
+    }
+}
 
 /* key definitions */
 #define MODKEY Mod4Mask

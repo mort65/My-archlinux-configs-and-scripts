@@ -1,4 +1,4 @@
-/* See LICENSE file for copyright and license details.
+	/* See LICENSE file for copyright and license details.
  *
  * dynamic window manager is designed like any other X client as well. It is
  * driven through handling X events. In contrast to other X clients, a window
@@ -115,6 +115,8 @@ struct Client {
 	int x, y, w, h;
 	int sfx, sfy, sfw, sfh; /* stored float geometry, used on mode revert */
 	int oldx, oldy, oldw, oldh;
+	char class[256];
+	char instance[256];
 	int basew, baseh, incw, inch, maxw, maxh, minw, minh;
 	int bw, oldbw;
 	unsigned int tags;
@@ -354,6 +356,7 @@ static void (*handler[LASTEvent]) (XEvent *) = {
 static Atom wmatom[WMLast], netatom[NetLast], xatom[XLast];
 static int restart = 0;
 static int running = 1;
+static int scanning = 1;
 static Cur *cursor[CurLast];
 static Clr **scheme;
 static Display *dpy;
@@ -397,7 +400,11 @@ applyrules(Client *c)
 	c->tags = 0;
 	XGetClassHint(dpy, c->win, &ch);
 	class    = ch.res_class ? ch.res_class : broken;
+	strncpy(c->class, class,  sizeof(c->class));
+	c->class[sizeof(c->class) - 1] = '\0';
 	instance = ch.res_name  ? ch.res_name  : broken;
+	strncpy(c->instance, instance,  sizeof(c->instance));
+	c->instance[sizeof(c->instance) - 1] = '\0';
 
 	for (i = 0; i < LENGTH(rules); i++) {
 		r = &rules[i];
@@ -419,6 +426,7 @@ applyrules(Client *c)
 	if (ch.res_name)
 		XFree(ch.res_name);
 	c->tags = c->tags & TAGMASK ? c->tags & TAGMASK : c->mon->tagset[c->mon->seltags];
+	ruleshook(c);
 }
 
 int
@@ -1123,7 +1131,7 @@ focus(Client *c)
 			XSetWindowBorder(dpy, c->win, scheme[SchemeSel][ColPermanent].pixel);
 		else if(c->issticky)
 			XSetWindowBorder(dpy, c->win, scheme[SchemeSel][ColSticky].pixel);
-		else if(c->isfloating)
+		else if(c->isfloating || !selmon->lt[selmon->sellt]->arrange)
 			XSetWindowBorder(dpy, c->win, scheme[SchemeSel][ColFloat].pixel);
 		else
 			XSetWindowBorder(dpy, c->win, scheme[SchemeSel][ColBorder].pixel);
@@ -1460,7 +1468,7 @@ manage(Window w, XWindowAttributes *wa)
 		XSetWindowBorder(dpy, w, scheme[SchemeSel][ColPermanent].pixel);
 	else if(c->issticky)
 		XSetWindowBorder(dpy, w, scheme[SchemeSel][ColSticky].pixel);
-	else if(c->isfloating)
+	else if(c->isfloating || !selmon->lt[selmon->sellt]->arrange)
 		XSetWindowBorder(dpy, w, scheme[SchemeSel][ColFloat].pixel);
 	else
 		XSetWindowBorder(dpy, w, scheme[SchemeNorm][ColBorder].pixel);
@@ -1482,7 +1490,7 @@ manage(Window w, XWindowAttributes *wa)
 		XSetWindowBorder(dpy, w, scheme[SchemeSel][ColPermanent].pixel);
 	else if(c->issticky)
 		XSetWindowBorder(dpy, w, scheme[SchemeSel][ColSticky].pixel);
-	else if(c->isfloating)
+	else if(c->isfloating || !selmon->lt[selmon->sellt]->arrange)
 		XSetWindowBorder(dpy, w, scheme[SchemeSel][ColFloat].pixel);
 	attachaside(c);
 	attachstack(c);
@@ -1786,11 +1794,11 @@ resizeclient(Client *c, int x, int y, int w, int h)
 	for (n = 0, nbc = nexttiled(selmon->clients); nbc; nbc = nexttiled(nbc->next), n++);
 
 	/* Do nothing if layout is floating */
-	if (c->isfloating || c->issticky || c->ispermanent || selmon->lt[selmon->sellt]->arrange == NULL) {
+	if (c->isfloating || selmon->lt[selmon->sellt]->arrange == NULL) {
 		gapincr = gapoffset = 0;
 	} else {
 		/* Remove border and gap if layout is monocle or only one client */
-		if (selmon->lt[selmon->sellt]->arrange == monocle || n == 1) {
+		if (selmon->lt[selmon->sellt]->arrange == monocle || (n == 1 && !c->issticky && !c->ispermanent)) {
 			gapoffset = 0;
 			gapincr = -2 * borderpx;
 			wc.border_width = 0;
@@ -1973,6 +1981,8 @@ scan(void)
 		if (wins)
 			XFree(wins);
 	}
+
+	scanning = 0;
 }
 
 void
@@ -2095,8 +2105,19 @@ setlayout(const Arg *arg)
 	if (arg && arg->v)
 		selmon->lt[selmon->sellt] = selmon->pertag->ltidxs[selmon->pertag->curtag][selmon->sellt] = (Layout *)arg->v;
 	strncpy(selmon->ltsymbol, selmon->lt[selmon->sellt]->symbol, sizeof selmon->ltsymbol);
-	if (selmon->sel)
+	if (selmon->sel) {
+		if (selmon->sel->ispermanent)
+			XSetWindowBorder(dpy, selmon->sel->win, scheme[SchemeSel][ColPermanent].pixel);
+		else if (selmon->sel->issticky)
+			XSetWindowBorder(dpy, selmon->sel->win, scheme[SchemeSel][ColSticky].pixel);
+		else if (selmon->sel->isfloating || !selmon->lt[selmon->sellt]->arrange)
+			XSetWindowBorder(dpy, selmon->sel->win, scheme[SchemeSel][ColFloat].pixel);
+		else {
+			XSetWindowBorder(dpy, selmon->sel->win, scheme[SchemeSel][ColBorder].pixel);
+			resizeclient(selmon->sel, selmon->sel->x, selmon->sel->y, selmon->sel->w, selmon->sel->h);
+		}
 		arrange(selmon);
+	}
 	else
 		drawbar(selmon);
 }
@@ -2422,7 +2443,7 @@ togglefloating(const Arg *arg)
 		XSetWindowBorder(dpy, selmon->sel->win, scheme[SchemeSel][ColPermanent].pixel);
 	else if (selmon->sel->issticky)
 		XSetWindowBorder(dpy, selmon->sel->win, scheme[SchemeSel][ColSticky].pixel);
-	else if (selmon->sel->isfloating)
+	else if (selmon->sel->isfloating || !selmon->lt[selmon->sellt]->arrange)
 		XSetWindowBorder(dpy, selmon->sel->win, scheme[SchemeSel][ColFloat].pixel);
 	else
 		XSetWindowBorder(dpy, selmon->sel->win, scheme[SchemeSel][ColBorder].pixel);
@@ -2472,7 +2493,7 @@ togglesticky(const Arg *arg)
 		XSetWindowBorder(dpy, selmon->sel->win, scheme[SchemeSel][ColPermanent].pixel);
 	else if (selmon->sel->issticky)
 		XSetWindowBorder(dpy, selmon->sel->win, scheme[SchemeSel][ColSticky].pixel);
-	else if (selmon->sel->isfloating)
+	else if (selmon->sel->isfloating || !selmon->lt[selmon->sellt]->arrange)
 		XSetWindowBorder(dpy, selmon->sel->win, scheme[SchemeSel][ColFloat].pixel);
 	else {
 		XSetWindowBorder(dpy, selmon->sel->win, scheme[SchemeSel][ColBorder].pixel);
@@ -2491,7 +2512,7 @@ togglepermanent(const Arg *arg)
 		XSetWindowBorder(dpy, selmon->sel->win, scheme[SchemeSel][ColPermanent].pixel);
 	else if (selmon->sel->issticky)
 		XSetWindowBorder(dpy, selmon->sel->win, scheme[SchemeSel][ColSticky].pixel);
-	else if (selmon->sel->isfloating)
+	else if (selmon->sel->isfloating || !selmon->lt[selmon->sellt]->arrange)
 		XSetWindowBorder(dpy, selmon->sel->win, scheme[SchemeSel][ColFloat].pixel);
 	else {
 		XSetWindowBorder(dpy, selmon->sel->win, scheme[SchemeSel][ColBorder].pixel);
