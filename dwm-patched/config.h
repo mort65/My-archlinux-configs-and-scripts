@@ -27,25 +27,23 @@ static const int showbar            = 1;        /* 0 means no bar */
 static const int topbar             = 1;        /* 0 means bottom bar */
 static const char *fonts[]          = { "monospace:size=10" };
 static const char dmenufont[]       = "monospace:size=10";
+
 static const char col_gray1[]       = "#222222";
 static const char col_gray2[]       = "#444444";
 static const char col_gray3[]       = "#bfbfbf";
-static const char col_gray4[]       = "#eeeeee";
-static const char col_black[]       = "#000000";
-static const char col_red[]         = "#770010";
-static const char col_orange[]      = "#ff4500";
-static const char col_cyan[]        = "#005577";
-static const char col_cyan2[]       = "#00ffb3";
-static const char col_cyan3[]       = "#00cc93";
-static const char col_green[]       = "#4b7700";
-static const char col_yellow[]      = "#775400";
-static const char col_yellow2[]      = "#ffff00";
-static const char col_purple[]      = "#5d0077";
+static const char col_white[]       = "#ffffff";
+static const char col_red[]        = "#ff0066";
+static const char col_pink[]      = "#a53076";
+static const char col_orange[]      = "#ff6600";
+static const char col_blue[]        = "#305fa5";
+static const char col_blue2[]       = "#0066ff";
+static const char col_green[]       = "#66ff00";
+static const char col_yellow[]      = "#ffff00";
 static const char *colors[][6]      = {
 	/*               fg         bg          border     float      sticky      permanent */
 	[SchemeNorm] = { col_gray3, col_gray1,  col_gray2, col_gray2, col_gray2,  col_gray2 },
-	[SchemeSel]  = { col_cyan2, col_gray1,  col_green, col_cyan,  col_yellow, col_purple },
-	[SchemeUrg]  = { col_gray3, col_orange, col_red,   col_red,   col_red,    col_red },
+	[SchemeSel]  = { col_white, col_blue,  col_blue2, col_green,  col_yellow, col_orange },
+	[SchemeUrg]  = { col_white, col_pink, col_red,   col_red,   col_red,    col_red },
 };
 
 /* tagging */
@@ -123,7 +121,7 @@ static const Layout layouts[] = {
 
 /* commands */
 static char dmenumon[2] = "0"; /* component of dmenucmd, manipulated in spawn() */
-static const char *dmenucmd[] = { "dmenu_run", "-m", dmenumon, "-fn", dmenufont, "-nb", col_gray1, "-nf", col_gray3, "-sb", col_cyan2, "-sf", col_black, NULL };
+static const char *dmenucmd[] = { "dmenu_run", "-m", dmenumon, "-fn", dmenufont, "-nb", col_gray1, "-nf", col_gray3, "-sb", col_blue, "-sf", col_white, NULL };
 static const char *roficmd[] = { "rofi", "-modi", "combi#window#run#drun", "-show", "combi", "-combi-modi", "window#run#drun", NULL };
 static const char *termcmd[]  = { "st", NULL };
 static const char *termcmd1[]  = { "urxvt", NULL };

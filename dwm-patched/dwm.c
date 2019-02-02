@@ -201,6 +201,7 @@ static void compileregexes(void);
 static void checkotherwm(void);
 static void cleanup(void);
 static void cleanupmon(Monitor *mon);
+static void clearurgent(Client *c);
 static void clientmessage(XEvent *e);
 static void col(Monitor *);
 static void configure(Client *c);
@@ -674,6 +675,19 @@ cleanupmon(Monitor *mon)
 }
 
 void
+clearurgent(Client *c)
+{
+	XWMHints *wmh;
+
+	c->isurgent = 0;
+	if (!(wmh = XGetWMHints(dpy, c->win)))
+		return;
+	wmh->flags &= ~XUrgencyHint;
+	XSetWMHints(dpy, c->win, wmh);
+	XFree(wmh);
+}
+
+void
 clientmessage(XEvent *e)
 {
 	XWindowAttributes wa;
@@ -995,8 +1009,14 @@ drawbar(Monitor *m)
 	x = 0;
 	for (i = 0; i < LENGTH(tags); i++) {
 		w = TEXTW(tags[i]);
-		drw_setscheme(drw, scheme[m->tagset[m->seltags] & 1 << i ? SchemeSel : SchemeNorm]);
-		drw_text(drw, x, 0, w, bh, lrpad / 2, tags[i], urg & 1 << i);
+		if (m->tagset[m->seltags] & 1 << i) {
+			drw_setscheme(drw, scheme[SchemeSel]);
+		} else if (urg & 1 << i) {
+			drw_setscheme(drw, scheme[SchemeUrg]);
+		} else {
+			drw_setscheme(drw, scheme[SchemeNorm]);
+		}
+		drw_text(drw, x, 0, w, bh, lrpad / 2, tags[i], 0);
 		if (occ & 1 << i)
 			drw_rect(drw, x + boxs, boxs, boxw, boxw,
 				m == selmon && selmon->sel && selmon->sel->tags & 1 << i,
@@ -2231,6 +2251,9 @@ showhide(Client *c)
 		return;
 	if (ISVISIBLE(c)) {
 		/* show clients top down */
+		if (c->isurgent) {
+			clearurgent(c);
+		}
 		XMoveWindow(dpy, c->win, c->x, c->y);
 		if ((!c->mon->lt[c->mon->sellt]->arrange || c->isfloating) && !c->isfullscreen)
 			resize(c, c->x, c->y, c->w, c->h, 0);
@@ -2977,6 +3000,10 @@ updatewmhints(Client *c)
 		else
 			c->neverfocus = 0;
 		XFree(wmh);
+	}
+
+	if (c->isurgent && ISVISIBLE(c)) {
+		clearurgent(c);
 	}
 }
 
