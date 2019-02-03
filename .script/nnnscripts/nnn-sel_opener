@@ -1,0 +1,23 @@
+#!/bin/bash
+#this script opens nnn's selected file
+
+file="$(< ~/.nnncp tr '\0' '\n' | tail -1)" >/dev/null 2>&1
+[ -z "$file" ] && exit 1
+
+ftypel="$(tr '[:upper:]' '[:lower:]' <<< "$(xdg-mime query filetype "$file" | tail -n 1 | xargs)")"
+regex_type_pic1="^image\/jpeg$|^image\/png$"
+regex_type_pic2='^image\/bmp$|^image\/x-ms-bmp$|^image\/x-bmp$|^image\/svg\+xml$'
+
+if [[ "$ftypel" =~ $regex_type_pic1 ]]; then
+	exec feh --scale-down "$file" >/dev/null 2>&1 &
+elif [[ "${ftypel}" =~ $regex_type_pic2 ]]; then
+	exec feh --scale-down --conversion-timeout 5 "$file" >/dev/null 2>&1 &
+else
+        #ftype=$(xdg-mime query filetype "$file" | tail -n 1 | xargs)
+	#echo -e ""opening file " \"$file\""
+	#echo -e "...of type " "$ftype"
+	#echo -e "...with $(xdg-mime query default "$ftype")"
+	exec xdg-open "$file" >/dev/null 2>&1 &
+fi
+
+exit 0
