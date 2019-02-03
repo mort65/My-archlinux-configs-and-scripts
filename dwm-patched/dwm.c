@@ -131,6 +131,7 @@ struct Client {
 };
 
 typedef struct {
+	int type;
 	unsigned int mod;
 	KeySym keysym;
 	void (*func)(const Arg *);
@@ -268,6 +269,7 @@ static void setdesktopnames(void);
 static void setfocus(Client *c);
 static void setfullscreen(Client *c, int fullscreen);
 static void setlayout(const Arg *arg);
+static void setmark(Client *c);
 static void setmfact(const Arg *arg);
 static void setsmfact(const Arg *arg);
 static void setnumdesktops(void);
@@ -279,12 +281,15 @@ static void sigchld(int unused);
 static void sighup(int unused);
 static void sigterm(int unused);
 static void spawn(const Arg *arg);
+static void swapclient(const Arg *arg);
+static void swapfocus(const Arg *arg);
 static Monitor *systraytomon(Monitor *m);
 static void tag(const Arg *arg);
 static void tagmon(const Arg *arg);
 static void tile(Monitor *);
 static void togglebar(const Arg *arg);
 static void togglefloating(const Arg *arg);
+static void togglemark(const Arg *arg);
 static void togglesticky(const Arg *arg);
 static void togglepermanent(const Arg *arg);
 static void togglescratch(const Arg *arg);
@@ -346,6 +351,7 @@ static void (*handler[LASTEvent]) (XEvent *) = {
 	[Expose] = expose,
 	[FocusIn] = focusin,
 	[KeyPress] = keypress,
+	[KeyRelease] = keypress,
 	[MappingNotify] = mappingnotify,
 	[MapRequest] = maprequest,
 	[MotionNotify] = motionnotify,
@@ -363,6 +369,7 @@ static Display *dpy;
 static Drw *drw;
 static Monitor *mons, *selmon;
 static Window root, wmcheckwin;
+static Client *mark;
 
 static xcb_connection_t *xcon;
 
@@ -1129,7 +1136,9 @@ focus(Client *c)
 		detachstack(c);
 		attachstack(c);
 		grabbuttons(c, 1);
-		if(c->ispermanent)
+		if (c == mark)
+			XSetWindowBorder(dpy, c->win, scheme[SchemeSel][ColMark].pixel);
+		else if(c->ispermanent)
 			XSetWindowBorder(dpy, c->win, scheme[SchemeSel][ColPermanent].pixel);
 		else if(c->issticky)
 			XSetWindowBorder(dpy, c->win, scheme[SchemeSel][ColSticky].pixel);
@@ -1357,6 +1366,7 @@ keypress(XEvent *e)
 	keysym = XKeycodeToKeysym(dpy, (KeyCode)ev->keycode, 0);
 	for (i = 0; i < LENGTH(keys); i++)
 		if (keysym == keys[i].keysym
+		&& ev->type == keys[i].type
 		&& CLEANMASK(keys[i].mod) == CLEANMASK(ev->state)
 		&& keys[i].func)
 			keys[i].func(&(keys[i].arg));
@@ -1466,7 +1476,9 @@ manage(Window w, XWindowAttributes *wa)
 
 	wc.border_width = c->bw;
 	XConfigureWindow(dpy, w, CWBorderWidth, &wc);
-	if(c->ispermanent)
+	if (c == mark)
+		XSetWindowBorder(dpy, w, scheme[SchemeNorm][ColMark].pixel);
+	else if(c->ispermanent)
 		XSetWindowBorder(dpy, w, scheme[SchemeSel][ColPermanent].pixel);
 	else if(c->issticky)
 		XSetWindowBorder(dpy, w, scheme[SchemeSel][ColSticky].pixel);
@@ -1488,7 +1500,9 @@ manage(Window w, XWindowAttributes *wa)
 		c->isfloating = c->oldstate = trans != None || c->isfixed;
 	if (c->isfloating)
 		XRaiseWindow(dpy, c->win);
-	if(c->ispermanent)
+	if(c == mark)
+		XSetWindowBorder(dpy, w, scheme[SchemeSel][ColMark].pixel);
+	else if(c->ispermanent)
 		XSetWindowBorder(dpy, w, scheme[SchemeSel][ColPermanent].pixel);
 	else if(c->issticky)
 		XSetWindowBorder(dpy, w, scheme[SchemeSel][ColSticky].pixel);
@@ -1800,7 +1814,7 @@ resizeclient(Client *c, int x, int y, int w, int h)
 		gapincr = gapoffset = 0;
 	} else {
 		/* Remove border and gap if layout is monocle or only one client */
-		if (!c->issticky && !c->ispermanent && (selmon->lt[selmon->sellt]->arrange == monocle || n == 1 )) {
+		if (!c->issticky && !c->ispermanent && !(c == mark) && (selmon->lt[selmon->sellt]->arrange == monocle || n == 1 )) {
 			gapoffset = 0;
 			gapincr = -2 * borderpx;
 			wc.border_width = 0;
@@ -2108,6 +2122,10 @@ setlayout(const Arg *arg)
 		selmon->lt[selmon->sellt] = selmon->pertag->ltidxs[selmon->pertag->curtag][selmon->sellt] = (Layout *)arg->v;
 	strncpy(selmon->ltsymbol, selmon->lt[selmon->sellt]->symbol, sizeof selmon->ltsymbol);
 	if (selmon->sel) {
+		if (selmon->sel == mark)
+			XSetWindowBorder(dpy, selmon->sel->win, scheme[SchemeSel][ColMark].pixel);
+		else if (selmon->sel->ispermanent)
+			XSetWindowBorder(dpy, selmon->sel->win, scheme[SchemeSel][ColPermanent].pixel);
 		if (selmon->sel->ispermanent)
 			XSetWindowBorder(dpy, selmon->sel->win, scheme[SchemeSel][ColPermanent].pixel);
 		else if (selmon->sel->issticky)
@@ -2122,6 +2140,23 @@ setlayout(const Arg *arg)
 	}
 	else
 		drawbar(selmon);
+}
+
+void
+setmark(Client *c)
+{
+	if (c == mark)
+		return;
+	if (mark) {
+		XSetWindowBorder(dpy, mark->win, scheme[mark == selmon->sel
+				? SchemeSel : SchemeNorm][ColBorder].pixel);
+		mark = 0;
+	}
+	if (c) {
+		XSetWindowBorder(dpy, c->win, scheme[c == selmon->sel
+				? SchemeSel : SchemeNorm][ColMark].pixel);
+		mark = c;
+	}
 }
 
 /* arg > 1.0 will set mfact absolutely */
@@ -2215,7 +2250,7 @@ setup(void)
 	/* init appearance */
 	scheme = ecalloc(LENGTH(colors), sizeof(Clr *));
 	for (i = 0; i < LENGTH(colors); i++)
-		scheme[i] = drw_scm_create(drw, colors[i], 6);
+		scheme[i] = drw_scm_create(drw, colors[i], 7);
 	/* init system tray */
 	updatesystray();
 	/* init bars */
@@ -2333,6 +2368,78 @@ spawn(const Arg *arg)
 }
 
 void
+swapclient(const Arg *arg)
+{
+	Client *s, *m, t;
+
+	if (!mark || !selmon->sel || mark == selmon->sel
+	    || !selmon->lt[selmon->sellt]->arrange)
+		return;
+	s = selmon->sel;
+	m = mark;
+	t = *s;
+	strcpy(s->name, m->name);
+	s->win = m->win;
+	s->x = m->x;
+	s->y = m->y;
+	s->w = m->w;
+	s->h = m->h;
+
+	m->win = t.win;
+	strcpy(m->name, t.name);
+	m->x = t.x;
+	m->y = t.y;
+	m->w = t.w;
+	m->h = t.h;
+
+	selmon->sel = m;
+	mark = s;
+	focus(s);
+	setmark(m);
+
+	arrange(s->mon);
+	if (s->mon != m->mon) {
+		arrange(m->mon);
+	}
+}
+
+void
+swapfocus(const Arg *arg)
+{
+	Client *t;
+
+	if (!selmon->sel || !mark || selmon->sel == mark)
+		return;
+	t = selmon->sel;
+	if (mark->mon != selmon) {
+		unfocus(selmon->sel, 0);
+		selmon = mark->mon;
+	}
+	if (ISVISIBLE(mark)) {
+		focus(mark);
+		restack(selmon);
+	} else {
+		selmon->seltags ^= 1;
+		selmon->tagset[selmon->seltags] = mark->tags;
+		focus(mark);
+	}
+	setmark(t);
+	if (selmon->sel == mark)
+		XSetWindowBorder(dpy, selmon->sel->win, scheme[SchemeSel][ColMark].pixel);
+	else if (selmon->sel->ispermanent)
+		XSetWindowBorder(dpy, selmon->sel->win, scheme[SchemeSel][ColPermanent].pixel);
+	else if (selmon->sel->issticky)
+		XSetWindowBorder(dpy, selmon->sel->win, scheme[SchemeSel][ColSticky].pixel);
+	else if (selmon->sel->isfloating || !selmon->lt[selmon->sellt]->arrange)
+		XSetWindowBorder(dpy, selmon->sel->win, scheme[SchemeSel][ColFloat].pixel);
+	else {
+		XSetWindowBorder(dpy, selmon->sel->win, scheme[SchemeSel][ColBorder].pixel);
+		resizeclient(selmon->sel, selmon->sel->x, selmon->sel->y, selmon->sel->w, selmon->sel->h);
+	}
+	arrange(selmon);
+}
+
+void
 tag(const Arg *arg)
 {
 	if (selmon->sel && arg->ui & TAGMASK) {
@@ -2341,6 +2448,28 @@ tag(const Arg *arg)
 		arrange(selmon);
 	}
 	updatecurrentdesktop();
+}
+
+void
+togglemark(const Arg *arg)
+{
+	if (!selmon->sel)
+		return;
+	setmark(selmon->sel == mark ? 0 : selmon->sel);
+
+	if (selmon->sel == mark)
+		XSetWindowBorder(dpy, selmon->sel->win, scheme[SchemeSel][ColMark].pixel);
+	else if (selmon->sel->ispermanent)
+		XSetWindowBorder(dpy, selmon->sel->win, scheme[SchemeSel][ColPermanent].pixel);
+	else if (selmon->sel->issticky)
+		XSetWindowBorder(dpy, selmon->sel->win, scheme[SchemeSel][ColSticky].pixel);
+	else if (selmon->sel->isfloating || !selmon->lt[selmon->sellt]->arrange)
+		XSetWindowBorder(dpy, selmon->sel->win, scheme[SchemeSel][ColFloat].pixel);
+	else {
+		XSetWindowBorder(dpy, selmon->sel->win, scheme[SchemeSel][ColBorder].pixel);
+		resizeclient(selmon->sel, selmon->sel->x, selmon->sel->y, selmon->sel->w, selmon->sel->h);
+	}
+	arrange(selmon);
 }
 
 void
@@ -2447,7 +2576,9 @@ togglefloating(const Arg *arg)
 	if (selmon->sel->isfullscreen) /* no support for fullscreen windows */
 		return;
 	selmon->sel->isfloating = !selmon->sel->isfloating || selmon->sel->isfixed;
-	if (selmon->sel->ispermanent)
+	if (selmon->sel == mark)
+		XSetWindowBorder(dpy, selmon->sel->win, scheme[SchemeSel][ColMark].pixel);
+	else if (selmon->sel->ispermanent)
 		XSetWindowBorder(dpy, selmon->sel->win, scheme[SchemeSel][ColPermanent].pixel);
 	else if (selmon->sel->issticky)
 		XSetWindowBorder(dpy, selmon->sel->win, scheme[SchemeSel][ColSticky].pixel);
@@ -2497,7 +2628,9 @@ togglesticky(const Arg *arg)
 	if (!selmon->sel)
 		return;
 	selmon->sel->issticky = !selmon->sel->issticky;
-	if (selmon->sel->ispermanent)
+	if (selmon->sel == mark)
+		XSetWindowBorder(dpy, selmon->sel->win, scheme[SchemeSel][ColMark].pixel);
+	else if (selmon->sel->ispermanent)
 		XSetWindowBorder(dpy, selmon->sel->win, scheme[SchemeSel][ColPermanent].pixel);
 	else if (selmon->sel->issticky)
 		XSetWindowBorder(dpy, selmon->sel->win, scheme[SchemeSel][ColSticky].pixel);
@@ -2516,7 +2649,9 @@ togglepermanent(const Arg *arg)
 	if (!selmon->sel)
 		return;
 	selmon->sel->ispermanent = !selmon->sel->ispermanent;
-	if (selmon->sel->ispermanent)
+	if (selmon->sel == mark)
+		XSetWindowBorder(dpy, selmon->sel->win, scheme[SchemeSel][ColMark].pixel);
+	else if (selmon->sel->ispermanent)
 		XSetWindowBorder(dpy, selmon->sel->win, scheme[SchemeSel][ColPermanent].pixel);
 	else if (selmon->sel->issticky)
 		XSetWindowBorder(dpy, selmon->sel->win, scheme[SchemeSel][ColSticky].pixel);
@@ -2598,7 +2733,10 @@ unfocus(Client *c, int setfocus)
 	if (!c)
 		return;
 	grabbuttons(c, 0);
-	XSetWindowBorder(dpy, c->win, scheme[SchemeNorm][ColBorder].pixel);
+	if (c == mark)
+		XSetWindowBorder(dpy, c->win, scheme[SchemeNorm][ColMark].pixel);
+	else
+		XSetWindowBorder(dpy, c->win, scheme[SchemeNorm][ColBorder].pixel);
 	if (setfocus) {
 		XSetInputFocus(dpy, root, RevertToPointerRoot, CurrentTime);
 		XDeleteProperty(dpy, root, netatom[NetActiveWindow]);
@@ -2612,6 +2750,9 @@ unmanage(Client *c, int destroyed)
 {
 	Monitor *m = c->mon;
 	XWindowChanges wc;
+
+	if (c == mark)
+		setmark(0);
 
 	if (c->swallowing) {
 		unswallow(c);
