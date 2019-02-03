@@ -3,7 +3,7 @@
 
 #FONT='-*-inconsolata-*-r-normal-*-*-90-*-*-*-*-iso8859-*'
 #FONT='-*-terminus-*-r-normal-*-*-120-*-*-*-*-iso8859-*'
-FONT="monospace:normal:size=10"
+FONT="monospace:bold:size=9"
 FG='#cccccc'
 BG='#222222'
 
