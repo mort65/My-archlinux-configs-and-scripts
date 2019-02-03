@@ -3,8 +3,8 @@
 
 #FONT='-*-inconsolata-*-r-normal-*-*-90-*-*-*-*-iso8859-*'
 #FONT='-*-terminus-*-r-normal-*-*-120-*-*-*-*-iso8859-*'
-FONT="monospace:size=9"
+FONT="monospace:normal:size=10"
 FG='#cccccc'
 BG='#222222'
 
-conky -c "$HOME/.conky/dwm_status_conkyrc" | dzen2 -e - -h '19' -w '550' -ta c -x '525' -fg $FG -bg $BG -fn $FONT &
+conky -c "$HOME/.conky/dwm_status_conkyrc" | dzen2 -e - -h '19' -w '600' -ta c -x '500' -fg $FG -bg $BG -fn $FONT &
