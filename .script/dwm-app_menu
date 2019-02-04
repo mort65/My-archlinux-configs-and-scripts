@@ -1,0 +1,28 @@
+#!/bin/bash
+
+STYLE="-fn monospace:normal:size=10 -nb #222222 -nf #bfbfbf -sb #305fa5 -sf #ffffff"
+DMENU="/usr/bin/dmenu ${STYLE}"
+FIRST_MENU="File\nTerm\nWeb\n..."
+
+USERNAME=${SUDO_USER:-$(id -u -n)}
+HOMEDIR="/home/$USERNAME"
+
+function choose {
+	CHOICE=$(echo -e $FIRST_MENU | $DMENU)
+}
+
+function execute {
+	if [ "$CHOICE" == "File" ];then
+		{ /usr/bin/bash "$HOMEDIR"/.script/siglauncher 110;  }
+	elif [ "$CHOICE" == "Term" ];then
+		{ /usr/bin/bash "$HOMEDIR"/.script/siglauncher 111;  }
+	elif [ "$CHOICE" == "Web" ];then
+		{ /usr/bin/bash "$HOMEDIR"/.script/siglauncher 112;  }
+	elif [ "$CHOICE" == "..." ];then
+		dmenu_run $STYLE
+	fi
+}
+
+choose && execute
+
+exit 0

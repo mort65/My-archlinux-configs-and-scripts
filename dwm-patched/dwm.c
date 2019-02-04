@@ -88,7 +88,7 @@ enum { NetSupported, NetWMName, NetWMState, NetWMCheck,
        NetWMWindowTypeDialog, NetClientList, NetDesktopNames, NetDesktopViewport, NetNumberOfDesktops, NetCurrentDesktop, NetLast }; /* EWMH atoms */
 enum { Manager, Xembed, XembedInfo, XLast }; /* Xembed atoms */
 enum { WMProtocols, WMDelete, WMState, WMTakeFocus, WMLast }; /* default atoms */
-enum { ClkTagBar, ClkLtSymbol, ClkStatusText,ClkClientWin,
+enum { ClkTagBar, ClkLtSymbol, ClkStatusText, ClkButton, ClkClientWin,
 	ClkRootWin, ClkLast }; /* clicks */
 
 typedef union {
@@ -608,16 +608,21 @@ buttonpress(XEvent *e)
 	}
 	if (ev->window == selmon->barwin) {
 		i = x = 0;
-		do
-			x += TEXTW(tags[i]);
-		while (ev->x >= x && ++i < LENGTH(tags));
-		if (i < LENGTH(tags)) {
-			click = ClkTagBar;
-			arg.ui = 1 << i;
-		} else if (ev->x < x + blw)
-			click = ClkLtSymbol;
-		else
-			click = ClkStatusText;
+		x += TEXTW(buttonbar);
+		if(ev->x < x) {
+			click = ClkButton;
+		} else {
+			do
+				x += TEXTW(tags[i]);
+			while (ev->x >= x && ++i < LENGTH(tags));
+			if (i < LENGTH(tags)) {
+				click = ClkTagBar;
+				arg.ui = 1 << i;
+			} else if (ev->x < x + blw)
+				click = ClkLtSymbol;
+			else
+				click = ClkStatusText;
+		}
 	} else if ((c = wintoclient(ev->window))) {
 		focus(c);
 		restack(selmon);
@@ -1024,6 +1029,9 @@ drawbar(Monitor *m)
 			urg |= c->tags;
 	}
 	x = 0;
+	w = blw = TEXTW(buttonbar);
+	drw_setscheme(drw, scheme[SchemeNorm]);
+	x = drw_text(drw, x, 0, w, bh, lrpad / 2, buttonbar, 0);
 	for (i = 0; i < LENGTH(tags); i++) {
 		w = TEXTW(tags[i]);
 		if (m->tagset[m->seltags] & 1 << i) {
@@ -1661,25 +1669,34 @@ nexttagged(Client *c) {
 
 void
 runorraise(const Arg *arg) {
-    char *app = ((char **)arg->v)[4];
     Arg a = { .ui = ~0 };
-    Monitor *mon;
-    Client *c;
-    XClassHint hint = { NULL, NULL };
     /* Tries to find the client */
-    for (mon = mons; mon; mon = mon->next) {
-        for (c = mon->clients; c; c = c->next) {
-            XGetClassHint(dpy, c->win, &hint);
-            if (hint.res_class && strcmp(app, hint.res_class) == 0) {
-                a.ui = c->tags;
-                view(&a);
-                focus(c);
-                XRaiseWindow(dpy, c->win);
-                return;
-            }
-        }
+    if (((char **)arg->v)[4]) {
+	    Monitor *mon;
+	    Client *c;
+	    XClassHint hint = { NULL, NULL };
+	    char *app = ((char **)arg->v)[4];
+	    for (mon = mons; mon; mon = mon->next) {
+		    for (c = mon->clients; c; c = c->next) {
+			    XGetClassHint(dpy, c->win, &hint);
+			    if (hint.res_class && strcmp(app, hint.res_class) == 0) {
+				    a.ui = c->tags;
+				    view(&a);
+				    focus(c);
+				    XRaiseWindow(dpy, c->win);
+				    return;
+			    }
+		    }
+	    }
     }
     /* Client not found: spawn it */
+    if (((char **)arg->v)[5]) {
+	    int tag = atoi(((char **)arg->v)[5]);
+	    if (tag + 1) {
+		    a.ui = tag ? (1 << (tag - 1)) : -1;
+		    view(&a);
+	    }
+    }
     spawn(arg);
 }
 

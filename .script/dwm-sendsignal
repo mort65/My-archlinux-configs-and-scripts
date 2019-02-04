@@ -1,0 +1,16 @@
+#!/bin/bash
+#this script send a signal to dwm
+#requires fsignal patch
+
+if [ "${#}" -ne 1 ]; then
+	exit 1
+fi
+CLEAR="                                                                                                     "
+#clear the panel
+if [ "${1}" -eq 0 ]; then
+	xsetroot -name "${CLEAR}"
+elif [ "${1}" -gt 0 ]; then
+	xsetroot -name "fsignal:${1}"
+fi
+
+exit 0

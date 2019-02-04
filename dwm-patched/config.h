@@ -25,6 +25,7 @@ static const int systraypinningfailfirst = 1;   /* 1: if pinning fails, display 
 static const int showsystray        = 1;     /* 0 means no systray */
 static const int showbar            = 1;        /* 0 means no bar */
 static const int topbar             = 1;        /* 0 means bottom bar */
+static const char buttonbar[]       = "<O>";
 static const char *fonts[]          = { "monospace:size=10" };
 static const char dmenufont[]       = "monospace:size=10";
 
@@ -168,17 +169,17 @@ static char dmenumon[2] = "0"; /* component of dmenucmd, manipulated in spawn() 
 static const char *dmenucmd[] = { "dmenu_run", "-m", dmenumon, "-fn", dmenufont, "-nb", col_gray1, "-nf", col_gray3, "-sb", col_blue, "-sf", col_white, NULL };
 static const char *roficmd[] = { "rofi", "-modi", "combi#window#run#drun", "-show", "combi", "-combi-modi", "window#run#drun", NULL };
 static const char *termcmd[]  = { "st", NULL };
-static const char *termcmd1[]  = { "urxvt", NULL };
+static const char *termcmd1[]  = { "urxvt", NULL, NULL, NULL, NULL, "1" };
 static const char *termcmd2[]  = { "mlterm", NULL };
 static const char scratchpadname[] = "scratchpad";
 static const char *scratchpadcmd[] = { "st", "-t", scratchpadname, "-g", "120x34", NULL };
-static const char *firefox[] = { "firefox", NULL, NULL, NULL, "Firefox" };
-static const char *filemanager[] = { "pcmanfm", NULL, NULL, NULL, "Pcmanfm" };
+static const char *firefox[] = { "firefox", NULL, NULL, NULL, "Firefox", "2" };
+static const char *filemanager[] = { "pcmanfm", NULL, NULL, NULL, "Pcmanfm", "3" };
 static const char *ranger[] = { "urxvt", "-e", "ranger" };
 static const char *nnn[] = { "st", "-e", "nnnstart" };
 static const char *cmus[] = { "st", "-e", "cmus" };
-static const char *musicplayer[] = { "pragha", NULL, NULL, NULL, "Pragha" };
-static const char *texteditor[] = { "geany", NULL, NULL, NULL, "Geany" };
+static const char *musicplayer[] = { "pragha", NULL, NULL, NULL, "Pragha", "4" };
+static const char *texteditor[] = { "geany", NULL, NULL, NULL, "Geany", NULL };
 static const char *volumeup[] = { "amixer", "set", "Master", "5%+", NULL };
 static const char *volumedown[] = { "amixer", "set", "Master", "5%-", NULL };
 static const char *volumemute[] = { "amixer", "set", "Master", "toggle", NULL };
@@ -186,8 +187,7 @@ static const char *audionext[] = { "playerctl", "next", NULL };
 static const char *audioprev[] = { "playerctl", "previous", NULL };
 static const char *audiostop[] = { "playerctl", "stop" };
 static const char *lock[] = { "slock", NULL };
-/*static const char *screenshot[] = { "lximage-qt", "-s", NULL };*/
-static const char *lxtask[] = { "lxtask", NULL, NULL, NULL, "Lxtask" };
+static const char *lxtask[] = { "lxtask", NULL, NULL, NULL, "Lxtask", NULL };
 static const char *htop[] = { "st", "-e", "htop", NULL };
 
 #include "selfrestart.c"
@@ -200,7 +200,7 @@ static Key keys[] = {
 	{KeyPress,	 MODKEY,                       XK_o,      spawn,          {.v = dmenucmd } },
 	{ KeyPress,	 MODKEY,                       XK_p,      spawn,          {.v = roficmd } },
 	{ KeyPress,	 MODKEY|ControlMask,           XK_Return, spawn,          {.v = termcmd } },
-	{ KeyPress,	 MODKEY|ShiftMask,             XK_Return, spawn,          {.v = termcmd1 } },
+	{ KeyPress,	 MODKEY|ShiftMask,             XK_Return, runorraise,          {.v = termcmd1 } },
 	{ KeyPress,	 MODKEY|ALTMODKEY,             XK_Return, spawn,          {.v = termcmd2 } },
         { KeyPress,	 MODKEY,                       XK_grave,  togglescratch,  {.v = scratchpadcmd } },
 	{ KeyPress,	 MODKEY,                       XK_b,      togglebar,      {0} },
@@ -282,9 +282,9 @@ static Key keys[] = {
         { KeyPress,	 MODKEY|ControlMask,           XK_w,      runorraise,     {.v = firefox} },
         { KeyPress,	 MODKEY|ControlMask,           XK_Home,   runorraise,     {.v = filemanager} },
         { KeyPress,	 MODKEY|ControlMask,           XK_e,      runorraise,     {.v = texteditor} },
-        /*{ KeyPress,	 MODKEY|ControlMask,           XK_Print,  runorraise,     {.v = screenshot} },*/
         { KeyPress,	 MODKEY|ControlMask,           XK_Delete, runorraise,     {.v = lxtask} },
         { KeyPress,	 MODKEY,                       XK_Delete, spawn,          {.v = htop} },
+        { KeyRelease,	 MODKEY,                       XK_F1,     spawn,          SHCMD("~/.script/dwm-app_menu") },
         { KeyRelease,	 MODKEY,                       XK_Print,  spawn,          SHCMD("~/bin/winshot") },
         { KeyRelease,	 0,                            XK_Print,  spawn,          SHCMD("~/bin/screenshot") },
 
@@ -295,6 +295,7 @@ static Key keys[] = {
 /* click can be ClkTagBar, ClkLtSymbol, ClkStatusText, ClkWinTitle, ClkClientWin, or ClkRootWin */
 static Button buttons[] = {
 	/* click                event mask      button          function        argument */
+	{ ClkButton,		0,		Button1,	spawn,		SHCMD("~/.script/dwm-app_menu") },
 	{ ClkLtSymbol,          0,              Button1,        setlayout,      {0} },
 	{ ClkLtSymbol,          0,              Button3,        setlayout,      {.v = &layouts[2]} },
 	{ ClkStatusText,        0,              Button2,        spawn,          {.v = termcmd} },
@@ -313,8 +314,9 @@ static Button buttons[] = {
 static Signal signals[] = {
 	/* signum       function        argument  */
 	{ 9,            quit,      {.v = 0} },
-	{ 70,           setlayout, {.v = 0} },
-/*	{ 101,          view,       {.ui = 1 << 0} },
+/*	{ 70,           setlayout, {.v = 0} },
+	{ 100,          view,      {.ui = 1 << -1} },
+	{ 101,          view,       {.ui = 1 << 0} },
 	{ 102,          view,       {.ui = 1 << 1} },
 	{ 103,          view,       {.ui = 1 << 2} },
 	{ 104,          view,       {.ui = 1 << 3} },
@@ -322,6 +324,9 @@ static Signal signals[] = {
 	{ 106,          view,       {.ui = 1 << 5} },
 	{ 107,          view,       {.ui = 1 << 6} },
 	{ 108,          view,       {.ui = 1 << 7} },
-	{ 109,          view,       {.ui = 1 << 8} },
-*/
+	{ 109,          view,       {.ui = 1 << 8} }, */
+	{ 110,          runorraise,       {.v = filemanager} },
+	{ 111,          runorraise,       {.v = termcmd1} },
+	{ 112,          runorraise,       {.v = firefox} },
+
 };
