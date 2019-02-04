@@ -1,0 +1,4 @@
+Terminal,~/.script/siglauncher 111,utilities-terminal
+File Manager,~/.script/siglauncher 110,system-file-manager
+Web Browser,~/.script/siglauncher 112,web-browser
+^sep()

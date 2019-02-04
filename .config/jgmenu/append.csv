@@ -1,0 +1,10 @@
+^sep()
+Exit,^checkout(Exit),system-log-out
+
+^tag(Exit)
+Lock,slock,system-lock-screen
+Logout,~/bin/logoff,system-log-out
+Restart,/usr/bin/gksudo /usr/bin/reboot,system-reboot
+Suspend,/usr/bin/gksudo /usr/bin/zzz,system-suspend
+#Hibernate,/usr/bin/gksudo /usr/bin/ZZZ,system-hibernate
+Poweroff,/usr/bin/gksudo /usr/bin/poweroff,system-shutdown

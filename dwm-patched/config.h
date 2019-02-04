@@ -284,7 +284,7 @@ static Key keys[] = {
         { KeyPress,	 MODKEY|ControlMask,           XK_e,      runorraise,     {.v = texteditor} },
         { KeyPress,	 MODKEY|ControlMask,           XK_Delete, runorraise,     {.v = lxtask} },
         { KeyPress,	 MODKEY,                       XK_Delete, spawn,          {.v = htop} },
-        { KeyRelease,	 MODKEY,                       XK_F1,     spawn,          SHCMD("~/.script/dwm-app_menu") },
+        { KeyRelease,	 MODKEY,                       XK_F1,     spawn,          SHCMD("jgmenu_run") },
         { KeyRelease,	 MODKEY,                       XK_Print,  spawn,          SHCMD("~/bin/winshot") },
         { KeyRelease,	 0,                            XK_Print,  spawn,          SHCMD("~/bin/screenshot") },
 
@@ -295,7 +295,8 @@ static Key keys[] = {
 /* click can be ClkTagBar, ClkLtSymbol, ClkStatusText, ClkWinTitle, ClkClientWin, or ClkRootWin */
 static Button buttons[] = {
 	/* click                event mask      button          function        argument */
-	{ ClkButton,		0,		Button1,	spawn,		SHCMD("~/.script/dwm-app_menu") },
+	/* { ClkButton,		0,		Button1,	spawn,		SHCMD("~/.script/dwm-app_menu") }, */
+	{ ClkButton,		0,		Button1,	spawn,		SHCMD("jgmenu_run") },
 	{ ClkLtSymbol,          0,              Button1,        setlayout,      {0} },
 	{ ClkLtSymbol,          0,              Button3,        setlayout,      {.v = &layouts[2]} },
 	{ ClkStatusText,        0,              Button2,        spawn,          {.v = termcmd} },
