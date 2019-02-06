@@ -12,21 +12,28 @@ function choose {
     CHOICE=$(echo -e $FIRST_MENU | $ROFI -p "")
 }
 
+function confirm {
+    CONFIRM=$(echo -e $SECOND_MENU | $ROFI -p "Are You Sure?")
+}
+
 function execute {
   if [ "$CHOICE" == "Lock" ];then
     ACTION="/usr/bin/slock"
   elif [ "$CHOICE" == "Logout" ];then
-    ACTION="$HOME/bin/logoff"
+    ACTION="$HOMEDIR/bin/logoff"
   elif [ "$CHOICE" == "Suspend" ];then
-    ACTION="/usr/bin/gksudo /usr/bin/zzz"
+    ACTION="/usr/bin/sudo /usr/bin/zzz"
   elif [ "$CHOICE" == "Reboot" ];then
-    ACTION="/usr/bin/gksudo /usr/bin/reboot"
+    ACTION="/usr/bin/sudo /usr/bin/reboot"
   elif [ "$CHOICE" == "Shutdown" ];then
-    ACTION="/usr/bin/gksudo /usr/bin/poweroff"
+    ACTION="/usr/bin/sudo /usr/bin/poweroff"
   fi
-  ${ACTION}
+
+  if [ "$CONFIRM" == "Yes" ];then
+	  ${ACTION}
+  fi
 }
 
-choose && execute
+choose && confirm && execute
 
 exit 0
