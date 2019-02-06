@@ -25,7 +25,7 @@ static const int systraypinningfailfirst = 1;   /* 1: if pinning fails, display 
 static const int showsystray        = 1;     /* 0 means no systray */
 static const int showbar            = 1;        /* 0 means no bar */
 static const int topbar             = 1;        /* 0 means bottom bar */
-static const char buttonbar[]       = "::";
+static const char buttonbar[]       = "⮞";
 static const char *fonts[]          = { "monospace:size=10" };
 static const char dmenufont[]       = "monospace:size=10";
 
@@ -271,6 +271,7 @@ static Key keys[] = {
 	{ KeyPress,	 MODKEY|ShiftMask,             XK_Scroll_Lock,      spawn,           {.v = lock} },
 	{ KeyPress,	 MODKEY|ShiftMask,             XK_q,      spawn,          SHCMD("~/.script/dwm-logout_menu") },
 	{ KeyPress,	 MODKEY|ShiftMask,             XK_Pause,  spawn,          SHCMD("~/.script/dwm-rofi_runit_exit_menu") },
+	{ KeyPress,	 MODKEY|ShiftMask,             XK_x,      spawn,          SHCMD("xkill") },
 	{ KeyPress,	 MODKEY|ControlMask,           XK_r,      spawn,          {.v = ranger} },
 	{ KeyPress,	 MODKEY|ControlMask,           XK_n,      spawn,          {.v = nnn} },
 	{ KeyPress,	 MODKEY|ControlMask,           XK_m,      spawn,          {.v = cmus} },
@@ -286,7 +287,9 @@ static Key keys[] = {
         { KeyPress,	 MODKEY|ControlMask,           XK_e,      runorraise,     {.v = texteditor} },
         { KeyPress,	 MODKEY|ControlMask,           XK_Delete, runorraise,     {.v = lxtask} },
         { KeyPress,	 MODKEY,                       XK_Delete, spawn,          {.v = htop} },
-        { KeyPress,	 MODKEY,                    XK_F1,   spawn,          SHCMD("jgmenu_run") },
+        { KeyPress,	 MODKEY,	               XK_F1,     spawn,          SHCMD("jgmenu_run") },
+        { KeyPress,	 MODKEY,	               XK_F2,     spawn,          SHCMD("~/.script/dwm-app_menu") },
+	{ KeyPress,	 MODKEY,	               XK_F3,     spawn,          SHCMD("gksudo") },
         { KeyRelease,	 MODKEY,                       XK_Print,  spawn,          SHCMD("~/bin/winshot") },
         { KeyRelease,	 0,                            XK_Print,  spawn,          SHCMD("~/bin/screenshot") },
 
@@ -299,6 +302,8 @@ static Button buttons[] = {
 	/* click                event mask      button          function        argument */
 	/* { ClkButton,		0,		Button1,	spawn,		SHCMD("~/.script/dwm-app_menu") }, */
 	{ ClkButton,		0,		Button1,	spawn,		SHCMD("jgmenu_run") },
+	{ ClkButton,		0,		Button2,	spawn,		SHCMD("jgmenu_run") },
+	{ ClkButton,		0,		Button3,	spawn,		SHCMD("~/.script/dwm-app_menu") },
 	{ ClkLtSymbol,          0,              Button1,        setlayout,      {0} },
 	{ ClkLtSymbol,          0,              Button3,        setlayout,      {.v = &layouts[2]} },
 	{ ClkStatusText,        0,              Button2,        spawn,          {.v = termcmd} },
