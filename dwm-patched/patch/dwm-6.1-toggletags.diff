@@ -46,9 +46,8 @@ diff -up /home/mohsen/dwm/dwm.c ./dwm.c
  		&& (c->x + (c->w / 2) < c->mon->wx + c->mon->ww)) ? bh : c->mon->my);
  	c->bw = borderpx;
 
-+	if (!c->mon->showtags && !c->tags) {
-+		c->tags |= c->mon->curtagset[c->mon->seltags];
-+	}
++	if (!c->tags)
++		c->tags = c->mon->showtags ? 1 : c->mon->curtagset[c->mon->seltags];
 +
  	wc.border_width = c->bw;
  	XConfigureWindow(dpy, w, CWBorderWidth, &wc);
