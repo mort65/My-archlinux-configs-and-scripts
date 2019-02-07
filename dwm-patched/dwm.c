@@ -2661,8 +2661,7 @@ toggletags(const Arg *arg) {
 void
 hidetags(const Arg *arg)
 {
-	for (int i = 0; i < LENGTH(selmon->curtagset); i++)
-		selmon->curtagset[i] = selmon->tagset[i];
+	selmon->curtagset[selmon->seltags] = selmon->tagset[selmon->seltags];
 	selmon->tagset[selmon->seltags] = 0;
 	selmon->showtags = 0;
 	focus(NULL);
@@ -2672,8 +2671,7 @@ hidetags(const Arg *arg)
 void
 showtags(const Arg *arg)
 {
-	for (int i = 0; i < LENGTH(selmon->curtagset); i++)
-		selmon->tagset[i] |= selmon->curtagset[i];
+	selmon->tagset[selmon->seltags] |= selmon->curtagset[selmon->seltags];
 	selmon->showtags = 1;
 	focus(NULL);
 	arrange(selmon);
