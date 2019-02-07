@@ -1485,7 +1485,7 @@ manage(Window w, XWindowAttributes *wa)
 	}
 
 	if (c->mon->tagset[c->mon->seltags] >= emptytag)
-		c->tags = c->tags >> (LENGTH(tags) + 1);
+		c->tags = (c->tags % emptytag) | (c->tags >> (LENGTH(tags) + 1));
 
 	wc.border_width = c->bw;
 	XConfigureWindow(dpy, w, CWBorderWidth, &wc);
@@ -2649,7 +2649,7 @@ void
 togglewindows(const Arg *arg)
 {
 	if (selmon->tagset[selmon->seltags]) {
-		unsigned int newtagset = selmon->tagset[selmon->seltags] >= emptytag ? selmon->tagset[selmon->seltags] >> (LENGTH(tags) + 1) : selmon->tagset[selmon->seltags] << (LENGTH(tags) + 1);
+		unsigned int newtagset = selmon->tagset[selmon->seltags] >= emptytag ? (selmon->tagset[selmon->seltags] % emptytag) | (selmon->tagset[selmon->seltags] >> (LENGTH(tags) + 1)) : selmon->tagset[selmon->seltags] << (LENGTH(tags) + 1);
 		selmon->tagset[selmon->seltags] = newtagset;
 		focus(NULL);
 		arrange(selmon);
