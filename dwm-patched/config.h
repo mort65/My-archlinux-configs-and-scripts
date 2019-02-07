@@ -303,8 +303,8 @@ static Button buttons[] = {
 	/* click                event mask      button          function        argument */
 	/* { ClkButton,		0,		Button1,	spawn,		SHCMD("~/.script/dwm-app_menu") }, */
 	{ ClkButton,		0,		Button1,	spawn,		SHCMD("jgmenu_run") },
-	{ ClkButton,		0,		Button2,	spawn,		SHCMD("jgmenu_run") },
-	{ ClkButton,		0,		Button3,	spawn,		SHCMD("~/.script/dwm-app_menu") },
+	{ ClkButton,		0,		Button2,	spawn,		SHCMD("~/.script/dwm-app_menu") },
+	{ ClkButton,		0,		Button3,	toggletags,     {0} },
 	{ ClkLtSymbol,          0,              Button1,        setlayout,      {0} },
 	{ ClkLtSymbol,          0,              Button3,        setlayout,      {.v = &layouts[2]} },
 	{ ClkStatusText,        0,              Button2,        spawn,          {.v = termcmd} },
