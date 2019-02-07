@@ -293,6 +293,7 @@ static void togglemark(const Arg *arg);
 static void togglesticky(const Arg *arg);
 static void togglepermanent(const Arg *arg);
 static void togglescratch(const Arg *arg);
+static void togglewindows(const Arg *arg);
 static void toggletag(const Arg *arg);
 static void toggleview(const Arg *arg);
 static void unfocus(Client *c, int setfocus);
@@ -386,6 +387,7 @@ struct Pertag {
 };
 
 static unsigned int scratchtag = 1 << LENGTH(tags);
+static unsigned int emptytag = 1 << (LENGTH(tags) + 1);
 
 /* compile-time check if all tags fit into an unsigned int bit array. */
 struct NumTags { char limitexceeded[LENGTH(tags) > 31 ? -1 : 1]; };
@@ -1481,6 +1483,9 @@ manage(Window w, XWindowAttributes *wa)
 		c->x = c->mon->wx + (c->mon->ww / 2 - WIDTH(c) / 2);
 		c->y = c->mon->wy + (c->mon->wh / 2 - HEIGHT(c) / 2);
 	}
+
+	if (c->mon->tagset[c->mon->seltags] >= emptytag)
+		c->tags = c->tags >> (LENGTH(tags) + 1);
 
 	wc.border_width = c->bw;
 	XConfigureWindow(dpy, w, CWBorderWidth, &wc);
@@ -2638,6 +2643,17 @@ togglescratch(const Arg *arg)
 		}
 	} else
 		spawn(arg);
+}
+
+void
+togglewindows(const Arg *arg)
+{
+	if (selmon->tagset[selmon->seltags]) {
+		unsigned int newtagset = selmon->tagset[selmon->seltags] >= emptytag ? selmon->tagset[selmon->seltags] >> (LENGTH(tags) + 1) : selmon->tagset[selmon->seltags] << (LENGTH(tags) + 1);
+		selmon->tagset[selmon->seltags] = newtagset;
+		focus(NULL);
+		arrange(selmon);
+	}
 }
 
 void
