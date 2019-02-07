@@ -1489,7 +1489,7 @@ manage(Window w, XWindowAttributes *wa)
 		c->y = c->mon->wy + (c->mon->wh / 2 - HEIGHT(c) / 2);
 	}
 
-	if (!c->mon->showtags) {
+	if (!c->mon->showtags && !c->tags) {
 		c->tags |= c->mon->curtagset[c->mon->seltags];
 	}
 
