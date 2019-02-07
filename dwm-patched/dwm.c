@@ -171,6 +171,8 @@ struct Monitor {
 	Window barwin;
 	const Layout *lt[2];
 	Pertag *pertag;
+	unsigned int curtagset[2];
+	int showtags;
 };
 
 typedef struct {
@@ -293,7 +295,9 @@ static void togglemark(const Arg *arg);
 static void togglesticky(const Arg *arg);
 static void togglepermanent(const Arg *arg);
 static void togglescratch(const Arg *arg);
-static void togglewindows(const Arg *arg);
+static void toggletags(const Arg *arg);
+static void showtags(const Arg *arg);
+static void hidetags(const Arg *arg);
 static void toggletag(const Arg *arg);
 static void toggleview(const Arg *arg);
 static void unfocus(Client *c, int setfocus);
@@ -387,7 +391,6 @@ struct Pertag {
 };
 
 static unsigned int scratchtag = 1 << LENGTH(tags);
-static unsigned int emptytag = 1 << (LENGTH(tags) + 1);
 
 /* compile-time check if all tags fit into an unsigned int bit array. */
 struct NumTags { char limitexceeded[LENGTH(tags) > 31 ? -1 : 1]; };
@@ -910,6 +913,8 @@ createmon(void)
 
 	m = ecalloc(1, sizeof(Monitor));
 	m->tagset[0] = m->tagset[1] = 1;
+	m->curtagset[0] = m->curtagset[1] = 1;
+	m->showtags = 1;
 	m->mfact = mfact;
 	m->smfact = smfact;
 	m->nmaster = nmaster;
@@ -1484,8 +1489,9 @@ manage(Window w, XWindowAttributes *wa)
 		c->y = c->mon->wy + (c->mon->wh / 2 - HEIGHT(c) / 2);
 	}
 
-	if (c->mon->tagset[c->mon->seltags] >= emptytag)
-		c->tags = (c->tags % emptytag) | (c->tags >> (LENGTH(tags) + 1));
+	if (!c->mon->showtags) {
+		c->tags |= c->mon->curtagset[c->mon->seltags];
+	}
 
 	wc.border_width = c->bw;
 	XConfigureWindow(dpy, w, CWBorderWidth, &wc);
@@ -2626,6 +2632,9 @@ togglefloating(const Arg *arg)
 void
 togglescratch(const Arg *arg)
 {
+	if (!selmon->showtags)
+		return;
+
 	Client *c;
 	unsigned int found = 0;
 
@@ -2646,14 +2655,29 @@ togglescratch(const Arg *arg)
 }
 
 void
-togglewindows(const Arg *arg)
+toggletags(const Arg *arg) {
+	selmon->showtags ? hidetags(NULL) : showtags(NULL);
+}
+
+void
+hidetags(const Arg *arg)
 {
-	if (selmon->tagset[selmon->seltags]) {
-		unsigned int newtagset = selmon->tagset[selmon->seltags] >= emptytag ? (selmon->tagset[selmon->seltags] % emptytag) | (selmon->tagset[selmon->seltags] >> (LENGTH(tags) + 1)) : selmon->tagset[selmon->seltags] << (LENGTH(tags) + 1);
-		selmon->tagset[selmon->seltags] = newtagset;
-		focus(NULL);
-		arrange(selmon);
-	}
+	for (int i = 0; i < LENGTH(selmon->curtagset); i++)
+		selmon->curtagset[i] = selmon->tagset[i];
+	selmon->tagset[selmon->seltags] = 0;
+	selmon->showtags = 0;
+	focus(NULL);
+	arrange(selmon);
+}
+
+void
+showtags(const Arg *arg)
+{
+	for (int i = 0; i < LENGTH(selmon->curtagset); i++)
+		selmon->tagset[i] |= selmon->curtagset[i];
+	selmon->showtags = 1;
+	focus(NULL);
+	arrange(selmon);
 }
 
 void
@@ -2705,6 +2729,7 @@ toggletag(const Arg *arg)
 
 	if (!selmon->sel)
 		return;
+
 	newtags = selmon->sel->tags ^ (arg->ui & TAGMASK);
 	if (newtags) {
 		selmon->sel->tags = newtags;
@@ -2716,6 +2741,9 @@ toggletag(const Arg *arg)
 void
 toggleview(const Arg *arg)
 {
+	if (!selmon->showtags)
+		showtags(NULL);
+
 	unsigned int newtagset = selmon->tagset[selmon->seltags] ^ (arg->ui & TAGMASK);
 
 	// the first visible client should be the same after we add a new tag
@@ -3250,6 +3278,9 @@ view(const Arg *arg)
 
 	if (selmon->showbar != selmon->pertag->showbars[selmon->pertag->curtag])
 		togglebar(NULL);
+
+	if (!selmon->showtags)
+		selmon->showtags = 1;
 
 	focus(NULL);
 	arrange(selmon);

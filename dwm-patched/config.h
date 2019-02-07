@@ -206,7 +206,7 @@ static Key keys[] = {
 	{ KeyPress,	 MODKEY|ALTMODKEY,             XK_Return, runorraise,          {.v = termcmd2 } },
         { KeyPress,	 MODKEY,                       XK_grave,  togglescratch,  {.v = scratchpadcmd } },
 	{ KeyPress,	 MODKEY,                       XK_b,      togglebar,      {0} },
-	{ KeyPress,	 MODKEY,             XK_z,      togglewindows,      {0} },
+	{ KeyPress,	 MODKEY,             XK_z,      toggletags,      {0} },
 	{ KeyPress,	 MODKEY|ShiftMask,             XK_b,      spawn,          SHCMD("~/.script/dwm-toggle_dzen") },
 	{ KeyPress,	 MODKEY|ShiftMask,             XK_j,      rotatestack,    {.i = +1 } },
 	{ KeyPress,	 MODKEY|ShiftMask,             XK_k,      rotatestack,    {.i = -1 } },
