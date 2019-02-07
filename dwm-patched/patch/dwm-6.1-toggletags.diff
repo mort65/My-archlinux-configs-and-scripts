@@ -1,3 +1,5 @@
+Author: Mort65, https://github.com/mort65/
+Description: This patch toggles the visibility of all tags on current monitor
 diff -up /home/mohsen/dwm/config.def.h ./config.def.h
 --- /home/mohsen/dwm/config.def.h	2019-02-07 21:05:32.382956919 +0330
 +++ ./config.def.h	2019-02-07 21:08:19.919621503 +0330
