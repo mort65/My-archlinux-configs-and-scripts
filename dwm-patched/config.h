@@ -253,7 +253,7 @@ static Key keys[] = {
 	{ KeyPress,	 MODKEY,                       XK_bracketleft,   togglemark,   {0} },
 	{ KeyPress,	 MODKEY,                       XK_bracketright,  swapfocus,    {0} },
 	{ KeyPress,	 MODKEY|ShiftMask,             XK_bracketright,  swapclient,   {0} },
-	{ KeyPress,	 MODKEY,                       XK_x,          swapfocused,     {0} },
+	{ KeyPress,	 ALTMODKEY,                       XK_Tab,          swapfocused,     {0} },
 	{ KeyPress,	 Mod4Mask,						XK_Up,						moveresize,			{.v = "0x -25y 0w 0h"} },
 	{ KeyPress,	 MODKEY,						XK_Down,					moveresize,			{.v = "0x 25y 0w 0h"} },
 	{ KeyPress,	 MODKEY,						XK_Left,					moveresize,			{.v = "-25x 0y 0w 0h"} },
