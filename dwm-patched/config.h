@@ -196,7 +196,7 @@ static const char *htop[] = { "st", "-e", "htop", NULL };
 #include "moveresize.c"
 #include "shiftview.c"
 #include "zoomswap.c"
-
+#include "focusurgent.c"
 static Key keys[] = {
 /*	 type            modifier                     key        function        argument */
 	{KeyPress,	 MODKEY,                       XK_o,      spawn,          {.v = dmenucmd } },
@@ -245,6 +245,7 @@ static Key keys[] = {
 	{ KeyPress,	 MODKEY|ShiftMask,             XK_n,      togglepermanent,{0} },
 	{ KeyPress,	 MODKEY,                       XK_0,      view,           {.ui = ~0 } },
 	{ KeyPress,	 MODKEY|ShiftMask,             XK_0,      tag,            {.ui = ~0 } },
+	{ KeyPress,      MODKEY,                       XK_backslash,      focusurgent,     {0} },
 	{ KeyPress,	 MODKEY|ALTMODKEY,             XK_comma,  focusmon,       {.i = -1 } },
 	{ KeyPress,	 MODKEY|ALTMODKEY,             XK_period, focusmon,       {.i = +1 } },
 	{ KeyPress,	 MODKEY|ShiftMask,             XK_comma,  tagmon,         {.i = -1 } },

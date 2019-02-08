@@ -12,7 +12,7 @@ options=(zipman)
 depends=('libx11' 'libxinerama' 'libxft' 'freetype2')
 optdepends=('st' 'dmenu')
 install=dwm.install
-source=(config.def.h config.h config.mk startdwm drw.c drw.h dwm.1 dwm.c dwm.desktop dwm.png fibonacci.c gaplessgrid.c LICENSE layouts.c Makefile moveresize.c README selfrestart.c shiftview.c tcl.c transient.c util.c util.h zoomswap.c)
+source=(config.def.h config.h config.mk startdwm drw.c drw.h dwm.1 dwm.c dwm.desktop dwm.png fibonacci.c focusurgent.c gaplessgrid.c LICENSE layouts.c Makefile moveresize.c README selfrestart.c shiftview.c tcl.c transient.c util.c util.h zoomswap.c)
 
 prepare() {
   mkdir -p "$pkgname-$pkgver"
@@ -28,6 +28,7 @@ prepare() {
   cp "$srcdir/dwm.desktop" .
   cp "$srcdir/dwm.png" .
   cp "$srcdir/fibonacci.c" .
+  cp "$srcdir/focusurgent.c" .
   cp "$srcdir/gaplessgrid.c" .
   cp "$srcdir/layouts.c" .
   cp "$srcdir/LICENSE" .
@@ -57,8 +58,8 @@ package() {
   install -m755 -D "$srcdir"/startdwm "$pkgdir"/usr/bin/startdwm
 }
 
-md5sums=('318674714a14ac8b32a7bca5de7d7f70'
-         '3fc20d3edba2a0acae6066c6f3b1f21b'
+md5sums=('446cbba5358f96863ee7c901a78072b3'
+         'a600833bb365cdec1eb4e9225524f561'
          '007fecea7a026dde17dbae253f756df1'
          '3dd0b4d4783d968dbb3adf9e1bf05b17'
          '8742b0e99c633724a73dcff43e521380'
@@ -68,6 +69,7 @@ md5sums=('318674714a14ac8b32a7bca5de7d7f70'
          '4d23917a18bfc2ef916d8b52866948da'
          'b410e9a038520b0a117644dba003da62'
          'e3923d63de491ed6d1216cacf1ae9c1a'
+         'cf96af0cb89d5739d4ccf9abc1845247'
          '907b5e290ac4bc41bd250837bf5343a9'
          '8555b535ebdcbd0f153d5c9fabde7168'
          '08196cb38741a3c758892b1420f7e8c5'
