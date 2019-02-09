@@ -2,6 +2,6 @@
 Encoding=UTF-8
 Name=Dwm
 Comment=Dynamic window manager
-Exec=startdwm
+Exec=dwm
 Icon=dwm
 Type=Application

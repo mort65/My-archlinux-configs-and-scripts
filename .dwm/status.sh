@@ -7,7 +7,7 @@ CDATE () {
 }
 
 CTIME () {
-	ctime=$(/usr/bin/date +"%a %H:%M")
+	ctime=$(/usr/bin/jdate +"%h %H:%M")
 	echo "${ctime}"
 }
 
@@ -21,6 +21,6 @@ GTEMP () {
 	echo "${gtemp}"
 }
 
-/usr/bin/xsetroot -name " [ $(CTEMP) $(GTEMP) $(CDATE) ] "
-#/usr/bin/xsetroot -name "[$(CTIME)]"
+/usr/bin/xsetroot -name "  [$(CTEMP) $(GTEMP)]   [$(CDATE)] "
+#/usr/bin/xsetroot -name "[$(CDATE)]"
 

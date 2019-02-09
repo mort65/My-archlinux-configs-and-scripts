@@ -261,6 +261,7 @@ static void resizerequest(XEvent *e);
 static void restack(Monitor *m);
 static void rotatestack(const Arg *arg);
 static void run(void);
+static void runAutostart(void);
 static void runorraise(const Arg *arg);
 static void scan(void);
 static int sendevent(Window w, Atom proto, int m, long d0, long d1, long d2, long d3, long d4);
@@ -2031,6 +2032,12 @@ scan(void)
 }
 
 void
+runAutostart(void) {
+	system("cd ~/.dwm; ./autostart_blocking.sh");
+	system("cd ~/.dwm; ./autostart.sh &");
+}
+
+void
 sendmon(Client *c, Monitor *m)
 {
 	if (c->mon == m)
@@ -3569,6 +3576,7 @@ main(int argc, char *argv[])
 		die("pledge");
 #endif /* __OpenBSD__ */
 	scan();
+	runAutostart();
 	run();
 	if(restart) execvp(argv[0], argv);
 	cleanup();

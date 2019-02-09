@@ -12,7 +12,7 @@ options=(zipman)
 depends=('libx11' 'libxinerama' 'libxft' 'freetype2')
 optdepends=('st' 'dmenu')
 install=dwm.install
-source=(config.def.h config.h config.mk startdwm drw.c drw.h dwm.1 dwm.c dwm.desktop dwm.png fibonacci.c focusurgent.c gaplessgrid.c LICENSE layouts.c Makefile moveresize.c README selfrestart.c shiftview.c tcl.c transient.c util.c util.h zoomswap.c)
+source=(config.def.h config.h config.mk drw.c drw.h dwm.1 dwm.c dwm.desktop dwm.png fibonacci.c focusurgent.c gaplessgrid.c LICENSE layouts.c Makefile moveresize.c README selfrestart.c shiftview.c tcl.c transient.c util.c util.h zoomswap.c)
 
 prepare() {
   mkdir -p "$pkgname-$pkgver"
@@ -20,7 +20,6 @@ prepare() {
   cp "$srcdir/config.def.h" .
   cp "$srcdir/config.h" .
   cp "$srcdir/config.mk" .
-  cp "$srcdir/startdwm" .
   cp "$srcdir/drw.c" .
   cp "$srcdir/drw.h" .
   cp "$srcdir/dwm.1" .
@@ -55,18 +54,16 @@ package() {
   install -m644 -D LICENSE "$pkgdir"/usr/share/licenses/"$pkgname"/LICENSE
   install -m644 -D README "$pkgdir"/usr/share/doc/"$pkgname"/README
   install -m644 -D "$srcdir"/dwm.desktop "$pkgdir"/usr/share/xsessions/dwm.desktop
-  install -m755 -D "$srcdir"/startdwm "$pkgdir"/usr/bin/startdwm
 }
 
 md5sums=('446cbba5358f96863ee7c901a78072b3'
          'dfc189517782c9a19c3f3f324559c5ac'
          '007fecea7a026dde17dbae253f756df1'
-         '3dd0b4d4783d968dbb3adf9e1bf05b17'
          '8742b0e99c633724a73dcff43e521380'
          '80ad7825da7303599396512bb3284b03'
          'da9488d56f433adbe317c6185bf4771b'
-         '491f41edc511aa2cbf71a5d0e7f3499a'
-         '4d23917a18bfc2ef916d8b52866948da'
+         '1c9d8ba82b740f2bbed7fcab45482c4e'
+         'e7e1b8940428f560ff8c5fe8d3c2cfd9'
          'b410e9a038520b0a117644dba003da62'
          'e3923d63de491ed6d1216cacf1ae9c1a'
          'cf96af0cb89d5739d4ccf9abc1845247'
