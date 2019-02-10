@@ -934,12 +934,12 @@ createmon(void)
 	m->pertag->curtag = m->pertag->prevtag = 1;
 
 	for (i = 0; i <= LENGTH(tags); i++) {
-		m->pertag->ltidxs[i][0] = &layouts[i ? (int)deflts[i - 1][0] : 0];
-		m->pertag->ltidxs[i][1] = m->lt[1];
+		m->pertag->ltidxs[i][0] = i ? &layouts[(int)deflts[i - 1][0]] : m->lt[0];
+		m->pertag->ltidxs[i][1] = i ? &layouts[(int)deflts[i - 1][1]] : m->lt[1];
+		m->pertag->nmasters[i] = i ? deflts[i - 1][2] : m->nmaster;
+		m->pertag->mfacts[i] = i ? deflts[i - 1][3] : m->mfact;
+		m->pertag->showbars[i] = i ? deflts[i - 1][4] : m->showbar;
 		m->pertag->sellts[i] = m->sellt;
-		m->pertag->nmasters[i] = i ? deflts[i - 1][1] : m->nmaster;
-		m->pertag->mfacts[i] = i ? deflts[i - 1][2] : m->mfact;
-		m->pertag->showbars[i] = i ? deflts[i - 1][3] : m->showbar;
 	}
 
 	return m;

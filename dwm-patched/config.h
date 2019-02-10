@@ -140,19 +140,19 @@ static const Layout layouts[] = {
 };
 
 /**
- * Default layout, nmaster mfact and showbar values for each tag
+ * Default layouts, nmaster mfact and showbar values for each tag
  *
 */
-static const float deflts[][4] = {
-	{ tile_layout, nmaster, mfact, showbar },
-	{ tcl_layout, nmaster, mfact, showbar },
-	{ bstack_layout, nmaster, mfact, showbar },
-	{ monocle_layout, nmaster, mfact, 0 },
-	{ deck_layout, nmaster, mfact, showbar },
-	{ monocle_layout, nmaster, mfact, showbar },
-	{ gaplessg_layout, nmaster, mfact, showbar },
-	{ col_layout, 2, mfact, showbar },
-	{ horizg_layout, nmaster, mfact, showbar },
+static const float deflts[][5] = {
+	{ tile_layout, floating_layout, nmaster, mfact, showbar },
+	{ tcl_layout, floating_layout, nmaster, mfact, showbar },
+	{ bstack_layout, floating_layout, nmaster, mfact, showbar },
+	{ monocle_layout, floating_layout, nmaster, mfact, 0 },
+	{ deck_layout, floating_layout, nmaster, mfact, showbar },
+	{ monocle_layout, floating_layout, nmaster, mfact, showbar },
+	{ gaplessg_layout, floating_layout, nmaster, mfact, showbar },
+	{ col_layout, floating_layout, 2, mfact, showbar },
+	{ horizg_layout, floating_layout, nmaster, mfact, showbar },
 };
 
 
