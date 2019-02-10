@@ -1,0 +1,20 @@
+diff -up /home/mohsen/dwm/dwm.c ./dwm.c
+--- /home/mohsen/dwm/dwm.c	2019-02-11 01:53:43.660610884 +0330
++++ ./dwm.c	2019-02-11 01:56:26.950608824 +0330
+@@ -1073,6 +1073,16 @@ manage(Window w, XWindowAttributes *wa)
+ 	c->mon->sel = c;
+ 	arrange(c->mon);
+ 	XMapWindow(dpy, c->win);
++	if (c->isurgent) {
++	    int i;
++	    for(i = 0; i < LENGTH(tags) && !((1 << i) & c->tags); i++);
++	    if(i < LENGTH(tags)) {
++		    const Arg a = {.ui = 1 << i};
++		    view(&a);
++		    focus(c);
++		    return;
++		}
++	}
+ 	focus(NULL);
+ }
+
