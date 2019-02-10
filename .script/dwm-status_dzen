@@ -7,4 +7,4 @@ FONT="monospace:bold:size=9"
 FG='#cccccc'
 BG='#222222'
 
-conky -c "$HOME/.conky/dwm_status_conkyrc" | dzen2 -e - -h '19' -w '520' -ta c -x '540' -fg $FG -bg $BG -fn $FONT &
+conky -c "$HOME/.conky/dwm_status_conkyrc" | dzen2 -e - -h '19' -w '524' -ta c -x '538' -fg $FG -bg $BG -fn $FONT &
