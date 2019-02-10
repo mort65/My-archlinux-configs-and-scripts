@@ -9,6 +9,18 @@ zstyle :compinstall filename "/home/$(id -u -n)/.zshrc"
 
 autoload -Uz compinit
 compinit
+
+autoload -Uz up-line-or-beginning-search down-line-or-beginning-search
+
+zle -N up-line-or-beginning-search
+zle -N down-line-or-beginning-search
+
+[[ -n "$key[Up]"   ]] && bindkey -- "$key[Up]"   up-line-or-beginning-search
+[[ -n "$key[Down]" ]] && bindkey -- "$key[Down]" down-line-or-beginning-search
+
+bindkey '\eOA' up-line-or-beginning-search # or ^[OA
+bindkey '\eOB' down-line-or-beginning-search # or ^[OB
+
 # End of lines added by compinstall
 
 setopt appendhistory autocd no_beep extendedglob nomatch notify hist_ignore_space hist_ignore_all_dups
@@ -158,7 +170,7 @@ jdatestatus()
  else
     echo "$(/usr/bin/date '+%h %d %B %Y %H:%M %p')"
  fi
- return	
+ return
 }
 
 
@@ -191,7 +203,7 @@ alias lart='ls -1Fcart'
 alias lrt='ls -1Fcrt'
 
 alias zshrc='$EDITOR ~/.zshrc' # Quick access to the ~/.zshrc file
-alias notes='$EDITOR ~/.note/Arch_Notes.txt' 
+alias notes='$EDITOR ~/.note/Arch_Notes.txt'
 # Alias definitions.
 # You may want to put all your additions into a separate file like
 # ~/.bash_aliases, instead of adding them here directly.
@@ -208,11 +220,11 @@ alias del='rm -iv'
 alias cd..='cd ..'
 
 ## a quick way to get out of current directory ##
-alias ..='cd ..' 
-alias ...='cd ../../../' 
-alias ....='cd ../../../../' 
-alias .....='cd ../../../../' 
-alias .4='cd ../../../../' 
+alias ..='cd ..'
+alias ...='cd ../../../'
+alias ....='cd ../../../../'
+alias .....='cd ../../../../'
+alias .4='cd ../../../../'
 alias .5='cd ../../../../..'
 
 ## Colorize the grep command output for ease of use (good for log files)##
@@ -237,9 +249,9 @@ alias nowtime=now
 alias nowdate='/usr/bin/date +"%d-%m-%Y"'
 
 # Set vim as default
-alias vi=vim 
-alias svi='sudo vi' 
-alias vis='/usr/bin/vim "+set si"' 
+alias vi=vim
+alias svi='sudo vi'
+alias vis='/usr/bin/vim "+set si"'
 alias edit='/usr/bin/vim'
 
 # Stop after sending count ECHO_REQUEST packets #
@@ -261,24 +273,24 @@ alias poweroff='/usr/bin/sudo /sbin/poweroff'
 alias halt='/usr/bin/sudo /sbin/halt'
 alias shutdown='/usr/bin/sudo /sbin/shutdown'
 
-## pass options to free ## 
+## pass options to free ##
 alias meminfo='/usr/bin/free -l -t -h'
- 
+
 ## get top process eating memory
 alias psmem='/usr/bin/ps auxf | sort -nr -k 4'
 alias psmem10='/usr/bin/ps auxf | sort -nr -k 4 | head -10'
- 
+
 ## get top process eating cpu ##
 alias pscpu='/usr/bin/ps auxf | sort -nr -k 3'
 alias pscpu10='/usr/bin/ps auxf | sort -nr -k 3 | head -10'
- 
+
 ## Get server cpu info ##
 alias cpuinfo='/usr/bin/lscpu'
- 
+
 ## older system use /proc/cpuinfo ##
 ##alias cpuinfo='/usr/bin/less /proc/cpuinfo' ##
 
-## get GPU ram on desktop / laptop## 
+## get GPU ram on desktop / laptop##
 #alias gpumeminfo='/usr/bin/grep -i --color memory /var/log/Xorg.0.log'
 
 ## this one saved by butt so many times ##
@@ -286,7 +298,7 @@ alias cpuinfo='/usr/bin/lscpu'
 alias wget='/usr/bin/wget -c'
 
 
-alias whereami='pwd' 
+alias whereami='pwd'
 
 
 alias tfm="$HOME/bin/totalfreemem"
@@ -305,10 +317,10 @@ alias py3="/usr/bin/python3"
 alias py2="/usr/bin/python2"
 alias ver="/usr/bin/uname -r"
 #alias mpv="/usr/bin/mpv --sub-scale=0.75 --volume-max=200"
- 
+
 # When using sudo, use alias expansion (otherwise sudo ignores your aliases)
 alias sudo='/usr/bin/sudo '
- 
+
 ##Env:
 #####################################
 
