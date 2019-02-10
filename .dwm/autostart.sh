@@ -4,6 +4,8 @@
 #status toggle
 STATUS=0
 
+~/.script/dwm-sendsignal 0;
+sleep 1
 pgrep -c lxpolkit || /usr/bin/lxpolkit &
 pgrep -c pcmanfm || dbus-launch pcmanfm -d &
 /usr/bin/numlockx &
@@ -24,8 +26,4 @@ if [ $STATUS -eq 1 ]; then
 		"$HOME/.dwm/status.sh" &> /dev/null
 		sleep 10s
 	done &
-else
-	sleep 1s;
-	~/.script/dwm-sendsignal 0;
-
 fi

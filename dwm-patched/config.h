@@ -60,30 +60,32 @@ static const Rule rules[] = {
 	 *	WM_CLASS(STRING) = instance, class
 	 *	WM_NAME(STRING) = title
 	 */
-	/*Match condition   Tags   Float   Permanent   Terminal   Swallow   Monitor*/
-	{ CLASS("Firefox|Chromium|Google-chrome|Vivaldi-stable"),   TAG(2),   0,   0,   0 },
-        { CLASS("VirtualBox"),   TAG(5),   0,   0 },
-        { CLASS("St|UXTerm|XTerm|rxvt|URxvt|Urxvt-tabbed|Lxterminal"),  0,   0,   0,   1,   1,   0 },
-        { CLASS("Thunar|Pcmanfm|pcmanfm-qt"),   TAG(3),   0,   0 },
-	{ CLASS("vlc|smplayer|mpv|smplayer"),   TAG(1)|TAG(3)|TAG(4),   0,   0,   0,   0 },
-	{ CLASS("Steam"),  TAG(6) ,   0,   0 },
+	/*Match condition   Tags   Center   Float   Permanent   Terminal   Swallow   Monitor*/
+	{ CLASS("Firefox|Chromium|Google-chrome|Vivaldi-stable"),   TAG(2),0,   0,   0,   0 },
+        { CLASS("VirtualBox"),   TAG(5),   0,   0,   0 },
+        { CLASS("St|UXTerm|XTerm|rxvt|Lxterminal"),  0,   0,   0,   0,   1,   1,   0 },
+        { CLASS("URxvt|Urxvt-tabbed"),  0,   1,   0,   1,   1,   1,   0 },
+        { CLASS("Thunar|Pcmanfm|pcmanfm-qt"),   TAG(3),   0,   0,   0 },
+	{ CLASS("vlc|smplayer|mpv|smplayer"),   TAG(1)|TAG(3)|TAG(4),   0,   0,   0,   0,   0 },
+	{ CLASS("Steam"),  TAG(6),   0,   0,   0 },
+	{ CLASS("Gimp"),  0,   1,   0,   0 },
 
         /*Floating windows*/
-	{ CLASS("Nitrogen|Dukto|Galculator|lxsu|lxsudo|Gpick"),   0,   1,   0,   0,   0 },
-	{ CLASS("Pragha"),  TAG(4) ,   1,   0 },
-        { TITLE("File Operation Progress"),   0,   1,   0,   0 },
+	{ CLASS("Nitrogen|Dukto|Galculator|lxsu|lxsudo|Gpick"),   0,   0,   1,   0,   0,   0 },
+	{ CLASS("Pragha"),  TAG(4) ,  1,    1,   0 },
+        { TITLE("File Operation Progress"),   0,   0,   1,   0,   0 },
         { TITLE("Module"),   0,   1,   0 },
-        { TITLE("Search Dialog"),   0,   1,   0,   0 },
-        { TITLE("Goto"),   0,   1,   0,   0 },
-        { TITLE("IDLE Preferences"),   0,   1,   0,   0 },
-        { TITLE("Preferences"),   0,   1,   0,   0 },
-        { TITLE("File Transfer"),   0,   1,   0,   0 },
-        { TITLE("branchdialog"),   0,   1,   0,   0 },
-        { TITLE("pinentry"),   0,   1,   0,   0 },
-        { TITLE("confirm"),   0,   1,   0,   0 },
-        { INSTANCE("eog"),   0,   1,    0,   0 },
-	{ CLASS_W_TITLE("Firefox","Firefox Preferences"),   TAG(2),   1,   0,   0 },
-	{ CLASS_W_TITLE("Firefox","Library"),   TAG(2),   1,   0,   0 },
+        { TITLE("Search Dialog"),   0,   0,   1,   0,   0 },
+        { TITLE("Goto"),  0,    0,   1,   0,   0 },
+        { TITLE("IDLE Preferences"),   0,   0,   1,   0,   0 },
+        { TITLE("Preferences"),   0,   0,   1,   0,   0 },
+        { TITLE("File Transfer"),   0,   0,   1,   0,   0 },
+        { TITLE("branchdialog"),   0,   0,   1,   0,   0 },
+        { TITLE("pinentry"),   0,   0,   1,   0,   0,   0 },
+        { TITLE("confirm"),   0,   0,   1,   0,   0 },
+        { INSTANCE("eog"),   0,   0,   1,    0,   0 },
+	{ CLASS_W_TITLE("Firefox","Firefox Preferences"),   TAG(2),   0,   1,   0,   0 },
+	{ CLASS_W_TITLE("Firefox","Library"),   TAG(2),  0,   1,   0,   0 },
 };
 
 /* layout(s) */
@@ -109,12 +111,14 @@ enum {
     bstack_layout,
     bstackh_layout,
     gaplessg_layout,
+    horizg_layout,
     spiral_layout,
     dwindle_layout,
 };
 
 #include "fibonacci.c"
 #include "gaplessgrid.c"
+#include "horizgrid.c"
 #include "layouts.c"
 #include "tcl.c"
 static const Layout layouts[] = {
@@ -128,6 +132,7 @@ static const Layout layouts[] = {
 	[bstack_layout]   = { "TTT",      bstack },
         [bstackh_layout]  = { "===",      bstackhoriz },
 	[gaplessg_layout] = { "HHH",      gaplessgrid },
+	[horizg_layout]   = { "###",      horizgrid },
  	[spiral_layout]   = { "[@]",      spiral },
  	[dwindle_layout]  = { "[\\]",      dwindle },
 	                    { NULL,       NULL },
@@ -235,14 +240,16 @@ static Key keys[] = {
 	{ KeyPress,	 MODKEY,                       XK_y,      setlayout,      {.v = &layouts[6]} },
 	{ KeyPress,	 MODKEY,                       XK_u,      setlayout,      {.v = &layouts[7]} },
 	{ KeyPress,	 MODKEY,                       XK_g,      setlayout,      {.v = &layouts[8]} },
-	{ KeyPress,	 MODKEY,                       XK_s,      setlayout,      {.v = &layouts[9]} },
-	{ KeyPress,	 MODKEY,                       XK_w,      setlayout,      {.v = &layouts[10]} },
+	{ KeyPress,	 MODKEY,                       XK_r,      setlayout,      {.v = &layouts[9]} },
+	{ KeyPress,	 MODKEY,                       XK_s,      setlayout,      {.v = &layouts[10]} },
+	{ KeyPress,	 MODKEY,                       XK_w,      setlayout,      {.v = &layouts[11]} },
 	{ KeyPress,	 MODKEY,		       XK_comma,  cyclelayout,    {.i = -1 } },
 	{ KeyPress,	 MODKEY,                       XK_period, cyclelayout,    {.i = +1 } },
 	{ KeyPress,	 MODKEY,                       XK_space,  setlayout,      {0} },
 	{ KeyPress,	 MODKEY|ShiftMask,             XK_space,  togglefloating, {0} },
 	{ KeyPress,	 MODKEY,                       XK_n,      togglesticky,   {0} },
 	{ KeyPress,	 MODKEY|ShiftMask,             XK_n,      togglepermanent,{0} },
+	{ KeyPress,	 MODKEY|ShiftMask,             XK_m,      center,{0} },
 	{ KeyPress,	 MODKEY,                       XK_0,      view,           {.ui = ~0 } },
 	{ KeyPress,	 MODKEY|ShiftMask,             XK_0,      tag,            {.ui = ~0 } },
 	{ KeyPress,      MODKEY,                       XK_a,      focusurgent,     {0} },
@@ -277,7 +284,8 @@ static Key keys[] = {
 	{ KeyPress,	 MODKEY|ShiftMask,             XK_Scroll_Lock,      spawn,           {.v = lock} },
 	{ KeyPress,	 MODKEY|ShiftMask,             XK_q,      spawn,          SHCMD("~/.script/dwm-logout_menu") },
 	{ KeyPress,	 MODKEY|ShiftMask,             XK_Pause,  spawn,          SHCMD("~/.script/dwm-rofi_runit_exit_menu") },
-	{ KeyPress,	 MODKEY|ShiftMask,             XK_x,      spawn,          SHCMD("xkill") },
+	{ KeyPress,	 MODKEY,                       XK_x,      spawn,          SHCMD("xkill") },
+	{ KeyPress,      MODKEY|ControlMask|ShiftMask, XK_x,      killunsel,      {0} },
 	{ KeyPress,	 MODKEY|ControlMask,           XK_r,      spawn,          {.v = ranger} },
 	{ KeyPress,	 MODKEY|ControlMask,           XK_n,      spawn,          {.v = nnn} },
 	{ KeyPress,	 MODKEY|ControlMask,           XK_m,      spawn,          {.v = cmus} },

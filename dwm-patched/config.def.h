@@ -35,10 +35,10 @@ static const Rule rules[] = {
 	 *	WM_CLASS(STRING) = instance, class
 	 *	WM_NAME(STRING) = title
 	 */
-	/* class      instance    title       tags mask     isfloating   ispermanent    isterminal noswallow monitor */
-	{ "Gimp",     NULL,       NULL,       0,            1,           0,            0,         0,        -1 },
-	{ "Firefox",  NULL,       NULL,       1 << 8,       0,           0,            0,         0,        -1 },
-	{ "st",       NULL,       NULL,       0,            0,           0,            1,         1,        -1 },
+	/* class      instance    title       tags mask     iscentered     isfloating   ispermanent    isterminal noswallow monitor */
+	{ "Gimp",     NULL,       NULL,       0,            0,            1,           0,            0,         0,        -1 },
+	{ "Firefox",  NULL,       NULL,       1 << 8,       0,            0,           0,            0,         0,        -1 },
+	{ "st",       NULL,       NULL,       0,            0,            0,           0,            1,         1,        -1 },
 };
 
 /* layout(s) */
@@ -49,6 +49,7 @@ static const int resizehints = 1;    /* 1 means respect size hints in tiled resi
 
 #include "fibonacci.c"
 #include "gaplessgrid.c"
+#include "horizgrid.c"
 #include "layouts.c"
 #include "tcl.c"
 static const Layout layouts[] = {
@@ -62,6 +63,7 @@ static const Layout layouts[] = {
 	{ "TTT",      bstack },
 	{ "===",      bstackhoriz },
 	{ "HHH",      gaplessgrid },
+	{ "###",      horizgrid },
  	{ "[@]",      spiral },
  	{ "[\\]",      dwindle },
 	{ NULL,       NULL },
@@ -111,6 +113,7 @@ static Key keys[] = {
 	{ KeyPress,	MODKEY,                       XK_Return, zoom,           {0} },
 	{ KeyPress,	MODKEY,                       XK_Tab,    view,           {0} },
 	{ KeyPress,	MODKEY|ShiftMask,             XK_c,      killclient,     {0} },
+	{ KeyPress,     MODKEY|ShiftMask,             XK_x,      killunsel,      {0} },
 	{ KeyPress,	MODKEY,                       XK_t,      setlayout,      {.v = &layouts[0]} },
 	{ KeyPress,	MODKEY,                       XK_f,      setlayout,      {.v = &layouts[1]} },
 	{ KeyPress,	MODKEY,                       XK_m,      setlayout,      {.v = &layouts[2]} },

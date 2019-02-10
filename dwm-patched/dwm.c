@@ -120,7 +120,7 @@ struct Client {
 	int basew, baseh, incw, inch, maxw, maxh, minw, minh;
 	int bw, oldbw;
 	unsigned int tags;
-	int isfixed, ispermanent, isfloating, isurgent, neverfocus, oldstate, isfullscreen, isterminal, noswallow, issticky, needresize;
+	int isfixed, ispermanent, iscentered, isfloating, isurgent, neverfocus, oldstate, isfullscreen, isterminal, noswallow, issticky, needresize;
 	pid_t pid;
 	Client *next;
 	Client *snext;
@@ -180,6 +180,7 @@ typedef struct {
 	const char *instance;
 	const char *title;
 	unsigned int tags;
+	int iscentered;
 	int isfloating;
 	int ispermanent;
 	int isterminal;
@@ -240,6 +241,7 @@ static void incnmaster(const Arg *arg);
 static void keypress(XEvent *e);
 static int fake_signal(void);
 static void killclient(const Arg *arg);
+static void killunsel(const Arg *arg);
 static void manage(Window w, XWindowAttributes *wa);
 static void mappingnotify(XEvent *e);
 static void maprequest(XEvent *e);
@@ -296,6 +298,7 @@ static void togglefloating(const Arg *arg);
 static void togglemark(const Arg *arg);
 static void togglesticky(const Arg *arg);
 static void togglepermanent(const Arg *arg);
+static void center(const Arg *arg);
 static void togglescratch(const Arg *arg);
 static void toggletags(const Arg *arg);
 static void showtags(const Arg *arg);
@@ -428,6 +431,7 @@ applyrules(Client *c)
 		   (!r->instance || !regexec(&regexcache[i][1], instance, 0, NULL, 0))) {
 
 			c->isterminal = r->isterminal;
+			c->iscentered = r->iscentered;
 			c->isfloating = r->isfloating;
 			c->ispermanent = r->ispermanent;
 			c->tags |= r->tags;
@@ -1202,7 +1206,7 @@ focusstack(const Arg *arg)
 {
 	Client *c = NULL, *i;
 
-	if (!selmon->sel)
+	if (!selmon->sel || selmon->sel->isfullscreen)
 		return;
 	if (arg->i > 0) {
 		for (c = selmon->sel->next; c && !ISVISIBLE(c); c = c->next);
@@ -1432,6 +1436,29 @@ fake_signal(void)
 }
 
 void
+killunsel(const Arg *arg)
+{
+	Client *i = NULL;
+
+	if (!selmon->sel)
+		return;
+
+	for (i = selmon->clients; i; i = i->next) {
+		if (ISVISIBLE(i) && i != selmon->sel && !i->ispermanent) {
+			if (!sendevent(i->win, wmatom[WMDelete], NoEventMask, wmatom[WMDelete], CurrentTime, 0 , 0, 0)) {
+				XGrabServer(dpy);
+				XSetErrorHandler(xerrordummy);
+				XSetCloseDownMode(dpy, DestroyAll);
+				XKillClient(dpy, i->win);
+				XSync(dpy, False);
+				XSetErrorHandler(xerror);
+				XUngrabServer(dpy);
+			}
+		}
+	}
+}
+
+void
 killclient(const Arg *arg)
 {
 	if(!selmon->sel || selmon->sel->ispermanent)
@@ -1494,6 +1521,11 @@ manage(Window w, XWindowAttributes *wa)
 
 	if (!c->tags)
 		c->tags = c->mon->showtags ? 1 : c->mon->curtagset[c->mon->seltags];
+
+	if(c->iscentered) {
+		c->x = (c->mon->mw - WIDTH(c)) / 2;
+		c->y = (c->mon->mh - HEIGHT(c)) / 2;
+	}
 
 	wc.border_width = c->bw;
 	XConfigureWindow(dpy, w, CWBorderWidth, &wc);
@@ -2651,7 +2683,7 @@ togglefloating(const Arg *arg)
 void
 togglescratch(const Arg *arg)
 {
-	if (!selmon->showtags)
+	if (!selmon->showtags || selmon->sel->isfullscreen)
 		return;
 
 	Client *c;
@@ -2735,6 +2767,22 @@ togglepermanent(const Arg *arg)
 	else {
 		XSetWindowBorder(dpy, selmon->sel->win, scheme[SchemeSel][ColBorder].pixel);
 		resizeclient(selmon->sel, selmon->sel->x, selmon->sel->y, selmon->sel->w, selmon->sel->h);
+	}
+	arrange(selmon);
+}
+
+void
+center(const Arg *ag)
+{
+	if (!selmon->sel || selmon->sel->isfullscreen)
+		return;
+	if (!selmon->sel->isfloating)
+		togglefloating(NULL);
+	if (selmon->sel->isfloating) {
+		selmon->sel->x = (selmon->sel->mon->mw - WIDTH(selmon->sel)) / 2;
+		selmon->sel->y = (selmon->sel->mon->mh - HEIGHT(selmon->sel)) / 2;
+		/* if (selmon->showbar)
+			selmon->sel->y += bh; */
 	}
 	arrange(selmon);
 }
