@@ -140,6 +140,24 @@ static const Layout layouts[] = {
 };
 
 /**
+ * Default layout, nmaster mfact and showbar values for each tag
+ *
+*/
+static const float deflts[][4] = {
+	{ tile_layout, nmaster, mfact, showbar },
+	{ tcl_layout, nmaster, mfact, showbar },
+	{ bstack_layout, nmaster, mfact, showbar },
+	{ monocle_layout, nmaster, mfact, 0 },
+	{ deck_layout, nmaster, mfact, showbar },
+	{ monocle_layout, nmaster, mfact, showbar },
+	{ gaplessg_layout, nmaster, mfact, showbar },
+	{ col_layout, 2, mfact, showbar },
+	{ horizg_layout, nmaster, mfact, showbar },
+};
+
+
+
+/**
  * Rules hook
  *
  * This function is called once applyrules is done processing a client with the
