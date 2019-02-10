@@ -61,19 +61,20 @@ static const Rule rules[] = {
 	 *	WM_NAME(STRING) = title
 	 */
 	/*Match condition   Tags   Center   Float   Permanent   Terminal   Swallow   Monitor*/
-	{ CLASS("Firefox|Chromium|Google-chrome|Vivaldi-stable"),   TAG(2),0,   0,   0,   0 },
-        { CLASS("VirtualBox"),   TAG(5),   0,   0,   0 },
-        { CLASS("UXTerm|XTerm|rxvt|Lxterminal"),  0,   0,   0,   0,   1,   1,   0 },
-        { CLASS("URxvt|Urxvt-tabbed"),  0,   0,   0,   1,   1,   1,   0 },
-        { CLASS("Thunar|Pcmanfm|pcmanfm-qt"),   TAG(3),   0,   0,   0 },
-	{ CLASS("vlc|smplayer|mpv|smplayer"),   TAG(1)|TAG(3)|TAG(4),   0,   0,   0,   0,   0 },
-	{ CLASS("Steam"),  TAG(6),   0,   0,   0 },
 	{ CLASS("Gimp"),  0,   1,   0,   0 },
+        { CLASS("URxvt|Urxvt-tabbed"),  0,   0,   0,   1,   1,   1,   0 },
+        { CLASS("UXTerm|XTerm|rxvt|Lxterminal"),  0,   0,   0,   0,   1,   1,   0 },
+	{ CLASS("vlc|smplayer|mpv|smplayer"),   TAG(1)|TAG(3)|TAG(4),   0,   0,   0,   0,   0 },
+	{ CLASS("Firefox|Chromium|Google-chrome|Vivaldi-stable"),   TAG(2),0,   0,   0,   0 },
+        { CLASS("Thunar|Pcmanfm|pcmanfm-qt"),   TAG(3),   0,   0,   0 },
+	{ CLASS("Pragha"),  TAG(5) ,  0,    0,   0 },
+        { CLASS("Geany|Leafpad"),   TAG(6),   0,   0,   0 },
+	{ CLASS("Steam"),  TAG(7),   0,   0,   0 },
+        { CLASS("VirtualBox"),   TAG(8),   0,   0,   0 },
 
         /*Floating windows*/
         { CLASS("St"),  0,   1,   1,   0,   1,   1,   0 },
 	{ CLASS("Nitrogen|Dukto|Galculator|lxsu|lxsudo|Gpick"),   0,   0,   1,   0,   0,   0 },
-	{ CLASS("Pragha"),  TAG(4) ,  1,    1,   0 },
         { TITLE("File Operation Progress"),   0,   0,   1,   0,   0 },
         { TITLE("Module"),   0,   1,   0 },
         { TITLE("Search Dialog"),   0,   0,   1,   0,   0 },
@@ -148,10 +149,10 @@ static const float deflts[][5] = {
 	{ tcl_layout, floating_layout, nmaster, mfact, showbar },
 	{ bstack_layout, floating_layout, nmaster, mfact, showbar },
 	{ monocle_layout, floating_layout, nmaster, mfact, 0 },
-	{ deck_layout, floating_layout, nmaster, mfact, showbar },
-	{ monocle_layout, floating_layout, nmaster, mfact, showbar },
 	{ gaplessg_layout, floating_layout, nmaster, mfact, showbar },
 	{ col_layout, floating_layout, 2, mfact, showbar },
+	{ monocle_layout, floating_layout, nmaster, mfact, showbar },
+	{ deck_layout, floating_layout, nmaster, mfact, showbar },
 	{ horizg_layout, floating_layout, nmaster, mfact, showbar },
 };
 
@@ -176,6 +177,7 @@ void ruleshook(Client *c)
     if (!scanning && !ISVISIBLE(c)) {
         seturgent(c, 1);
     }
+
 }
 
 /* key definitions */
@@ -199,12 +201,12 @@ static const char *termcmd1[]  = { "urxvt", NULL, NULL, NULL, NULL, "1", NULL };
 static const char *termcmd2[]  = { "st", NULL, NULL, NULL, NULL, "1", NULL };
 static const char scratchpadname[] = "scratchpad";
 static const char *scratchpadcmd[] = { "st", "-t", scratchpadname, "-g", "120x34", NULL };
-static const char *firefox[] = { "firefox", NULL, NULL, NULL, "Firefox", "2", NULL};
-static const char *filemanager[] = { "pcmanfm", NULL, NULL, NULL, "Pcmanfm", "3", NULL};
-static const char *ranger[] = { "urxvt", "-e", "ranger" };
-static const char *nnn[] = { "st", "-e", "nnnstart" };
-static const char *cmus[] = { "st", "-e", "cmus" };
-static const char *musicplayer[] = { "pragha", NULL, NULL, NULL, "Pragha", "4", NULL};
+static const char *firefox[] = { "firefox", NULL, NULL, NULL, "Firefox", NULL, NULL};
+static const char *filemanager[] = { "pcmanfm", NULL, NULL, NULL, "Pcmanfm", NULL, NULL};
+static const char *ranger[] = { "urxvt", "-e", "ranger", NULL, NULL, NULL, NULL };
+static const char *nnn[] = { "urxvt", "-e", "nnnstart", NULL, NULL, NULL, NULL };
+static const char *cmus[] = { "mlterm", "-e", "cmus", NULL, NULL, "5", NULL};
+static const char *musicplayer[] = { "pragha", NULL, NULL, NULL, "Pragha", NULL, NULL};
 static const char *texteditor[] = { "geany", NULL, NULL, NULL, "Geany", NULL, NULL };
 static const char *volumeup[] = { "amixer", "set", "Master", "5%+", NULL };
 static const char *volumedown[] = { "amixer", "set", "Master", "5%-", NULL };
@@ -214,13 +216,12 @@ static const char *audioprev[] = { "playerctl", "previous", NULL };
 static const char *audiostop[] = { "playerctl", "stop" };
 static const char *lock[] = { "slock", NULL };
 static const char *lxtask[] = { "lxtask", NULL, NULL, NULL, "Lxtask", NULL, NULL };
-static const char *htop[] = { "st", "-e", "htop", NULL };
+static const char *htop[] = { "mlterm", "-e", "htop", NULL, NULL, NULL, NULL };
 
 #include "selfrestart.c"
 #include "moveresize.c"
 #include "shiftview.c"
 #include "zoomswap.c"
-#include "focusurgent.c"
 static Key keys[] = {
 /*	 type            modifier                     key        function        argument */
 	{KeyPress,	 MODKEY,                       XK_o,      spawn,          {.v = dmenucmd } },
@@ -271,7 +272,6 @@ static Key keys[] = {
 	{ KeyPress,	 MODKEY|ShiftMask,             XK_m,      center,{0} },
 	{ KeyPress,	 MODKEY,                       XK_0,      view,           {.ui = ~0 } },
 	{ KeyPress,	 MODKEY|ShiftMask,             XK_0,      tag,            {.ui = ~0 } },
-	{ KeyPress,      MODKEY,                       XK_a,      focusurgent,     {0} },
 	{ KeyPress,	 MODKEY|ALTMODKEY,             XK_comma,  focusmon,       {.i = -1 } },
 	{ KeyPress,	 MODKEY|ALTMODKEY,             XK_period, focusmon,       {.i = +1 } },
 	{ KeyPress,	 MODKEY|ShiftMask,             XK_comma,  tagmon,         {.i = -1 } },
@@ -307,7 +307,7 @@ static Key keys[] = {
 	{ KeyPress,      MODKEY|ControlMask|ShiftMask, XK_x,      killunsel,      {0} },
 	{ KeyPress,	 MODKEY|ControlMask,           XK_r,      spawn,          {.v = ranger} },
 	{ KeyPress,	 MODKEY|ControlMask,           XK_n,      spawn,          {.v = nnn} },
-	{ KeyPress,	 MODKEY|ControlMask,           XK_m,      spawn,          {.v = cmus} },
+	{ KeyPress,	 MODKEY|ControlMask,           XK_m,      runorraise,          {.v = cmus} },
 	{ KeyPress,	 MODKEY|ControlMask,           XK_p,      runorraise,     {.v = musicplayer} },
 	{ KeyPress,	 0,       XF86XK_AudioRaiseVolume,        spawn,          {.v = volumeup} },
 	{ KeyPress,	 0,       XF86XK_AudioLowerVolume,        spawn,          {.v = volumedown} },

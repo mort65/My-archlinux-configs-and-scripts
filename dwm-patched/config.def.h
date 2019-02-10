@@ -90,7 +90,6 @@ static const char *scratchpadcmd[] = { "st", "-t", scratchpadname, "-g", "120x34
 #include "selfrestart.c"
 #include "shiftview.c"
 #include "zoomswap.c"
-#include "focusurgent.c"
 
 static Key keys[] = {
 /*        type          modifier                      key        function        argument */
@@ -124,7 +123,6 @@ static Key keys[] = {
 	{ KeyPress,	MODKEY,                       XK_n,      togglesticky,   {0} },
 	{ KeyPress,	MODKEY,                       XK_0,      view,           {.ui = ~0 } },
 	{ KeyPress,	MODKEY|ShiftMask,             XK_0,      tag,            {.ui = ~0 } },
-	{ KeyPress,     MODKEY,                       XK_u,      focusurgent,     {0} },
 	{ KeyPress,	MODKEY,                       XK_comma,  focusmon,       {.i = -1 } },
 	{ KeyPress,	MODKEY,                       XK_period, focusmon,       {.i = +1 } },
 	{ KeyPress,	MODKEY|ShiftMask,             XK_comma,  tagmon,         {.i = -1 } },
