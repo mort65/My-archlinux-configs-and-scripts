@@ -148,7 +148,7 @@ static const float deflts[][5] = {
 	{ tile_layout, floating_layout, nmaster, mfact, showbar },
 	{ tcl_layout, floating_layout, nmaster, mfact, showbar },
 	{ bstack_layout, floating_layout, nmaster, mfact, showbar },
-	{ monocle_layout, floating_layout, nmaster, mfact, 0 },
+	{ monocle_layout, floating_layout, nmaster, mfact, showbar },
 	{ gaplessg_layout, floating_layout, nmaster, mfact, showbar },
 	{ col_layout, floating_layout, 2, mfact, showbar },
 	{ monocle_layout, floating_layout, nmaster, mfact, showbar },
