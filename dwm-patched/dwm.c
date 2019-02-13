@@ -746,7 +746,7 @@ clientmessage(XEvent *e)
 			c->h = c->oldh = wa.height;
 			c->oldbw = wa.border_width;
 			c->bw = 0;
-			c->isfloating = True;
+			c->isfloating = 1;
 			/* reuse tags field as mapped status */
 			c->tags = 1;
 			updatesizehints(c);
@@ -1518,7 +1518,7 @@ manage(Window w, XWindowAttributes *wa)
 
 	if (!strcmp(c->name, scratchpadname)) {
 		c->mon->tagset[c->mon->seltags] |= c->tags = scratchtag;
-		c->isfloating = True;
+		c->isfloating = 1;
 		c->x = c->mon->wx + (c->mon->ww / 2 - WIDTH(c) / 2);
 		c->y = c->mon->wy + (c->mon->wh / 2 - HEIGHT(c) / 2);
 	}
@@ -2192,6 +2192,19 @@ setfullscreen(Client *c, int fullscreen)
 		c->w = c->oldw;
 		c->h = c->oldh;
 		resizeclient(c, c->x, c->y, c->w, c->h);
+		if (selmon->sel && c == selmon->sel) {
+			if (c == mark)
+				XSetWindowBorder(dpy, c->win, scheme[SchemeSel][ColMark].pixel);
+			else if (c->ispermanent)
+				XSetWindowBorder(dpy, c->win, scheme[SchemeSel][ColPermanent].pixel);
+			else if (c->issticky)
+				XSetWindowBorder(dpy, c->win, scheme[SchemeSel][ColSticky].pixel);
+			else if (c->isfloating || !selmon->lt[selmon->sellt]->arrange)
+				XSetWindowBorder(dpy, c->win, scheme[SchemeSel][ColFloat].pixel);
+			else {
+				XSetWindowBorder(dpy, c->win, scheme[SchemeSel][ColBorder].pixel);
+			}
+		}
 		arrange(c->mon);
 	}
 }
@@ -2628,7 +2641,7 @@ tile(Monitor *m)
 			else
 				h = (m->wh - smh - ty) / (n - i);
 			if(h < minwsz) {
-				c->isfloating = True;
+				c->isfloating = 1;
 				XRaiseWindow(dpy, c->win);
 				resize(c, m->mx + (m->mw / 2 - WIDTH(c) / 2), m->my + (m->mh / 2 - HEIGHT(c) / 2), m->ww - mw - (2*c->bw), h - (2*c->bw), False);
 				ty -= HEIGHT(c);
