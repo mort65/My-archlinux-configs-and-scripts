@@ -11,13 +11,13 @@ Index: dwm/tagall.c
 +tagall(const Arg *arg) {
 +	if (!selmon->clients)
 +		return;
-+	/* if parameter starts with F, just move floating windows */
-+	Client* c;
-+	if(arg->ui & TAGMASK)
++	if(arg->ui & TAGMASK) {
++		Client* c;
 +		for(c = selmon->clients; c; c = c->next) {
 +			if (ISVISIBLE(c) && TAGMASK == (c->tags | TAGMASK))
 +				c->tags = arg->ui & TAGMASK;
 +		}
++	}
 +	focus(NULL);
 +	arrange(selmon);
 +	updatecurrentdesktop();
@@ -27,13 +27,13 @@ Index: dwm/tagall.c
 +tagallfloating(const Arg *arg) {
 +	if (!selmon->clients)
 +		return;
-+	/* if parameter starts with F, just move floating windows */
-+	Client* c;
 +	if(arg->ui & TAGMASK)
++		Client* c;
 +		for(c = selmon->clients; c; c = c->next) {
 +			if (c->isfloating && ISVISIBLE(c) && TAGMASK == (c->tags | TAGMASK))
 +				c->tags = arg->ui & TAGMASK;
 +		}
++	}
 +	focus(NULL);
 +	arrange(selmon);
 +	updatecurrentdesktop();
