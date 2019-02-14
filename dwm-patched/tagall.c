@@ -6,7 +6,8 @@ tagall(const Arg *arg) {
 	Client* c;
 	if(arg->ui & TAGMASK)
 		for(c = selmon->clients; c; c = c->next) {
-			c->tags = arg->ui & TAGMASK;
+			if (TAGMASK == (c->tags | TAGMASK))
+				c->tags = arg->ui & TAGMASK;
 		}
 	focus(NULL);
 	arrange(selmon);
@@ -21,7 +22,7 @@ tagallfloating(const Arg *arg) {
 	Client* c;
 	if(arg->ui & TAGMASK)
 		for(c = selmon->clients; c; c = c->next) {
-			if (c->isfloating)
+			if (c->isfloating && TAGMASK == (c->tags | TAGMASK))
 				c->tags = arg->ui & TAGMASK;
 		}
 	focus(NULL);
