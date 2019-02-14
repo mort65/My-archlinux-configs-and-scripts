@@ -1,0 +1,39 @@
+Author: Jan Christoph Ebersbach <jceb@e-jc.de>
+URL: http://dwm.suckless.org/patches/historical/tagall
+Shortcut to move all (floating) windows from one tag to another.
+
+Index: dwm/tagall.c
+===================================================================
+--- /dev/null
++++ dwm/tagall.c
+@@ -0,0 +1,24 @@
++void
++tagall(const Arg *arg) {
++	if (!selmon->clients)
++		return;
++	/* if parameter starts with F, just move floating windows */
++	Client* c;
++	if(arg->ui & TAGMASK)
++		for(c = selmon->clients; c; c = c->next) {
++			c->tags = arg->ui & TAGMASK;
++		}
++	focus(NULL);
++	arrange(selmon);
++	updatecurrentdesktop();
++}
++
++void
++tagallfloating(const Arg *arg) {
++	if (!selmon->clients)
++		return;
++	/* if parameter starts with F, just move floating windows */
++	Client* c;
++	if(arg->ui & TAGMASK)
++		for(c = selmon->clients; c; c = c->next) {
++			if (c->isfloating)
++				c->tags = arg->ui & TAGMASK;
++		}
++	focus(NULL);
++	arrange(selmon);
++	updatecurrentdesktop();
++}

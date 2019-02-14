@@ -12,7 +12,7 @@ options=(zipman)
 depends=('libx11' 'libxinerama' 'libxft' 'freetype2')
 optdepends=('st' 'dmenu')
 install=dwm.install
-source=(config.def.h config.h config.mk drw.c drw.h dwm.1 dwm.c dwm.desktop dwm.png fibonacci.c gaplessgrid.c horizgrid.c LICENSE layouts.c Makefile moveresize.c README selfrestart.c shiftview.c tcl.c transient.c util.c util.h zoomswap.c)
+source=(config.def.h config.h config.mk drw.c drw.h dwm.1 dwm.c dwm.desktop dwm.png fibonacci.c gaplessgrid.c horizgrid.c LICENSE layouts.c Makefile moveresize.c README selfrestart.c shiftview.c tagall.c tcl.c transient.c util.c util.h zoomswap.c)
 
 prepare() {
   mkdir -p "$pkgname-$pkgver"
@@ -36,6 +36,7 @@ prepare() {
   cp "$srcdir/README" .
   cp "$srcdir/selfrestart.c" .
   cp "$srcdir/shiftview.c" .
+  cp "$srcdir/tagall.c" .
   cp "$srcdir/tcl.c" .
   cp "$srcdir/transient.c" .
   cp "$srcdir/util.c" .
@@ -57,12 +58,12 @@ package() {
 }
 
 md5sums=('ca997d76f289250ca29ae78db46679b5'
-         'f0d661cc8d9e74a31b7814cd4612bf3a'
+         'ef334cd329b460a97d5f7e770e05a501'
          'd2825b098fe47b262a9c80867b7ad297'
          '8742b0e99c633724a73dcff43e521380'
          '80ad7825da7303599396512bb3284b03'
          'da9488d56f433adbe317c6185bf4771b'
-         '14299208b8382cbe2b8c66e68d115a3b'
+         'dc61bed8b15b8275aa555c2845336485'
          'e7e1b8940428f560ff8c5fe8d3c2cfd9'
          'b410e9a038520b0a117644dba003da62'
          'e3923d63de491ed6d1216cacf1ae9c1a'
@@ -75,6 +76,7 @@ md5sums=('ca997d76f289250ca29ae78db46679b5'
          'ad7413999e5ed8abc7747e52ec870a0f'
          'aada803e6a681e3e3b383ee860578ef3'
          'd27ffe45978d3aee241538b5d9c70805'
+         '3738d6a5d63295c4395daabe0c08d5f9'
          'bfec7cc5ce8269f391b0cd5d1df6f2ef'
          '1f002e4c3da39eed17c5581e8649daa1'
          'e1d877b57636568ba579b1bc0ae42e8f'
