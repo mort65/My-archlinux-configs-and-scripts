@@ -1,7 +1,7 @@
 # Maintainer: Mbani <>
 
 pkgname=dwm-patched
-pkgver=6.1
+pkgver=6.2
 pkgrel=3
 pkgdesc="A dynamic window manager for X"
 url="http://dwm.suckless.org"
@@ -76,7 +76,7 @@ md5sums=('ca997d76f289250ca29ae78db46679b5'
          'ad7413999e5ed8abc7747e52ec870a0f'
          'aada803e6a681e3e3b383ee860578ef3'
          'd27ffe45978d3aee241538b5d9c70805'
-         'bf0a8b16bd567e3fdf0b201864fc1152'
+         '60e70c82387936c6a20ae925e5ad4f63'
          'bfec7cc5ce8269f391b0cd5d1df6f2ef'
          '1f002e4c3da39eed17c5581e8649daa1'
          'e1d877b57636568ba579b1bc0ae42e8f'
