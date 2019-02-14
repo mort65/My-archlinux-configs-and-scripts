@@ -22,7 +22,7 @@ tagallfloating(const Arg *arg) {
 	Client* c;
 	if(arg->ui & TAGMASK)
 		for(c = selmon->clients; c; c = c->next) {
-			if (ISVISIBLE(c) && TAGMASK == (c->tags | TAGMASK) && c->isfloating)
+			if (c->isfloating && ISVISIBLE(c) && TAGMASK == (c->tags | TAGMASK))
 				c->tags = arg->ui & TAGMASK;
 		}
 	focus(NULL);
