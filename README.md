@@ -1,5 +1,5 @@
 # my-arch-linux-configs-and-scripts : DWM
-Patched DWM 6.1 for personal usage.
+Patched DWM 6.2 for personal usage.
 
 Installation
 ------------
