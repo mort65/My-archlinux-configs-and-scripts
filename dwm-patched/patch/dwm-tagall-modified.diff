@@ -15,7 +15,7 @@ Index: dwm/tagall.c
 +	Client* c;
 +	if(arg->ui & TAGMASK)
 +		for(c = selmon->clients; c; c = c->next) {
-+			if (TAGMASK == (c->tags | TAGMASK))
++			if (ISVISIBLE(c) && TAGMASK == (c->tags | TAGMASK))
 +				c->tags = arg->ui & TAGMASK;
 +		}
 +	focus(NULL);
@@ -31,7 +31,7 @@ Index: dwm/tagall.c
 +	Client* c;
 +	if(arg->ui & TAGMASK)
 +		for(c = selmon->clients; c; c = c->next) {
-+			if (c->isfloating && TAGMASK == (c->tags | TAGMASK))
++			if (ISVISIBLE(c) && c->isfloating && TAGMASK == (c->tags | TAGMASK))
 +				c->tags = arg->ui & TAGMASK;
 +		}
 +	focus(NULL);
