@@ -217,7 +217,8 @@ static const char *volumedown[] = { "amixer", "set", "Master", "5%-", NULL };
 static const char *volumemute[] = { "amixer", "set", "Master", "toggle", NULL };
 static const char *audionext[] = { "playerctl", "next", NULL };
 static const char *audioprev[] = { "playerctl", "previous", NULL };
-static const char *audiostop[] = { "playerctl", "stop" };
+static const char *audiostop[] = { "playerctl", "stop", NULL };
+static const char *audioplay[] = { "playerctl", "play-pause", NULL };
 static const char *lock[] = { "slock", NULL };
 static const char *lxtask[] = { "lxtask", NULL, NULL, NULL, "Lxtask", NULL, NULL };
 static const char *htop[] = { "mlterm", "-e", "htop", NULL, NULL, NULL, NULL };
@@ -228,111 +229,114 @@ static const char *htop[] = { "mlterm", "-e", "htop", NULL, NULL, NULL, NULL };
 #include "zoomswap.c"
 static Key keys[] = {
 /*	 type            modifier                         key                function        argument */
-	{KeyPress,	 MODKEY,                          XK_o,              spawn,          {.v = dmenucmd } },
-	{ KeyPress,	 MODKEY,                          XK_p,              spawn,          {.v = roficmd } },
-	{ KeyPress,	 MODKEY|ControlMask,              XK_Return,         runorraise,     {.v = termcmd } },
-	{ KeyPress,	 MODKEY|ControlMask,              XK_t,              spawn,          {.v = termcmd } },
-	{ KeyPress,	 MODKEY|ShiftMask,                XK_Return,         runorraise,     {.v = termcmd1 } },
-	{ KeyPress,	 MODKEY|ShiftMask,                XK_t,              spawn,          {.v = termcmd1 } },
-	{ KeyPress,	 MODKEY|ALTMODKEY,                XK_Return,         runorraise,     {.v = termcmd2 } },
-	{ KeyPress,	 MODKEY|ALTMODKEY,                XK_t,              spawn,          {.v = termcmd2 } },
-        { KeyPress,	 MODKEY,                          XK_grave,          togglescratch,  {.v = scratchpadcmd } },
-	{ KeyPress,	 MODKEY,                          XK_b,              togglebar,      {0} },
-	{ KeyPress,	 MODKEY,                          XK_z,              toggletags,     {0} },
-	{ KeyPress,	 MODKEY|ShiftMask,                XK_b,              spawn,          SHCMD("~/.script/dwm-toggle_dzen") },
-	{ KeyPress,	 MODKEY|ShiftMask,                XK_j,              rotatestack,    {.i = +1 } },
-	{ KeyPress,	 MODKEY|ShiftMask,                XK_k,              rotatestack,    {.i = -1 } },
-	{ KeyPress,	 MODKEY,                          XK_j,              focusstack,     {.i = +1 } },
-	{ KeyPress,	 MODKEY,                          XK_k,              focusstack,     {.i = -1 } },
-	{ KeyPress,	 MODKEY,                          XK_i,              incnmaster,     {.i = +1 } },
-	{ KeyPress,	 MODKEY,                          XK_d,              incnmaster,     {.i = -1 } },
-        { KeyPress,	 MODKEY,                          XK_semicolon,      shiftview,      {.i = -1 } },
-        { KeyPress,	 MODKEY,                          XK_apostrophe,     shiftview,      {.i = +1 } },
-        { KeyPress,	 MODKEY,                          XK_h,              setmfact,       {.f = -0.05} },
-	{ KeyPress,	 MODKEY,                          XK_l,              setmfact,       {.f = +0.05} },
-	{ KeyPress,	 MODKEY|ShiftMask,                XK_h,              setsmfact,      {.f = +0.05} },
-	{ KeyPress,	 MODKEY|ShiftMask,                XK_l,              setsmfact,      {.f = -0.05} },
-	{ KeyPress,	 MODKEY,                          XK_Return,         zoom,           {0} },
-	{ KeyPress,	 MODKEY,                          XK_Tab,            view,           {0} },
-	{ KeyPress,	 MODKEY|ShiftMask,                XK_c,              killclient,     {0} },
-	{ KeyPress,	 MODKEY,                          XK_t,              setlayout,      {.v = &layouts[0]} },
-	{ KeyPress,	 MODKEY,                          XK_f,              setlayout,      {.v = &layouts[1]} },
-	{ KeyPress,	 MODKEY,                          XK_m,              setlayout,      {.v = &layouts[2]} },
-	{ KeyPress,	 MODKEY,                          XK_c,              setlayout,      {.v = &layouts[3]} },
-	{ KeyPress,	 MODKEY,                          XK_e,              setlayout,      {.v = &layouts[4]} },
-	{ KeyPress,	 MODKEY,                          XK_v,              setlayout,      {.v = &layouts[5]} },
-	{ KeyPress,	 MODKEY,                          XK_y,              setlayout,      {.v = &layouts[6]} },
-	{ KeyPress,	 MODKEY,                          XK_u,              setlayout,      {.v = &layouts[7]} },
-	{ KeyPress,	 MODKEY,                          XK_g,              setlayout,      {.v = &layouts[8]} },
-	{ KeyPress,	 MODKEY,                          XK_r,              setlayout,      {.v = &layouts[9]} },
-	{ KeyPress,	 MODKEY,                          XK_s,              setlayout,      {.v = &layouts[10]} },
-	{ KeyPress,	 MODKEY,                          XK_w,              setlayout,      {.v = &layouts[11]} },
-	{ KeyPress,	 MODKEY,		          XK_comma,          cyclelayout,    {.i = -1 } },
-	{ KeyPress,	 MODKEY,                          XK_period,         cyclelayout,    {.i = +1 } },
-	{ KeyPress,	 MODKEY,                          XK_space,          setlayout,      {0} },
-	{ KeyPress,	 MODKEY|ShiftMask,                XK_space,          togglefloating, {0} },
-	{ KeyPress,	 MODKEY,                          XK_n,              togglesticky,   {0} },
-	{ KeyPress,	 MODKEY|ShiftMask,                XK_n,              togglepermanent,{0} },
-	{ KeyPress,	 MODKEY|ShiftMask,                XK_m,              center,{0} },
-	{ KeyPress,	 MODKEY,                          XK_0,              view,           {.ui = ~0 } },
-	{ KeyPress,	 MODKEY|ShiftMask,                XK_0,              tag,            {.ui = ~0 } },
-	{ KeyPress,	 MODKEY|ControlMask|ShiftMask,    XK_0,              tagall,         {.ui = ~0 } },
-	{ KeyPress,	 ALTMODKEY|ControlMask|ShiftMask, XK_0,              tagallfloating, {.ui = ~0 } },
-	{ KeyPress,	 MODKEY|ALTMODKEY,                XK_comma,          focusmon,       {.i = -1 } },
-	{ KeyPress,	 MODKEY|ALTMODKEY,                XK_period,         focusmon,       {.i = +1 } },
-	{ KeyPress,	 MODKEY|ShiftMask,                XK_comma,          tagmon,         {.i = -1 } },
-	{ KeyPress,	 MODKEY|ShiftMask,                XK_period,         tagmon,         {.i = +1 } },
-	{ KeyPress,	 MODKEY,                          XK_bracketleft,    togglemark,   {0} },
-	{ KeyPress,	 MODKEY,                          XK_bracketright,   swapfocus,    {0} },
-	{ KeyPress,	 MODKEY,                          XK_backslash,      swapclient,   {0} },
-	{ KeyPress,	 ALTMODKEY,                       XK_Tab,            swapfocused,  {0} },
-	{ KeyPress,	 Mod4Mask,			  XK_Up,	     moveresize,   {.v = "0x -25y 0w 0h"} },
-	{ KeyPress,	 MODKEY,			  XK_Down,	     moveresize,   {.v = "0x 25y 0w 0h"} },
-	{ KeyPress,	 MODKEY,			  XK_Left,	     moveresize,   {.v = "-25x 0y 0w 0h"} },
-	{ KeyPress,	 MODKEY,			  XK_Right,	     moveresize,   {.v = "25x 0y 0w 0h"} },
-	{ KeyPress,	 MODKEY|ShiftMask,		  XK_Up,	     moveresize,   {.v = "0x 0y 0w -25h"} },
-	{ KeyPress,	 MODKEY|ShiftMask,	          XK_Down,           moveresize,   {.v = "0x 0y 0w 25h"} },
-	{ KeyPress,	 MODKEY|ShiftMask,	          XK_Left,           moveresize,   {.v = "0x 0y -25w 0h"} },
-	{ KeyPress,	 MODKEY|ShiftMask,		  XK_Right,          moveresize,   {.v = "0x 0y 25w 0h"} },
-	TAGKEYS(                        XK_1,                      0)
-	TAGKEYS(                        XK_2,                      1)
-	TAGKEYS(                        XK_3,                      2)
-	TAGKEYS(                        XK_4,                      3)
-	TAGKEYS(                        XK_5,                      4)
-	TAGKEYS(                        XK_6,                      5)
-	TAGKEYS(                        XK_7,                      6)
-	TAGKEYS(                        XK_8,                      7)
-	TAGKEYS(                        XK_9,                      8)
-        { KeyPress,	 MODKEY|ShiftMask,             XK_r,      self_restart,   {0} },
-	/*{ KeyPress,	 MODKEY|ShiftMask,             XK_q,      quit,           {0} },*/
-	{ KeyPress,	 MODKEY|ControlMask|ShiftMask, XK_q,      quit,           {1} },
-	{ KeyPress,	 MODKEY|ShiftMask,             XK_Scroll_Lock,      spawn,           {.v = lock} },
-	{ KeyPress,	 MODKEY|ShiftMask,             XK_q,      spawn,          SHCMD("~/.script/dwm-logout_menu") },
-	{ KeyPress,	 MODKEY|ShiftMask,             XK_Pause,  spawn,          SHCMD("~/.script/dwm-rofi_runit_exit_menu") },
-	{ KeyPress,	 MODKEY,                       XK_x,      spawn,          SHCMD("xkill") },
-	{ KeyPress,      MODKEY|ControlMask|ShiftMask, XK_x,      killunsel,      {0} },
-	{ KeyPress,	 MODKEY|ControlMask,           XK_r,      spawn,          {.v = ranger} },
-	{ KeyPress,	 MODKEY|ControlMask,           XK_n,      spawn,          {.v = nnn} },
-	{ KeyPress,	 MODKEY|ControlMask,           XK_m,      runorraise,          {.v = cmus} },
-	{ KeyPress,	 MODKEY|ControlMask,           XK_p,      runorraise,     {.v = musicplayer} },
-	{ KeyPress,	 0,       XF86XK_AudioRaiseVolume,        spawn,          {.v = volumeup} },
-	{ KeyPress,	 0,       XF86XK_AudioLowerVolume,        spawn,          {.v = volumedown} },
-	{ KeyPress,	 0,       XF86XK_AudioMute,               spawn,          {.v = volumemute} },
-	{ KeyPress,	 0,       XF86XK_AudioNext,               spawn,          {.v = audionext} },
-	{ KeyPress,	 0,       XF86XK_AudioPrev,               spawn,          {.v = audioprev} },
-	{ KeyPress,	 0,       XF86XK_AudioStop,               spawn,          {.v = audiostop} },
-        { KeyPress,	 MODKEY|ControlMask,           XK_w,      runorraise,     {.v = firefox} },
-        { KeyPress,	 MODKEY|ControlMask,           XK_Home,   runorraise,     {.v = filemanager} },
-        { KeyPress,	 MODKEY|ControlMask,           XK_e,      runorraise,     {.v = texteditor} },
-        { KeyPress,	 MODKEY|ControlMask,           XK_Delete, runorraise,     {.v = lxtask} },
-        { KeyPress,	 MODKEY,                       XK_Delete, spawn,          {.v = htop} },
-        { KeyPress,	 MODKEY,	               XK_F1,     spawn,          SHCMD("jgmenu_run") },
-        { KeyPress,	 MODKEY,	               XK_F2,     spawn,          SHCMD("~/.script/dwm-app_menu") },
-	{ KeyPress,	 MODKEY,	               XK_F3,     spawn,          SHCMD("gksudo") },
-        { KeyRelease,	 MODKEY,                       XK_Print,  spawn,          SHCMD("~/bin/winshot") },
-        { KeyRelease,	 0,                            XK_Print,  spawn,          SHCMD("~/bin/screenshot") },
-
-
+ 	{KeyPress,	 MODKEY,                          32,              spawn,          {.v = dmenucmd } }, // o
+	{ KeyPress,	 MODKEY,                          33,              spawn,          {.v = roficmd } }, // p
+	{ KeyPress,	 MODKEY|ControlMask,              36,              runorraise,     {.v = termcmd } }, // Return
+	{ KeyPress,	 MODKEY|ControlMask,              28,              spawn,          {.v = termcmd } }, // t
+	{ KeyPress,	 MODKEY|ShiftMask,                36,              runorraise,     {.v = termcmd1 } }, // Return
+	{ KeyPress,	 MODKEY|ShiftMask,                28,              spawn,          {.v = termcmd1 } }, // t
+	{ KeyPress,	 MODKEY|ALTMODKEY,                36,              runorraise,     {.v = termcmd2 } }, // Return
+	{ KeyPress,	 MODKEY|ALTMODKEY,                28,              spawn,          {.v = termcmd2 } }, // t
+        { KeyPress,	 MODKEY,                          49,              togglescratch,  {.v = scratchpadcmd } }, // grave `
+	{ KeyPress,	 MODKEY,                          56,              togglebar,      {0} }, // b
+	{ KeyPress,	 MODKEY,                          52,              toggletags,     {0} }, // z
+	{ KeyPress,	 MODKEY|ShiftMask,                56,              spawn,          SHCMD("~/.script/dwm-toggle_dzen") }, // b
+	{ KeyPress,	 MODKEY|ShiftMask,                44,              rotatestack,    {.i = +1 } }, // j
+	{ KeyPress,	 MODKEY|ShiftMask,                45,              rotatestack,    {.i = -1 } }, // k
+	{ KeyPress,	 MODKEY,                          44,              focusstack,     {.i = +1 } }, // j
+	{ KeyPress,	 MODKEY,                          45,              focusstack,     {.i = -1 } }, // k
+	{ KeyPress,	 MODKEY,                          31,              incnmaster,     {.i = +1 } }, // i
+	{ KeyPress,	 MODKEY,                          40,              incnmaster,     {.i = -1 } }, // d
+        { KeyPress,	 MODKEY,                          47,              shiftview,      {.i = -1 } }, // semicolon ;
+        { KeyPress,	 MODKEY,                          48,              shiftview,      {.i = +1 } }, // apostrophe '
+        { KeyPress,	 MODKEY,                          43,              setmfact,       {.f = -0.05} }, // h
+	{ KeyPress,	 MODKEY,                          46,              setmfact,       {.f = +0.05} }, // l
+	{ KeyPress,	 MODKEY|ShiftMask,                43,              setsmfact,      {.f = +0.05} }, // h
+	{ KeyPress,	 MODKEY|ShiftMask,                46,              setsmfact,      {.f = -0.05} }, // l
+	{ KeyPress,	 MODKEY,                          36,              zoom,           {0} }, // Return
+	{ KeyPress,	 MODKEY,                          23,              view,           {0} },// Tab
+	{ KeyPress,	 MODKEY|ShiftMask,                54,              killclient,     {0} }, // c
+	{ KeyPress,	 MODKEY,                          28,              setlayout,      {.v = &layouts[0]} }, // t
+	{ KeyPress,	 MODKEY,                          41,              setlayout,      {.v = &layouts[1]} }, // f
+	{ KeyPress,	 MODKEY,                          58,              setlayout,      {.v = &layouts[2]} }, // m
+	{ KeyPress,	 MODKEY,                          54,              setlayout,      {.v = &layouts[3]} }, // c
+	{ KeyPress,	 MODKEY,                          26,              setlayout,      {.v = &layouts[4]} }, // e
+	{ KeyPress,	 MODKEY,                          55,              setlayout,      {.v = &layouts[5]} }, // v
+	{ KeyPress,	 MODKEY,                          29,              setlayout,      {.v = &layouts[6]} }, // y
+	{ KeyPress,	 MODKEY,                          30,              setlayout,      {.v = &layouts[7]} }, // u
+	{ KeyPress,	 MODKEY,                          42,              setlayout,      {.v = &layouts[8]} }, // g
+	{ KeyPress,	 MODKEY,                          27,              setlayout,      {.v = &layouts[9]} }, // r
+	{ KeyPress,	 MODKEY,                          39,              setlayout,      {.v = &layouts[10]} }, // s
+	{ KeyPress,	 MODKEY,                          25,              setlayout,      {.v = &layouts[11]} }, // w
+	{ KeyPress,	 MODKEY,		          59,              cyclelayout,    {.i = -1 } }, // comma ,
+	{ KeyPress,	 MODKEY,                          60,              cyclelayout,    {.i = +1 } }, // period .
+	{ KeyPress,	 MODKEY,                          65,              setlayout,      {0} }, // space
+	{ KeyPress,	 MODKEY|ShiftMask,                65,              togglefloating, {0} }, // space
+	{ KeyPress,	 MODKEY,                          57,              togglesticky,   {0} }, // n
+	{ KeyPress,	 MODKEY|ShiftMask,                57,              togglepermanent,{0} }, // n
+	{ KeyPress,	 MODKEY|ShiftMask,                58,              center,         {0} }, // m
+	{ KeyPress,	 MODKEY,                          19,              view,           {.ui = ~0 } }, // 0
+	{ KeyPress,	 MODKEY|ShiftMask,                19,              tag,            {.ui = ~0 } }, // 0
+	{ KeyPress,	 MODKEY|ControlMask|ShiftMask,    19,              tagall,         {.ui = ~0 } }, // 0
+	{ KeyPress,	 ALTMODKEY|ControlMask|ShiftMask, 19,              tagallfloating, {.ui = ~0 } }, // 0
+	{ KeyPress,	 MODKEY|ALTMODKEY,                59,              focusmon,       {.i = -1 } }, // comma ,
+	{ KeyPress,	 MODKEY|ALTMODKEY,                60,              focusmon,       {.i = +1 } }, // period .
+	{ KeyPress,	 MODKEY|ShiftMask,                59,              tagmon,         {.i = -1 } }, // comma ,
+	{ KeyPress,	 MODKEY|ShiftMask,                60,              tagmon,         {.i = +1 } }, // period .
+	{ KeyPress,	 MODKEY,                          34,              togglemark,     {0} }, // bracketleft [
+	{ KeyPress,	 MODKEY,                          35,              swapfocus,      {0} }, // bracketright ]
+	{ KeyPress,	 MODKEY,                          51,              swapclient,     {0} }, // backslash
+	{ KeyPress,	 ALTMODKEY,                       23,              swapfocused,    {0} }, // Tab
+	{ KeyPress,	 Mod4Mask,			  111,	           moveresize,     {.v = "0x -25y 0w 0h"} }, // Up
+	{ KeyPress,	 MODKEY,			  116,	           moveresize,     {.v = "0x 25y 0w 0h"} }, // Down
+	{ KeyPress,	 MODKEY,			  113,	           moveresize,     {.v = "-25x 0y 0w 0h"} }, // Left
+	{ KeyPress,	 MODKEY,			  114,	           moveresize,     {.v = "25x 0y 0w 0h"} }, // Right
+	{ KeyPress,	 MODKEY|ShiftMask,		  111,	           moveresize,     {.v = "0x 0y 0w -25h"} }, // Up
+	{ KeyPress,	 MODKEY|ShiftMask,	          116,             moveresize,     {.v = "0x 0y 0w 25h"} }, // Down
+	{ KeyPress,	 MODKEY|ShiftMask,	          113,             moveresize,     {.v = "0x 0y -25w 0h"} }, // Left
+	{ KeyPress,	 MODKEY|ShiftMask,		  114,             moveresize,     {.v = "0x 0y 25w 0h"} }, // Right
+        { KeyPress,	 MODKEY|ShiftMask,                27,              self_restart,   {0} }, // r
+	/*{ KeyPress,	 MODKEY|ShiftMask,                24,              quit,           {0} },*/ // q
+	{ KeyPress,	 MODKEY|ControlMask|ShiftMask,    24,              quit,           {1} }, // q
+	{ KeyPress,	 MODKEY|ShiftMask,                78,              spawn,          {.v = lock} }, // scroll_lock
+	{ KeyPress,	 MODKEY|ShiftMask,                24,              spawn,          SHCMD("~/.script/dwm-logout_menu") }, // q
+	{ KeyPress,	 MODKEY|ShiftMask,                127,             spawn,          SHCMD("~/.script/dwm-rofi_runit_exit_menu") }, // Pause
+	{ KeyPress,	 MODKEY,                          53,              spawn,          SHCMD("xkill") }, // x
+	{ KeyPress,      MODKEY|ControlMask|ShiftMask,    53,              killunsel,      {0} }, // x
+	{ KeyPress,	 MODKEY|ControlMask,              27,              spawn,          {.v = ranger} }, // r
+	{ KeyPress,	 MODKEY|ControlMask,              57,              spawn,          {.v = nnn} }, // n
+	{ KeyPress,	 MODKEY|ControlMask,              58,              runorraise,     {.v = cmus} }, // m
+	{ KeyPress,	 MODKEY|ControlMask,              33,              runorraise,     {.v = musicplayer} }, // p
+        { KeyPress,	 MODKEY|ControlMask,              110,             runorraise,     {.v = filemanager} }, // Home
+        { KeyPress,	 MODKEY|ControlMask,              26,              runorraise,     {.v = texteditor} },
+        { KeyPress,	 MODKEY|ControlMask,              119,             runorraise,     {.v = lxtask} }, // Delete
+        { KeyPress,	 MODKEY,                          119,             spawn,          {.v = htop} }, // Delete
+        { KeyPress,	 MODKEY,	                  67,              spawn,          SHCMD("jgmenu_run") }, // F1
+        { KeyPress,	 MODKEY,	                  68,              spawn,          SHCMD("~/.script/dwm-app_menu") }, // F2
+	{ KeyPress,	 MODKEY,	                  69,              spawn,          SHCMD("gksudo") }, // F3
+        { KeyRelease,	 MODKEY,                          107,             spawn,          SHCMD("~/bin/winshot") }, // Print
+        { KeyRelease,	 0,                               107,             spawn,          SHCMD("~/bin/screenshot") }, // Print
+	{ KeyPress,	 0,                               123,             spawn,          {.v = volumeup} }, // XF86XK_AudioRaiseVolume
+	{ KeyPress,	 0,                               122,             spawn,          {.v = volumedown} }, //XF86XK_AudioLowerVolume
+	{ KeyPress,	 0,                               121,             spawn,          {.v = volumemute} }, // XF86XK_AudioMute
+	{ KeyPress,	 0,                               171,             spawn,          {.v = audionext} }, // XF86XK_AudioNext
+	{ KeyPress,	 0,                               173,             spawn,          {.v = audioprev} }, // XF86XK_AudioPrev
+	{ KeyPress,	 0,                               174,             spawn,          {.v = audiostop} }, // XF86XK_AudioStop
+	{ KeyPress,	 0,                               172,             spawn,          {.v = audioplay} }, // XF86XK_AudioPlay
+	{ KeyPress,	 0,                               180,             runorraise,     {.v = firefox} }, // XF86XK_HomePage
+	{ KeyPress,	 0,                               225,             spawn,          SHCMD("xdg-open 'https://www.google.com/'") }, // XF86Search
+	{ KeyPress,	 0,                               163,             spawn,          SHCMD("xdg-open 'https://www.google.com/gmail/'") }, // XF86Mail
+	{ KeyPress,	 0,                               164,             spawn,          {.v = filemanager} }, // XF86Favorites
+        { KeyPress,	 MODKEY|ControlMask,              25,              runorraise,     {.v = firefox} }, // w
+	TAGKEYS(                        10,                      0) // 1
+	TAGKEYS(                        11,                      1) // 2
+	TAGKEYS(                        12,                      2) // 3
+	TAGKEYS(                        13,                      3) // 4
+	TAGKEYS(                        14,                      4) // 5
+	TAGKEYS(                        15,                      5) // 6
+	TAGKEYS(                        16,                      6) // 7
+	TAGKEYS(                        17,                      7) // 8
+	TAGKEYS(                        18,                      8) // 9
 };
 
 /* button definitions */
