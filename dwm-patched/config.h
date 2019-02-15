@@ -201,8 +201,8 @@ static char dmenumon[2] = "0"; /* component of dmenucmd, manipulated in spawn() 
 static const char *dmenucmd[] = { "dmenu_run", "-m", dmenumon, "-fn", dmenufont, "-nb", col_gray1, "-nf", col_gray3, "-sb", col_blue, "-sf", col_white, NULL };
 static const char *roficmd[] = { "rofi", "-modi", "combi#window#run#drun", "-show", "combi", "-combi-modi", "window#run#drun", NULL };
 static const char *termcmd[]  = { "mlterm", NULL, NULL, NULL, NULL, "1", NULL };
-static const char *termcmd1[]  = { "urxvt", NULL, NULL, NULL, NULL, "1", NULL };
-static const char *termcmd2[]  = { "st", NULL, NULL, NULL, NULL, "1", NULL };
+static const char *termcmd1[] = { "urxvt", NULL, NULL, NULL, NULL, "1", NULL };
+static const char *termcmd2[] = { "st", NULL, NULL, NULL, NULL, "1", NULL };
 static const char scratchpadname[] = "scratchpad";
 static const char *scratchpadcmd[] = { "st", "-t", scratchpadname, "-g", "120x34", NULL };
 static const char *firefox[] = { "firefox", NULL, NULL, NULL, "Firefox", NULL, NULL};
@@ -229,7 +229,7 @@ static const char *htop[] = { "mlterm", "-e", "htop", NULL, NULL, NULL, NULL };
 #include "zoomswap.c"
 static Key keys[] = {
 /*	 type            modifier                         key                function        argument */
- 	{KeyPress,	 MODKEY,                          32,              spawn,          {.v = dmenucmd } }, // o
+ 	{ KeyPress,	 MODKEY,                          32,              spawn,          {.v = dmenucmd } }, // o
 	{ KeyPress,	 MODKEY,                          33,              spawn,          {.v = roficmd } }, // p
 	{ KeyPress,	 MODKEY|ControlMask,              36,              runorraise,     {.v = termcmd } }, // Return
 	{ KeyPress,	 MODKEY|ControlMask,              28,              spawn,          {.v = termcmd } }, // t
@@ -279,6 +279,7 @@ static Key keys[] = {
 	{ KeyPress,	 MODKEY|ShiftMask,                19,              tag,            {.ui = ~0 } }, // 0
 	{ KeyPress,	 MODKEY|ControlMask|ShiftMask,    19,              tagall,         {.ui = ~0 } }, // 0
 	{ KeyPress,	 ALTMODKEY|ControlMask|ShiftMask, 19,              tagallfloating, {.ui = ~0 } }, // 0
+	{ KeyPress,      MODKEY|ALTMODKEY,                19,              winview,        {0} }, // 0
 	{ KeyPress,	 MODKEY|ALTMODKEY,                59,              focusmon,       {.i = -1 } }, // comma ,
 	{ KeyPress,	 MODKEY|ALTMODKEY,                60,              focusmon,       {.i = +1 } }, // period .
 	{ KeyPress,	 MODKEY|ShiftMask,                59,              tagmon,         {.i = -1 } }, // comma ,
@@ -297,11 +298,11 @@ static Key keys[] = {
 	{ KeyPress,	 MODKEY|ShiftMask,		  114,             moveresize,     {.v = "0x 0y 25w 0h"} }, // Right
         { KeyPress,	 MODKEY|ShiftMask,                27,              self_restart,   {0} }, // r
 	/*{ KeyPress,	 MODKEY|ShiftMask,                24,              quit,           {0} },*/ // q
-	{ KeyPress,	 MODKEY|ControlMask|ShiftMask,    24,              quit,           {1} }, // q
-	{ KeyPress,	 MODKEY|ShiftMask,                78,              spawn,          {.v = lock} }, // scroll_lock
 	{ KeyPress,	 MODKEY|ShiftMask,                24,              spawn,          SHCMD("~/.script/dwm-logout_menu") }, // q
 	{ KeyPress,	 MODKEY|ShiftMask,                127,             spawn,          SHCMD("~/.script/dwm-rofi_runit_exit_menu") }, // Pause
 	{ KeyPress,	 MODKEY,                          53,              spawn,          SHCMD("xkill") }, // x
+	{ KeyPress,	 MODKEY|ControlMask|ShiftMask,    24,              quit,           {1} }, // q
+	{ KeyPress,	 MODKEY|ShiftMask,                78,              spawn,          {.v = lock} }, // scroll_lock
 	{ KeyPress,      MODKEY|ControlMask|ShiftMask,    53,              killunsel,      {0} }, // x
 	{ KeyPress,	 MODKEY|ControlMask,              27,              spawn,          {.v = ranger} }, // r
 	{ KeyPress,	 MODKEY|ControlMask,              57,              spawn,          {.v = nnn} }, // n
