@@ -310,6 +310,7 @@ static Key keys[] = {
         { KeyPress,	 MODKEY|ControlMask,              110,             runorraise,     {.v = filemanager} }, // Home
         { KeyPress,	 MODKEY|ControlMask,              26,              runorraise,     {.v = texteditor} },
         { KeyPress,	 MODKEY|ControlMask,              119,             runorraise,     {.v = lxtask} }, // Delete
+        { KeyPress,	 MODKEY|ControlMask,              25,              runorraise,     {.v = firefox} }, // w
         { KeyPress,	 MODKEY,                          119,             spawn,          {.v = htop} }, // Delete
         { KeyPress,	 MODKEY,	                  67,              spawn,          SHCMD("jgmenu_run") }, // F1
         { KeyPress,	 MODKEY,	                  68,              spawn,          SHCMD("~/.script/dwm-app_menu") }, // F2
@@ -327,7 +328,6 @@ static Key keys[] = {
 	{ KeyPress,	 0,                               225,             spawn,          SHCMD("xdg-open 'https://www.google.com/'") }, // XF86Search
 	{ KeyPress,	 0,                               163,             spawn,          SHCMD("xdg-open 'https://www.google.com/gmail/'") }, // XF86Mail
 	{ KeyPress,	 0,                               164,             spawn,          {.v = filemanager} }, // XF86Favorites
-        { KeyPress,	 MODKEY|ControlMask,              25,              runorraise,     {.v = firefox} }, // w
 	TAGKEYS(                        10,                      0) // 1
 	TAGKEYS(                        11,                      1) // 2
 	TAGKEYS(                        12,                      2) // 3
