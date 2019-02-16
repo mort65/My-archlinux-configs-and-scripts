@@ -292,7 +292,7 @@ static Monitor *systraytomon(Monitor *m);
 static void tag(const Arg *arg);
 static void tagmon(const Arg *arg);
 static void tile(Monitor *);
-static void updatewindowborder(Client *c, int updatesize);
+static void updatewindowborder(Client *c, int schemeindex, int colorindex, int updatesize);
 static void togglebar(const Arg *arg);
 static void togglefloating(const Arg *arg);
 static void togglemark(const Arg *arg);
@@ -1164,7 +1164,7 @@ focus(Client *c)
 		detachstack(c);
 		attachstack(c);
 		grabbuttons(c, 1);
-		updatewindowborder(c, 0);
+		updatewindowborder(c, SchemeSel, -1, 0);
 		setfocus(c);
 	} else {
 		XSetInputFocus(dpy, root, RevertToPointerRoot, CurrentTime);
@@ -1549,7 +1549,7 @@ manage(Window w, XWindowAttributes *wa)
 	c->mon->sel = c;
 	XkbGetState(dpy, XkbUseCoreKbd, &kbd_state);
 	c->kbdgrp = kbd_state.group;
-	updatewindowborder(c, 0);
+	updatewindowborder(c, -1, -1, 0);
 	arrange(c->mon);
 	XMapWindow(dpy, c->win);
 	if (term)
@@ -1865,7 +1865,7 @@ resizeclient(Client *c, int x, int y, int w, int h)
 		gapincr = gapoffset = 0;
 	} else {
 		/* Remove border and gap if layout is monocle or only one client */
-		if (!c->issticky && !c->ispermanent && !(c == mark) && (selmon->lt[selmon->sellt]->arrange == monocle || n == 1 )) {
+		if (selmon->lt[selmon->sellt]->arrange == monocle || (n == 1 && !c->issticky && !c->ispermanent && !(c == mark))) {
 			gapoffset = 0;
 			gapincr = -2 * borderpx;
 			wc.border_width = 0;
@@ -2169,7 +2169,7 @@ setfullscreen(Client *c, int fullscreen)
 		c->h = c->oldh;
 		resizeclient(c, c->x, c->y, c->w, c->h);
 		if (selmon->sel && c == selmon->sel)
-			updatewindowborder(c, 0);
+			updatewindowborder(c, SchemeSel, -1, 0);
 		arrange(c->mon);
 	}
 }
@@ -2182,7 +2182,7 @@ setlayout(const Arg *arg)
 	if (arg && arg->v)
 		selmon->lt[selmon->sellt] = selmon->pertag->ltidxs[selmon->pertag->curtag][selmon->sellt] = (Layout *)arg->v;
 	strncpy(selmon->ltsymbol, selmon->lt[selmon->sellt]->symbol, sizeof selmon->ltsymbol);
-	updatewindowborder(selmon->sel, 1);
+	updatewindowborder(selmon->sel, SchemeSel, -1, 1);
 	arrange(selmon);
 	drawbar(selmon);
 }
@@ -2193,14 +2193,13 @@ setmark(Client *c)
 	if (c == mark)
 		return;
 	if (mark) {
-		XSetWindowBorder(dpy, mark->win, scheme[mark == selmon->sel
-				? SchemeSel : SchemeNorm][ColBorder].pixel);
+		Client *m = mark;
 		mark = 0;
+		updatewindowborder(m, m == selmon->sel ? SchemeSel : SchemeNorm, -1, 0);
 	}
 	if (c) {
-		XSetWindowBorder(dpy, c->win, scheme[c == selmon->sel
-				? SchemeSel : SchemeNorm][ColMark].pixel);
 		mark = c;
+		updatewindowborder(mark, mark == selmon->sel ? SchemeSel : SchemeNorm, ColMark, 0);
 	}
 }
 
@@ -2470,7 +2469,7 @@ swapfocus(const Arg *arg)
 		focus(mark);
 	}
 	setmark(t);
-	updatewindowborder(selmon->sel, 1);
+	updatewindowborder(selmon->sel, SchemeSel, -1, 1);
 	arrange(selmon);
 }
 
@@ -2502,7 +2501,6 @@ togglemark(const Arg *arg)
 	if (!selmon->sel)
 		return;
 	setmark(selmon->sel == mark ? 0 : selmon->sel);
-	updatewindowborder(selmon->sel, 1);
 	arrange(selmon);
 }
 
@@ -2583,19 +2581,33 @@ tile(Monitor *m)
 }
 
 void
-updatewindowborder(Client *c, int updatesize) {
+updatewindowborder(Client *c, int schemeindex, int colorindex, int updatesize) {
 	if (!c)
 		return;
-	if (c == mark)
-		XSetWindowBorder(dpy, c->win, scheme[SchemeSel][ColMark].pixel);
+
+	int i;
+
+	if (schemeindex > -1)
+		i = schemeindex;
+	else if ( selmon->sel == c)
+		i = SchemeSel;
+	else if (c->isurgent)
+		i = SchemeUrg;
+	else
+		i = SchemeNorm;
+
+	if (colorindex > -1)
+		XSetWindowBorder(dpy, c->win, scheme[i][colorindex].pixel);
+	else if (c == mark)
+		XSetWindowBorder(dpy, c->win, scheme[i][ColMark].pixel);
 	else if (c->ispermanent)
-		XSetWindowBorder(dpy, c->win, scheme[SchemeSel][ColPermanent].pixel);
+		XSetWindowBorder(dpy, c->win, scheme[i][ColPermanent].pixel);
 	else if (c->issticky)
-		XSetWindowBorder(dpy, selmon->sel->win, scheme[SchemeSel][ColSticky].pixel);
+		XSetWindowBorder(dpy, c->win, scheme[i][ColSticky].pixel);
 	else if (c->isfloating || !selmon->lt[selmon->sellt]->arrange)
-		XSetWindowBorder(dpy, c->win, scheme[SchemeSel][ColFloat].pixel);
+		XSetWindowBorder(dpy, c->win, scheme[i][ColFloat].pixel);
 	else {
-		XSetWindowBorder(dpy, c->win, scheme[SchemeSel][ColBorder].pixel);
+		XSetWindowBorder(dpy, c->win, scheme[i][ColBorder].pixel);
 		if(updatesize)
 			resizeclient(c, c->x, c->y, c->w, c->h);
 	}
@@ -2629,7 +2641,7 @@ togglefloating(const Arg *arg)
 	if (selmon->sel->isfullscreen) /* no support for fullscreen windows */
 		return;
 	selmon->sel->isfloating = !selmon->sel->isfloating || selmon->sel->isfixed;
-	updatewindowborder(selmon->sel, 0);
+	updatewindowborder(selmon->sel, SchemeSel, -1, 0);
 	if(selmon->sel->isfloating)
 		/* restore last known float dimensions */
 		resize(selmon->sel, selmon->sel->sfx, selmon->sel->sfy,
@@ -2699,7 +2711,7 @@ togglesticky(const Arg *arg)
 	if (!selmon->sel)
 		return;
 	selmon->sel->issticky = !selmon->sel->issticky;
-	updatewindowborder(selmon->sel, 1);
+	updatewindowborder(selmon->sel, SchemeSel, -1, 1);
 	arrange(selmon);
 }
 
@@ -2709,7 +2721,7 @@ togglepermanent(const Arg *arg)
 	if (!selmon->sel)
 		return;
 	selmon->sel->ispermanent = !selmon->sel->ispermanent;
-	updatewindowborder(selmon->sel, 1);
+	updatewindowborder(selmon->sel, SchemeSel, -1, 1);
 	arrange(selmon);
 }
 
@@ -2803,10 +2815,7 @@ unfocus(Client *c, int setfocus)
 		return;
 	prevclient = c;
 	grabbuttons(c, 0);
-	if (c == mark)
-		XSetWindowBorder(dpy, c->win, scheme[SchemeNorm][ColMark].pixel);
-	else
-		XSetWindowBorder(dpy, c->win, scheme[SchemeNorm][ColBorder].pixel);
+	updatewindowborder(c, SchemeNorm, -1, 0);
 	if (setfocus) {
 		XSetInputFocus(dpy, root, RevertToPointerRoot, CurrentTime);
 		XDeleteProperty(dpy, root, netatom[NetActiveWindow]);
@@ -3238,8 +3247,7 @@ updatewmhints(Client *c)
 			XSetWMHints(dpy, c->win, wmh);
 		} else {
 			c->isurgent = (wmh->flags & XUrgencyHint) ? 1 : 0;
-			if (c->isurgent)
-				XSetWindowBorder(dpy, c->win, scheme[SchemeUrg][ColBorder].pixel);
+			updatewindowborder(c, -1, -1, 0);
                 }
 		if (wmh->flags & InputHint)
 			c->neverfocus = !wmh->input;
