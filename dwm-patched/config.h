@@ -104,13 +104,13 @@ static const int resizehints = 0;    /* 1 means respect size hints in tiled resi
  * to the "layouts" variable.
  */
 enum {
-    tile_layout,
+    bstack_layout,
     floating_layout,
     monocle_layout,
+    tile_layout,
     col_layout,
     tcl_layout,
     deck_layout,
-    bstack_layout,
     bstackh_layout,
     gaplessg_layout,
     horizg_layout,
@@ -145,9 +145,9 @@ static const Layout layouts[] = {
  *
 */
 static const float deflts[][5] = {
-	{ tile_layout, floating_layout, nmaster, mfact, showbar },
-	{ tcl_layout, floating_layout, nmaster, mfact, showbar },
 	{ bstack_layout, floating_layout, nmaster, mfact, showbar },
+	{ tcl_layout, floating_layout, nmaster, mfact, showbar },
+	{ tile_layout, floating_layout, nmaster, mfact, showbar },
 	{ monocle_layout, floating_layout, nmaster, mfact, showbar },
 	{ gaplessg_layout, floating_layout, nmaster, mfact, showbar },
 	{ col_layout, floating_layout, 2, mfact, showbar },
@@ -256,18 +256,18 @@ static Key keys[] = {
 	{ KeyPress,	 MODKEY,                          36,              zoom,           {0} }, // Return
 	{ KeyPress,	 MODKEY,                          23,              view,           {0} },// Tab
 	{ KeyPress,	 MODKEY|ShiftMask,                54,              killclient,     {0} }, // c
-	{ KeyPress,	 MODKEY,                          28,              setlayout,      {.v = &layouts[0]} }, // t
-	{ KeyPress,	 MODKEY,                          41,              setlayout,      {.v = &layouts[1]} }, // f
-	{ KeyPress,	 MODKEY,                          58,              setlayout,      {.v = &layouts[2]} }, // m
-	{ KeyPress,	 MODKEY,                          54,              setlayout,      {.v = &layouts[3]} }, // c
-	{ KeyPress,	 MODKEY,                          26,              setlayout,      {.v = &layouts[4]} }, // e
-	{ KeyPress,	 MODKEY,                          55,              setlayout,      {.v = &layouts[5]} }, // v
-	{ KeyPress,	 MODKEY,                          29,              setlayout,      {.v = &layouts[6]} }, // y
-	{ KeyPress,	 MODKEY,                          30,              setlayout,      {.v = &layouts[7]} }, // u
-	{ KeyPress,	 MODKEY,                          42,              setlayout,      {.v = &layouts[8]} }, // g
-	{ KeyPress,	 MODKEY,                          27,              setlayout,      {.v = &layouts[9]} }, // r
-	{ KeyPress,	 MODKEY,                          39,              setlayout,      {.v = &layouts[10]} }, // s
-	{ KeyPress,	 MODKEY,                          25,              setlayout,      {.v = &layouts[11]} }, // w
+	{ KeyPress,	 MODKEY,                          28,              setlayout,      {.v = &layouts[tile_layout]} }, // t
+	{ KeyPress,	 MODKEY,                          41,              setlayout,      {.v = &layouts[floating_layout]} }, // f
+	{ KeyPress,	 MODKEY,                          58,              setlayout,      {.v = &layouts[monocle_layout]} }, // m
+	{ KeyPress,	 MODKEY,                          54,              setlayout,      {.v = &layouts[col_layout]} }, // c
+	{ KeyPress,	 MODKEY,                          26,              setlayout,      {.v = &layouts[tcl_layout]} }, // e
+	{ KeyPress,	 MODKEY,                          55,              setlayout,      {.v = &layouts[deck_layout]} }, // v
+	{ KeyPress,	 MODKEY,                          29,              setlayout,      {.v = &layouts[bstack_layout]} }, // y
+	{ KeyPress,	 MODKEY,                          30,              setlayout,      {.v = &layouts[bstackh_layout]} }, // u
+	{ KeyPress,	 MODKEY,                          42,              setlayout,      {.v = &layouts[gaplessg_layout]} }, // g
+	{ KeyPress,	 MODKEY,                          27,              setlayout,      {.v = &layouts[horizg_layout]} }, // r
+	{ KeyPress,	 MODKEY,                          39,              setlayout,      {.v = &layouts[spiral_layout]} }, // s
+	{ KeyPress,	 MODKEY,                          25,              setlayout,      {.v = &layouts[dwindle_layout]} }, // w
 	{ KeyPress,	 MODKEY,		          59,              cyclelayout,    {.i = -1 } }, // comma ,
 	{ KeyPress,	 MODKEY,                          60,              cyclelayout,    {.i = +1 } }, // period .
 	{ KeyPress,	 MODKEY,                          65,              setlayout,      {0} }, // space
