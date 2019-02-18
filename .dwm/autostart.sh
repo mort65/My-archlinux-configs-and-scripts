@@ -1,8 +1,6 @@
 #! /bin/bash
 ## dwm autostart script
 
-sleep 1s
-
 #kill previous instances of this script
 /usr/bin/pgrep autostart.sh | /usr/bin/tac | /usr/bin/awk 'NR > 1' | /usr/bin/xargs kill -9 &> /dev/null
 
@@ -10,7 +8,7 @@ sleep 1s
 STATUS=2
 
 sleep 1s
-dwm-clearstatus
+~/.script/dwm-sendsignal 0;
 pgrep -c lxpolkit || /usr/bin/lxpolkit &
 pgrep -c pcmanfm || dbus-launch pcmanfm -d &
 /usr/bin/numlockx &
