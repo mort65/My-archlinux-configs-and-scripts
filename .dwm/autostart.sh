@@ -20,11 +20,11 @@ pgrep -c nm-applet || /usr/bin/nm-applet &
 sleep 1s
 
 #kill previous instances of this script
-kill $(pgrep autostart.sh | grep -v $$)
+kill "$(pgrep autostart.sh | grep -v $$)"
 
 sleep 2s
 
-if [ $STATUS -eq 1s ]; then
+if [ $STATUS -eq 1 ]; then
 	pkill -c --signal=SIGTERM 'conky|dzen2'
 	sleep 1s
 	while true; do
@@ -34,3 +34,5 @@ if [ $STATUS -eq 1s ]; then
 elif [ $STATUS -eq 2 ]; then
 	pkill -c --signal=SIGTERM 'conky|dzen2'; sleep 1s ; ~/.script/dwm-status_dzen &
 fi
+
+exit 0
