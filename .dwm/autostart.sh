@@ -4,25 +4,33 @@
 #status toggle
 STATUS=2
 
+#kill previous instances of this script
+SCRIPT_NAME="autostart.sh"
+for pid in $(pidof -x "$SCRIPT_NAME"); do
+    if [ "$pid" != $$ ]; then
+        kill "$pid" > /dev/null 2>&1
+    fi
+done
+sleep 2s
+mapfile -t pids  < <(pgrep "$SCRIPT_NAME" | grep -v $$)
+kill -9 "${pids[@]}" > /dev/null 2>&1
+
+sleep 1s
+
 ~/.script/dwm-sendsignal 0;
-pgrep -c lxpolkit || /usr/bin/lxpolkit &
-pgrep -c pcmanfm || dbus-launch pcmanfm -d &
+pgrep -c lxpolkit || exec /usr/bin/lxpolkit &
+pgrep -c pcmanfm || exec dbus-launch pcmanfm -d &
 /usr/bin/numlockx &
 /usr/bin//nitrogen --restore &
 sleep 1s
-pgrep -c gxkb || /usr/bin/gxkb &
-pgrep -c compton || /usr/bin/compton -b &
-pgrep -c volumeicon || /usr/bin/volumeicon &
-pgrep -c udiskie || /usr/bin/udiskie -2 -s &
-pgrep -c clipit || /usr/bin/clipit &
-pgrep -c nm-applet || /usr/bin/nm-applet &
+pgrep -c gxkb || exec /usr/bin/gxkb &
+pgrep -c compton || exec /usr/bin/compton -b &
+pgrep -c volumeicon || exec /usr/bin/volumeicon &
+pgrep -c udiskie || exec /usr/bin/udiskie -2 -s &
+pgrep -c clipit || exec /usr/bin/clipit &
+pgrep -c nm-applet || exec /usr/bin/nm-applet &
 
 sleep 1s
-
-#kill previous instances of this script
-kill "$(pgrep autostart.sh | grep -v $$)"
-
-sleep 2s
 
 if [ $STATUS -eq 1 ]; then
 	pkill -c --signal=SIGTERM 'conky|dzen2'
