@@ -175,7 +175,6 @@ main(void)
 	char *cpu;
 	char *time;
 	char *tc, *tg;
-	char *clr = "                                                    ";
 
 	if (!(dpy = XOpenDisplay(NULL))) {
 		fprintf(stderr, "dwmstatus: cannot open display.\n");
@@ -188,9 +187,8 @@ main(void)
 		time = getdatetime();
 		tc = gettemperature("/sys/devices/platform/coretemp.0/hwmon/hwmon1", "temp1_input");
 		tg = gettemperature("/sys/devices/pci0000:00/0000:00:01.0/0000:01:00.0/hwmon/hwmon0", "temp1_input");
-		status = smprintf(" C[%s %s] G[%s] R[%s] T[%s]",
+		status = smprintf("      C[%s %s] G[%s] R[%s] T[%s]",
 				cpu, tc, tg, mem, time);
-		setstatus(clr);
 		setstatus(status);
 
 		free(tc);
