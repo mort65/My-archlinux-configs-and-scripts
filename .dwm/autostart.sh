@@ -17,7 +17,9 @@ kill -9 "${pids[@]}" > /dev/null 2>&1
 
 sleep 1s
 
+xsetroot -solid black
 ~/.script/dwm-sendsignal 0;
+
 pgrep -c lxpolkit || exec /usr/bin/lxpolkit &
 pgrep -c pcmanfm || exec dbus-launch pcmanfm -d &
 /usr/bin/numlockx &

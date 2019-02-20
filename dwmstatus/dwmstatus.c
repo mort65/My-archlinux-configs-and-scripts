@@ -175,7 +175,7 @@ main(void)
 	char *cpu;
 	char *time;
 	char *tc, *tg;
-	char clr[50] = {'\0'};
+	char *clr = "                                                  ";
 
 	if (!(dpy = XOpenDisplay(NULL))) {
 		fprintf(stderr, "dwmstatus: cannot open display.\n");
