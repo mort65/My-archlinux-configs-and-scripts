@@ -2,7 +2,7 @@
 ## dwm autostart script
 
 #status toggle
-STATUS=2
+STATUS=1
 
 #kill previous instances of this script
 SCRIPT_NAME="autostart.sh"
@@ -33,14 +33,16 @@ pgrep -c nm-applet || exec /usr/bin/nm-applet &
 sleep 1s
 
 if [ $STATUS -eq 1 ]; then
-	pkill -c --signal=SIGTERM 'conky|dzen2'
+	pkill -c --signal=SIGTERM 'conky|dzen2|dwmstatus' &> /dev/null
 	sleep 1s
 	while true; do
 		"$HOME/.dwm/status.sh" &> /dev/null
 		sleep 10s
 	done &
 elif [ $STATUS -eq 2 ]; then
-	pkill -c --signal=SIGTERM 'conky|dzen2'; sleep 1s ; ~/.script/dwm-status_dzen &
+	pkill -c --signal=SIGTERM 'conky|dzen2|dwmstatus' &> /dev/null; sleep 1s ; dwmstatus &> /dev/null
+elif [ $STATUS -eq 3 ]; then
+	pkill -c --signal=SIGTERM 'conky|dzen2|dwmstatus' &> /dev/null; sleep 1s ; ~/.script/dwm-status_dzen &
 fi
 
 exit 0

@@ -1,0 +1,8 @@
+dwmstatus
+
+Barebone status monitor with basic functions written in C. This follows the suckless philosophy, to give you an easy way to extend the source code to your needs. See the helper functions for C below, to extend it to your needs. Just check it out and keep on hacking.
+
+cd dwmstatus
+make
+make PREFIX=/usr install
+# add »dwmstatus 2>&1 >/dev/null &« to your .xinitrc
