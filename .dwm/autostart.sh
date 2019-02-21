@@ -2,7 +2,7 @@
 ## dwm autostart script
 
 #status toggle
-STATUS=1
+STATUS=3
 
 #kill previous instances of this script
 SCRIPT_NAME="autostart.sh"
