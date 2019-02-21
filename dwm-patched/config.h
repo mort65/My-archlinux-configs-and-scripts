@@ -38,6 +38,7 @@ static const char col_red[]         = "#ff0066";
 static const char col_pink[]        = "#a53076";
 static const char col_blue[]        = "#305fa5";
 static const char col_blue2[]       = "#0099ff";
+static const char col_blue3[]       = "#0097ff";
 static const char col_green[]       = "#66ff00";
 static const char col_yellow[]      = "#ffff00";
 static const char col_purple[]      = "#9900ff";
@@ -49,6 +50,7 @@ static const char *colors[][7]      = {
 	[SchemeSel]  = { col_white, col_blue,  col_blue2, col_green,  col_yellow, col_purple, col_orange },
 	[SchemeUrg]  = { col_white, col_pink, col_red,   col_red,   col_red,    col_red, col_red },
 	[SchemeBtn]  = { col_white, col_purple2, col_red,   col_red,   col_red,    col_red, col_red },
+	[SchemeSym]  = { col_blue3, col_gray1, col_red,   col_red,   col_red,    col_red, col_red },
 };
 
 /* tagging */
