@@ -2,10 +2,11 @@
 
 COOL=65
 WARM=80
+NUM="$(echo "$1" | tr -dc '0-9.\n')"
 
-if [[ $1 < $COOL ]]; then
+if (( $(bc -l<<<"$NUM<$COOL") )); then
 	echo -e "^fg()$1"    # COOL
-elif [[ ! $1 < $WARM ]]; then
+elif (( $(bc -l<<<"$NUM>=$WARM") )); then
 	echo -e "^fg(#ff0066)$1"  # HOT
 else
 	echo -e "^fg(#ffff00)$1"                        # WARM
