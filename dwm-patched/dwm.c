@@ -2658,7 +2658,7 @@ togglefloating(const Arg *arg)
 void
 togglescratch(const Arg *arg)
 {
-	if (!selmon->showtags || (selmon->sel && selmon->sel->isfullscreen))
+	if (!selmon->showtags)
 		return;
 
 	Client *c;
