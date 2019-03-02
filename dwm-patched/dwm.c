@@ -1545,7 +1545,11 @@ manage(Window w, XWindowAttributes *wa)
 	XMoveResizeWindow(dpy, c->win, c->x + 2 * sw, c->y, c->w, c->h); /* some windows require this */
 	setclientstate(c, NormalState);
 	if (c->mon == selmon)
+	{
+		if (selmon->sel && selmon->sel->isfullscreen)
+			setfullscreen(selmon->sel, 0);
 		unfocus(selmon->sel, 0);
+	}
 	c->mon->sel = c;
 	XkbGetState(dpy, XkbUseCoreKbd, &kbd_state);
 	c->kbdgrp = kbd_state.group;
