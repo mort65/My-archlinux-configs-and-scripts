@@ -119,7 +119,7 @@ struct Client {
 	int basew, baseh, incw, inch, maxw, maxh, minw, minh;
 	int bw, oldbw;
 	unsigned int tags;
-	int isfixed, ispermanent, iscentered, isfloating, isurgent, neverfocus, oldstate, isfullscreen, isterminal, noswallow, issticky, needresize;
+	int isfixed, ispermanent, iscentered, isfloating, isurgent, neverfocus, oldstate, isfullscreen, isterminal, noswallow, issticky, bordercolor, needresize;
 	pid_t pid;
 	Client *next;
 	Client *snext;
@@ -182,6 +182,7 @@ typedef struct {
 	int iscentered;
 	int isfloating;
 	int ispermanent;
+	int bordercolor;
 	int isterminal;
 	int noswallow;
 	int monitor;
@@ -418,6 +419,7 @@ applyrules(Client *c)
 	/* rule matching */
 	c->isfloating = 0;
 	c->tags = 0;
+	c->bordercolor = 0;
 	XGetClassHint(dpy, c->win, &ch);
 	class    = ch.res_class ? ch.res_class : broken;
 	strncpy(c->class, class,  sizeof(c->class));
@@ -435,6 +437,8 @@ applyrules(Client *c)
 			c->isterminal = r->isterminal;
 			c->iscentered = r->iscentered;
 			c->isfloating = r->isfloating;
+			c->ispermanent = r->ispermanent;
+			c->bordercolor = r->bordercolor;
 			c->ispermanent = r->ispermanent;
 			c->tags |= r->tags;
 			for (m = mons; m && m->num != r->monitor; m = m->next);
@@ -2591,8 +2595,9 @@ updatewindowborder(Client *c, int schemeindex, int updatesize)
 		return;
 
 	int i;
-
-	if (schemeindex > -1)
+	if (c->bordercolor)
+		i = c->bordercolor - 1;
+	else if (schemeindex > -1)
 		i = schemeindex;
 	else if ( selmon->sel == c)
 		i = SchemeSel;

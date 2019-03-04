@@ -11,7 +11,9 @@
 #define CLASS(C) (C), NULL, NULL
 #define INSTANCE(I) NULL, (I), NULL
 #define TITLE(T) NULL, NULL, (T)
-#define CLASS_W_TITLE(C, T) (C), NULL, (T)
+#define CLASS_TITLE(C, T) (C), NULL, (T)
+#define CLASS_INSTANCE(C, I) (C),(I) , NULL
+#define CLASS_INSTANCE_TITLE(C, I, T) (C), (I), (T)
 /*->Macros*/
 
 /* appearance */
@@ -62,10 +64,10 @@ static const Rule rules[] = {
 	 *	WM_CLASS(STRING) = instance, class
 	 *	WM_NAME(STRING) = title
 	 */
-	/*Match condition   Tags   Center   Float   Permanent   Terminal   Swallow   Monitor*/
+	/*Match condition   Tags   Center   Float   Permanent   BorderColor Terminal   Swallow   Monitor*/
 	{ CLASS("Gimp"),  0,   1,   0,   0 },
-        { CLASS("URxvt|Urxvt-tabbed"),  0,   0,   0,   1,   1,   1,   0 },
-        { CLASS("UXTerm|XTerm|rxvt|Lxterminal"),  0,   0,   0,   0,   1,   1,   0 },
+        { CLASS("URxvt|Urxvt-tabbed"),  0,   0,   0,   1,   0,   1,   1,   0 },
+        { CLASS("UXTerm|XTerm|rxvt|Lxterminal"),  0,   0,   0,   0,   0,   1,   1,   0 },
 	{ CLASS("vlc|smplayer|mpv|smplayer"),   TAG(1)|TAG(3)|TAG(4),   0,   0,   0,   0,   0 },
 	{ CLASS("Firefox|Chromium|Google-chrome|Vivaldi-stable"),   TAG(2),0,   0,   0,   0 },
         { CLASS("Thunar|Pcmanfm|pcmanfm-qt"),   TAG(3),   0,   0,   0 },
@@ -73,11 +75,12 @@ static const Rule rules[] = {
         { CLASS("Geany|Leafpad"),   TAG(6),   0,   0,   0 },
 	{ CLASS("Steam"),  TAG(7),   0,   0,   0 },
         { CLASS("VirtualBox"),   TAG(8),   0,   0,   0 },
+	{ CLASS("Wine"),   TAG(7),   1,   1,   0,   1 },
 
         /*Floating windows*/
-        { CLASS("St"),  0,   1,   1,   0,   1,   1,   0 },
-	{ CLASS("Nitrogen|Dukto|Galculator|lxsu|lxsudo|Gpick"),   0,   0,   1,   0,   0,   0 },
-        { TITLE("File Operation Progress"),   0,   0,   1,   0,   0 },
+        { CLASS("St"),  0,   1,   1,   0,   0,   1,   1,   0 },
+	{ CLASS("Nitrogen|Dukto|Galculator|lxsu|lxsudo|Gpick"),   0,   0,   1,   0,   0,   0,   0 },
+        { TITLE("File Operation Progress"),   0,   0,   1,   0,   0,   0 },
         { TITLE("Module"),   0,   1,   0 },
         { TITLE("Search Dialog"),   0,   0,   1,   0,   0 },
         { TITLE("Goto"),  0,    0,   1,   0,   0 },
@@ -88,8 +91,8 @@ static const Rule rules[] = {
         { TITLE("pinentry"),   0,   0,   1,   0,   0,   0 },
         { TITLE("confirm"),   0,   0,   1,   0,   0 },
         { INSTANCE("eog"),   0,   0,   1,    0,   0 },
-	{ CLASS_W_TITLE("Firefox","Firefox Preferences"),   TAG(2),   0,   1,   0,   0 },
-	{ CLASS_W_TITLE("Firefox","Library"),   TAG(2),  0,   1,   0,   0 },
+	{ CLASS_TITLE("Firefox","Firefox Preferences"),   TAG(2),   0,   1,   0,   0 },
+	{ CLASS_TITLE("Firefox","Library"),   TAG(2),  0,   1,   0,   0 },
 };
 
 /* layout(s) */
@@ -211,6 +214,7 @@ static const char *firefox[] = { "firefox", NULL, NULL, NULL, "Firefox", NULL, N
 static const char *filemanager[] = { "pcmanfm", NULL, NULL, NULL, "Pcmanfm", NULL, NULL};
 static const char *ranger[] = { "urxvt", "-e", "ranger", NULL, NULL, NULL, NULL };
 static const char *nnn[] = { "urxvt", "-e", "nnnstart", NULL, NULL, NULL, NULL };
+static const char *vifm[] = { "urxvt", "-e", "vifmrun", NULL, NULL, NULL, NULL };
 static const char *cmus[] = { "mlterm", "-e", "cmus", NULL, NULL, "5", NULL};
 static const char *musicplayer[] = { "pragha", NULL, NULL, NULL, "Pragha", NULL, NULL};
 static const char *texteditor[] = { "geany", NULL, NULL, NULL, "Geany", NULL, NULL };
@@ -308,6 +312,7 @@ static Key keys[] = {
 	{ KeyPress,      MODKEY|ControlMask|ShiftMask,    53,              killunsel,      {0} }, // x
 	{ KeyPress,	 MODKEY|ControlMask,              27,              spawn,          {.v = ranger} }, // r
 	{ KeyPress,	 MODKEY|ControlMask,              57,              spawn,          {.v = nnn} }, // n
+	{ KeyPress,	 MODKEY|ControlMask,              55,              spawn,          {.v = vifm} }, // v
 	{ KeyPress,	 MODKEY|ControlMask,              58,              runorraise,     {.v = cmus} }, // m
 	{ KeyPress,	 MODKEY|ControlMask,              33,              runorraise,     {.v = musicplayer} }, // p
         { KeyPress,	 MODKEY|ControlMask,              110,             runorraise,     {.v = filemanager} }, // Home
