@@ -76,6 +76,7 @@ static const Rule rules[] = {
 	{ CLASS("Steam"),  TAG(7),   0,   0,   0 },
         { CLASS("VirtualBox"),   TAG(8),   0,   0,   0 },
 	{ CLASS("Wine"),   TAG(7),   1,   1,   0,   1 },
+        { CLASS("Tixati"),   TAG(9),   0,   0,   0 },
 
         /*Floating windows*/
         { CLASS("St"),  0,   1,   1,   0,   0,   1,   1,   0 },
