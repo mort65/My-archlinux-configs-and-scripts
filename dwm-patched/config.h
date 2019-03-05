@@ -247,7 +247,7 @@ static Key keys[] = {
 	{ KeyPress,	 MODKEY|ALTMODKEY,                36,              runorraise,     {.v = termcmd2 } }, // Return
 	{ KeyPress,	 MODKEY|ALTMODKEY,                28,              spawn,          {.v = termcmd2 } }, // t
         { KeyPress,	 MODKEY,                          49,              togglescratch,  {.v = scratchcmd1 } }, // grave `
-        { KeyPress,	 MODKEY|ControlMask,              58,              togglescratch,  {.v = scratchcmd2 } }, // m
+        { KeyPress,	 MODKEY,                           9,              togglescratch,  {.v = scratchcmd2 } }, // Escape
 	{ KeyPress,	 MODKEY,                          56,              togglebar,      {0} }, // b
 	{ KeyPress,	 MODKEY,                          52,              toggletags,     {0} }, // z
 	{ KeyPress,	 MODKEY|ShiftMask,                56,              spawn,          SHCMD("~/.script/dwm-toggle_dzen") }, // b
