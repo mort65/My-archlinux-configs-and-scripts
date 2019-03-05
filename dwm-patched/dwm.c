@@ -435,6 +435,7 @@ applyrules(Client *c)
 		   (!r->instance || !regexec(&regexcache[i][1], instance, 0, NULL, 0))) {
 
 			c->isterminal = r->isterminal;
+			c->noswallow = r->noswallow;
 			c->iscentered = r->iscentered;
 			c->isfloating = r->isfloating;
 			c->ispermanent = r->ispermanent;

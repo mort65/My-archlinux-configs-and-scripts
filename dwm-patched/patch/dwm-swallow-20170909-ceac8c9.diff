@@ -25,19 +25,19 @@ index a9ac303..2d26a23 100644
 +	{ "Firefox",  NULL,       NULL,       1 << 8,       0,           0,         0,        -1 },
 +	{ "st",       NULL,       NULL,       0,            0,           1,         1,        -1 },
  };
- 
+
  /* layout(s) */
 diff --git a/config.mk b/config.mk
 index 80dc936..5ed14e3 100644
 --- a/config.mk
 +++ b/config.mk
 @@ -22,7 +22,7 @@ FREETYPEINC = /usr/include/freetype2
- 
+
  # includes and libs
  INCS = -I${X11INC} -I${FREETYPEINC}
 -LIBS = -L${X11LIB} -lX11 ${XINERAMALIBS} ${FREETYPELIBS}
 +LIBS = -L${X11LIB} -lX11 ${XINERAMALIBS} ${FREETYPELIBS} -lX11-xcb -lxcb -lxcb-res
- 
+
  # flags
  CPPFLAGS = -D_DEFAULT_SOURCE -D_BSD_SOURCE -D_POSIX_C_SOURCE=2 -DVERSION=\"${VERSION}\" ${XINERAMAFLAGS}
 diff --git a/dwm.c b/dwm.c
@@ -50,7 +50,7 @@ index a5ce993..20b635b 100644
  #include <X11/Xft/Xft.h>
 +#include <X11/Xlib-xcb.h>
 +#include <xcb/res.h>
- 
+
  #include "drw.h"
  #include "util.h"
 @@ -93,9 +95,11 @@ struct Client {
@@ -74,11 +74,11 @@ index a5ce993..20b635b 100644
 +	int noswallow;
  	int monitor;
  } Rule;
- 
+
 @@ -235,6 +241,13 @@ static int xerrordummy(Display *dpy, XErrorEvent *ee);
  static int xerrorstart(Display *dpy, XErrorEvent *ee);
  static void zoom(const Arg *arg);
- 
+
 +static pid_t getparentprocess(pid_t p);
 +static int isdescprocess(pid_t p, pid_t c);
 +static Client *swallowingclient(Window w);
@@ -92,24 +92,25 @@ index a5ce993..20b635b 100644
 @@ -269,6 +282,8 @@ static Drw *drw;
  static Monitor *mons, *selmon;
  static Window root, wmcheckwin;
- 
+
 +static xcb_connection_t *xcon;
 +
  /* configuration, allows nested code to access above variables */
  #include "config.h"
- 
+
 @@ -298,6 +313,7 @@ applyrules(Client *c)
  		&& (!r->class || strstr(class, r->class))
  		&& (!r->instance || strstr(instance, r->instance)))
  		{
 +			c->isterminal = r->isterminal;
++			c->noswallow = r->noswallow;
  			c->isfloating = r->isfloating;
  			c->tags |= r->tags;
  			for (m = mons; m && m->num != r->monitor; m = m->next);
 @@ -414,6 +430,47 @@ attachstack(Client *c)
  	c->mon->stack = c;
  }
- 
+
 +void
 +swallow(Client *p, Client *c)
 +{
@@ -155,14 +156,14 @@ index a5ce993..20b635b 100644
  buttonpress(XEvent *e)
  {
 @@ -653,6 +709,9 @@ destroynotify(XEvent *e)
- 
+
  	if ((c = wintoclient(ev->window)))
  		unmanage(c, 1);
 +
 +	else if ((c = swallowingclient(ev->window)))
 +		unmanage(c->swallowing, 1);
  }
- 
+
  void
 @@ -1019,12 +1078,13 @@ killclient(const Arg *arg)
  void
@@ -172,7 +173,7 @@ index a5ce993..20b635b 100644
 +	Client *c, *t = NULL, *term = NULL;
  	Window trans = None;
  	XWindowChanges wc;
- 
+
  	c = ecalloc(1, sizeof(Client));
  	c->win = w;
 +	c->pid = winpid(w);
@@ -185,7 +186,7 @@ index a5ce993..20b635b 100644
  		applyrules(c);
 +		term = termforwin(c);
  	}
- 
+
  	if (c->x + WIDTH(c) > c->mon->mx + c->mon->mw)
 @@ -1075,6 +1136,8 @@ manage(Window w, XWindowAttributes *wa)
  	c->mon->sel = c;
@@ -195,11 +196,11 @@ index a5ce993..20b635b 100644
 +		swallow(term, c);
  	focus(NULL);
  }
- 
+
 @@ -1767,6 +1830,20 @@ unmanage(Client *c, int destroyed)
  	Monitor *m = c->mon;
  	XWindowChanges wc;
- 
+
 +	if (c->swallowing) {
 +		unswallow(c);
 +		return;
@@ -231,12 +232,12 @@ index a5ce993..20b635b 100644
 +		updateclientlist();
 +	}
  }
- 
+
  void
 @@ -2045,6 +2125,103 @@ view(const Arg *arg)
  	arrange(selmon);
  }
- 
+
 +pid_t
 +winpid(Window w)
 +{
@@ -346,6 +347,6 @@ index a5ce993..20b635b 100644
  	checkotherwm();
  	setup();
  	scan();
--- 
+--
 2.14.1
 
