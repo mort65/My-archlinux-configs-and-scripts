@@ -78,7 +78,7 @@ static const Rule rules[] = {
         { CLASS("Tixati"),   TAG(9),   0,   0,   0,   0,   0,   1,   0 },
 
         /*Floating windows*/
-        { CLASS("St"),  0,   1,   1,   0,   0,   1,   1,   0 },
+        { CLASS("St|Scratchpad|CMUS"),  0,   1,   1,   0,   0,   1,   1,   0 },
 	{ CLASS("Wine"),   TAG(7),   1,   1,   0,   1,   0,   1,   0 },
         { CLASS("Mlconfig"),  0,   1,   1,   0,   0,   0,   1,   0 },
 	{ CLASS("Nitrogen|Dukto|Galculator|lxsu|lxsudo|Gpick"),   0,   0,   1,   0,   0,   0,   1,   0 },
@@ -210,14 +210,15 @@ static const char *roficmd[] = { "rofi", "-modi", "combi#window#run#drun", "-sho
 static const char *termcmd[]  = { "mlterm", NULL, NULL, NULL, NULL, "1", NULL };
 static const char *termcmd1[] = { "urxvt", NULL, NULL, NULL, NULL, "1", NULL };
 static const char *termcmd2[] = { "st", NULL, NULL, NULL, NULL, "1", NULL };
-static const char scratchpadname[] = "scratchpad";
-static const char *scratchpadcmd[] = { "st", "-t", scratchpadname, "-g", "120x34", NULL };
+static const size_t scratchlen = 13; /* length of scratchcmd* arrays */
+static const char scratchname[] = "scratchpad";
+static const char *scratchcmd1[] = { "st", "-t", scratchname, "-c", "Scratchpad", "-g", "120x34", NULL, NULL, NULL, "Scratchpad", "st", NULL };
+static const char *scratchcmd2[] = { "st", "-t", scratchname, "-c", "CMUS", "-g", "120x34", "-e", "cmus", NULL, "CMUS", "st",  NULL };
 static const char *firefox[] = { "firefox", NULL, NULL, NULL, "Firefox", NULL, NULL};
 static const char *filemanager[] = { "pcmanfm", NULL, NULL, NULL, "Pcmanfm", NULL, NULL};
 static const char *ranger[] = { "urxvt", "-e", "ranger", NULL, NULL, NULL, NULL };
 static const char *nnn[] = { "urxvt", "-e", "nnnstart", NULL, NULL, NULL, NULL };
 static const char *vifm[] = { "urxvt", "-e", "vifmrun", NULL, NULL, NULL, NULL };
-static const char *cmus[] = { "mlterm", "-e", "cmus", NULL, NULL, "5", NULL};
 static const char *musicplayer[] = { "pragha", NULL, NULL, NULL, "Pragha", NULL, NULL};
 static const char *texteditor[] = { "geany", NULL, NULL, NULL, "Geany", NULL, NULL };
 static const char *volumeup[] = { "amixer", "set", "Master", "5%+", NULL };
@@ -245,7 +246,8 @@ static Key keys[] = {
 	{ KeyPress,	 MODKEY|ShiftMask,                28,              spawn,          {.v = termcmd1 } }, // t
 	{ KeyPress,	 MODKEY|ALTMODKEY,                36,              runorraise,     {.v = termcmd2 } }, // Return
 	{ KeyPress,	 MODKEY|ALTMODKEY,                28,              spawn,          {.v = termcmd2 } }, // t
-        { KeyPress,	 MODKEY,                          49,              togglescratch,  {.v = scratchpadcmd } }, // grave `
+        { KeyPress,	 MODKEY,                          49,              togglescratch,  {.v = scratchcmd1 } }, // grave `
+        { KeyPress,	 MODKEY|ControlMask,              58,              togglescratch,  {.v = scratchcmd2 } }, // m
 	{ KeyPress,	 MODKEY,                          56,              togglebar,      {0} }, // b
 	{ KeyPress,	 MODKEY,                          52,              toggletags,     {0} }, // z
 	{ KeyPress,	 MODKEY|ShiftMask,                56,              spawn,          SHCMD("~/.script/dwm-toggle_dzen") }, // b
@@ -315,7 +317,6 @@ static Key keys[] = {
 	{ KeyPress,	 MODKEY|ControlMask,              27,              spawn,          {.v = ranger} }, // r
 	{ KeyPress,	 MODKEY|ControlMask,              57,              spawn,          {.v = nnn} }, // n
 	{ KeyPress,	 MODKEY|ControlMask,              55,              spawn,          {.v = vifm} }, // v
-	{ KeyPress,	 MODKEY|ControlMask,              58,              runorraise,     {.v = cmus} }, // m
 	{ KeyPress,	 MODKEY|ControlMask,              33,              runorraise,     {.v = musicplayer} }, // p
         { KeyPress,	 MODKEY|ControlMask,              110,             runorraise,     {.v = filemanager} }, // Home
         { KeyPress,	 MODKEY|ControlMask,              26,              runorraise,     {.v = texteditor} },

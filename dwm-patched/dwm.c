@@ -1512,7 +1512,7 @@ manage(Window w, XWindowAttributes *wa)
 		&& (c->x + (c->w / 2) < c->mon->wx + c->mon->ww)) ? bh : c->mon->my);
 	c->bw = borderpx;
 
-	if (!strcmp(c->name, scratchpadname)) {
+	if (!strcmp(c->name, scratchname)) {
 		c->mon->tagset[c->mon->seltags] |= c->tags = scratchtag;
 		c->isfloating = 1;
 		c->x = c->mon->wx + (c->mon->ww / 2 - WIDTH(c) / 2);
@@ -2673,19 +2673,38 @@ togglescratch(const Arg *arg)
 
 	Client *c;
 	unsigned int found = 0;
+	char *title = ((char**)arg->v)[scratchlen - 1];
+	char *instance = ((char**)arg->v)[scratchlen - 2];
+	char *class = ((char**)arg->v)[scratchlen - 3];
 
-	for (c = selmon->clients; c && !(found = c->tags & scratchtag); c = c->next);
+	if (class || instance || title) {
+	    XClassHint hint = { NULL, NULL };
+	    for (c = selmon->clients; c; c = c->next) {
+		    if (c->tags & scratchtag) {
+			    XGetClassHint(dpy, c->win, &hint);
+			    if (class && (!hint.res_class || (strcmp(class, hint.res_class) != 0)))
+				    continue;
+			    if (instance && (!hint.res_name || (strcmp(instance, hint.res_name) != 0)))
+				    continue;
+			    if (title && (!c->name || (strcmp(title, c->name) != 0)))
+				    continue;
+			    found = 1;
+			    break;
+		    }
+	    }
+	} else
+	    for (c = selmon->clients; c && !(found = c->tags & scratchtag); c = c->next);
 	if (found) {
-		unsigned int newtagset = selmon->tagset[selmon->seltags] ^ scratchtag;
-		if (newtagset) {
-			selmon->tagset[selmon->seltags] = newtagset;
-			focus(NULL);
-			arrange(selmon);
-		}
-		if (ISVISIBLE(c)) {
-			focus(c);
-			restack(selmon);
-		}
+	    unsigned int newtagset = selmon->tagset[selmon->seltags] ^ scratchtag;
+	    if (newtagset) {
+		    selmon->tagset[selmon->seltags] = newtagset;
+		    focus(NULL);
+		    arrange(selmon);
+	    }
+	    if (ISVISIBLE(c)) {
+		    focus(c);
+		    restack(selmon);
+	    }
 	} else
 		spawn(arg);
 }
