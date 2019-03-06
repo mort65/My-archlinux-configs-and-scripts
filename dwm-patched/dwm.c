@@ -1524,7 +1524,7 @@ manage(Window w, XWindowAttributes *wa)
 		c->tags ^= scratchtag;
 
 	if (!c->tags)
-		c->tags = (c->mon->showtags || (c->mon->curtagset[c->mon->seltags] & scratchtag)) ? 1 : c->mon->curtagset[c->mon->seltags];
+		c->tags = (!c->mon->showtags || (c->mon->curtagset[c->mon->seltags] & scratchtag)) ? 1 : c->mon->curtagset[c->mon->seltags];
 
 	if(c->iscentered) {
 		c->x = (c->mon->mw - WIDTH(c)) / 2;
