@@ -78,7 +78,8 @@ static const Rule rules[] = {
         { CLASS("Tixati"),   TAG(9),   0,   0,   0,   0,   0,   1,   0 },
 
         /*Floating windows*/
-        { CLASS("St|ScratchPad[0-9]+"),  0,   1,   1,   1,   0,   1,   1,   0 },
+        { CLASS("St"),  0,   1,   1,   0,   0,   1,   1,   0 },
+        { CLASS("ScratchPad(1|2)"),  0,   1,   1,   1,   0,   1,   1,   0 },
 	{ CLASS("Wine"),   TAG(7),   1,   1,   0,   1,   0,   1,   0 },
         { CLASS("Mlconfig"),  0,   1,   1,   0,   0,   0,   1,   0 },
 	{ CLASS("Nitrogen|Dukto|Galculator|lxsu|lxsudo|Gpick"),   0,   0,   1,   0,   0,   0,   1,   0 },
