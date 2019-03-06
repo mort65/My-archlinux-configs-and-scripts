@@ -1158,8 +1158,13 @@ focus(Client *c)
 {
 	if (!c || !ISVISIBLE(c))
 		for (c = selmon->stack; c && !ISVISIBLE(c); c = c->snext);
-	if (selmon->sel && selmon->sel != c)
+	if (selmon->sel && selmon->sel != c) {
+		if (selmon->sel->tags & scratchtag) {
+			selmon->sel->tags = scratchtag;
+			arrange(selmon);
+		}
 		unfocus(selmon->sel, 0);
+	}
 	if (c) {
 		if (c->mon != selmon)
 			selmon = c->mon;
@@ -1513,8 +1518,10 @@ manage(Window w, XWindowAttributes *wa)
 	c->bw = borderpx;
 
 	if (!strcmp(c->name, scratchname)) {
-		c->mon->tagset[c->mon->seltags] |= c->tags = scratchtag;
+		c->tags |= scratchtag;
 		c->isfloating = 1;
+		c->w = c->mon->mw * (scratchwp / 100.0);
+		c->h = c->mon->mh * (scratchhp / 100.0);
 		c->x = c->mon->wx + (c->mon->ww / 2 - WIDTH(c) / 2);
 		c->y = c->mon->wy + (c->mon->wh / 2 - HEIGHT(c) / 2);
 	}
@@ -2427,7 +2434,7 @@ swapclient(const Arg *arg)
 	Client *s, *m, t;
 
 	if (!mark || !selmon->sel || mark == selmon->sel
-	    || !selmon->lt[selmon->sellt]->arrange)
+	    || !selmon->lt[selmon->sellt]->arrange || (mark->tags | selmon->sel->tags) & scratchtag)
 		return;
 	s = selmon->sel;
 	m = mark;
@@ -2496,6 +2503,8 @@ swapfocused(const Arg *arg)
 void
 tag(const Arg *arg)
 {
+	if (selmon->sel->tags & scratchtag)
+		return;
 	if (selmon->sel && arg->ui & TAGMASK) {
 		selmon->sel->tags = arg->ui & TAGMASK;
 		focus(NULL);
@@ -2672,7 +2681,8 @@ togglescratch(const Arg *arg)
 		return;
 
 	Client *c;
-	unsigned int found = 0;
+	Client *scratch = NULL;
+
 	char *title = ((char**)arg->v)[scratchlen - 1];
 	char *instance = ((char**)arg->v)[scratchlen - 2];
 	char *class = ((char**)arg->v)[scratchlen - 3];
@@ -2681,32 +2691,49 @@ togglescratch(const Arg *arg)
 	    XClassHint hint = { NULL, NULL };
 	    for (c = selmon->clients; c; c = c->next) {
 		    if (c->tags & scratchtag) {
-			    XGetClassHint(dpy, c->win, &hint);
-			    if (class && (!hint.res_class || (strcmp(class, hint.res_class) != 0)))
+			   XGetClassHint(dpy, c->win, &hint);
+			    if (class && (!hint.res_class || (strcmp(class, hint.res_class) != 0))) {
+				    if (ISVISIBLE(c))
+						    c->tags = scratchtag;
 				    continue;
-			    if (instance && (!hint.res_name || (strcmp(instance, hint.res_name) != 0)))
+			    }
+			    if (instance && (!hint.res_name || (strcmp(instance, hint.res_name) != 0))) {
+				    if (ISVISIBLE(c))
+						    c->tags = scratchtag;
 				    continue;
-			    if (title && (!c->name || (strcmp(title, c->name) != 0)))
+			    }
+			    if (title && (!c->name || (strcmp(title, c->name) != 0))) {
+				    if (ISVISIBLE(c))
+						    c->tags = scratchtag;
 				    continue;
-			    found = 1;
-			    break;
+			    }
+			    if (scratch)
+				    continue;
+
+			    if (ISVISIBLE(c)) {
+				    c->tags = scratchtag;
+			    } else {
+				    c->isfloating = 1;
+				    c->w = c->mon->mw * (scratchwp / 100.0);
+				    c->h = c->mon->mh * (scratchhp / 100.0);
+				    c->x = c->mon->wx + (c->mon->ww / 2 - WIDTH(c) / 2);
+				    c->y = c->mon->wy + (c->mon->wh / 2 - HEIGHT(c) / 2);
+				    c->tags = scratchtag | selmon->tagset[selmon->seltags];
+			    }
+
+			    scratch = c;
 		    }
 	    }
-	} else
-	    for (c = selmon->clients; c && !(found = c->tags & scratchtag); c = c->next);
-	if (found) {
-	    unsigned int newtagset = selmon->tagset[selmon->seltags] ^ scratchtag;
-	    if (newtagset) {
-		    selmon->tagset[selmon->seltags] = newtagset;
+	    if (scratch) {
 		    focus(NULL);
 		    arrange(selmon);
-	    }
-	    if (ISVISIBLE(c)) {
-		    focus(c);
-		    restack(selmon);
-	    }
-	} else
-		spawn(arg);
+		    if (ISVISIBLE(scratch)) {
+			    focus(scratch);
+			    restack(selmon);
+		    }
+	    } else
+		    spawn(arg);
+	}
 }
 
 void

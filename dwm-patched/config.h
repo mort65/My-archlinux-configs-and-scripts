@@ -64,7 +64,7 @@ static const Rule rules[] = {
 	 *	WM_CLASS(STRING) = instance, class
 	 *	WM_NAME(STRING) = title
 	 */
-	/*Match condition   Tags   Center   Float   Permanent   BorderColor Terminal   NoSwallow   Monitor*/
+	/*Match condition Tags Center Float Permanent BorderColor Terminal NoSwallow Monitor*/
 	{ CLASS("Gimp"),  0,   1,   0,   0,  0,  0,  1,  0 },
         { CLASS("URxvt|Urxvt-tabbed"),  0,   0,   0,   1,   0,   1,   1,   0 },
         { CLASS("UXTerm|XTerm|rxvt|Lxterminal"),  0,   0,   0,   0,   0,   1,   1,   0 },
@@ -78,7 +78,7 @@ static const Rule rules[] = {
         { CLASS("Tixati"),   TAG(9),   0,   0,   0,   0,   0,   1,   0 },
 
         /*Floating windows*/
-        { CLASS("St|Scratchpad|CMUS"),  0,   1,   1,   0,   0,   1,   1,   0 },
+        { CLASS("St|ScratchPad[0-9]+"),  0,   1,   1,   1,   0,   1,   1,   0 },
 	{ CLASS("Wine"),   TAG(7),   1,   1,   0,   1,   0,   1,   0 },
         { CLASS("Mlconfig"),  0,   1,   1,   0,   0,   0,   1,   0 },
 	{ CLASS("Nitrogen|Dukto|Galculator|lxsu|lxsudo|Gpick"),   0,   0,   1,   0,   0,   0,   1,   0 },
@@ -210,10 +210,12 @@ static const char *roficmd[] = { "rofi", "-modi", "combi#window#run#drun", "-sho
 static const char *termcmd[]  = { "mlterm", NULL, NULL, NULL, NULL, "1", NULL };
 static const char *termcmd1[] = { "urxvt", NULL, NULL, NULL, NULL, "1", NULL };
 static const char *termcmd2[] = { "st", NULL, NULL, NULL, NULL, "1", NULL };
-static const unsigned int scratchlen = 13; /* length of scratchcmd* arrays */
+static const unsigned int scratchlen = 11; /* length of scratchcmd* arrays */
+static const unsigned int scratchwp = 95; /* scratchpad width relative to monitor width in percent */
+static const unsigned int scratchhp = 90; /* scratchpad height relative to the monitor height in percent */
 static const char scratchname[] = "scratchpad";
-static const char *scratchcmd1[] = { "st", "-t", scratchname, "-c", "Scratchpad", "-g", "120x34", NULL, NULL, NULL, "Scratchpad", "st", NULL };
-static const char *scratchcmd2[] = { "st", "-t", scratchname, "-c", "CMUS", "-g", "120x34", "-e", "cmus", NULL, "CMUS", "st",  NULL };
+static const char *scratchcmd1[] = { "st", "-t", scratchname, "-c", "ScratchPad1", NULL, NULL, NULL, "ScratchPad1", "st", NULL };
+static const char *scratchcmd2[] = { "st", "-t", scratchname, "-c", "ScratchPad2", "-e", "cmus", NULL, "ScratchPad2", "st",  NULL };
 static const char *firefox[] = { "firefox", NULL, NULL, NULL, "Firefox", NULL, NULL};
 static const char *filemanager[] = { "pcmanfm", NULL, NULL, NULL, "Pcmanfm", NULL, NULL};
 static const char *ranger[] = { "urxvt", "-e", "ranger", NULL, NULL, NULL, NULL };
