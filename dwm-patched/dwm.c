@@ -1520,14 +1520,11 @@ manage(Window w, XWindowAttributes *wa)
 		c->h = c->mon->mh * (scratchhp / 100.0);
 		c->x = c->mon->wx + (c->mon->ww / 2 - WIDTH(c) / 2);
 		c->y = c->mon->wy + (c->mon->wh / 2 - HEIGHT(c) / 2);
-	} else if (c->tags & scratchtag) {
+	} else if (c->tags & scratchtag)
 		c->tags ^= scratchtag;
-		if ((c->tags & TAGMASK) == 0)
-			c->tags |= (1 << 0);
-	}
 
 	if (!c->tags)
-		c->tags = c->mon->showtags ? 1 : c->mon->curtagset[c->mon->seltags];
+		c->tags = (c->mon->showtags || (c->mon->curtagset[c->mon->seltags] & scratchtag)) ? 1 : c->mon->curtagset[c->mon->seltags];
 
 	if(c->iscentered) {
 		c->x = (c->mon->mw - WIDTH(c)) / 2;
