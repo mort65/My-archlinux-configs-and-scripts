@@ -171,7 +171,6 @@ struct Monitor {
 	const Layout *lt[2];
 	Pertag *pertag;
 	unsigned int curtagset[2];
-	int showtags;
 };
 
 typedef struct {
@@ -934,7 +933,6 @@ createmon(void)
 	m = ecalloc(1, sizeof(Monitor));
 	m->tagset[0] = m->tagset[1] = 1;
 	m->curtagset[0] = m->curtagset[1] = 1;
-	m->showtags = 1;
 	m->mfact = mfact;
 	m->smfact = smfact;
 	m->nmaster = nmaster;
@@ -2685,7 +2683,7 @@ togglefloating(const Arg *arg)
 void
 togglescratch(const Arg *arg)
 {
-	if (!selmon->showtags)
+	if ((selmon->tagset[selmon->seltags] & TAGMASK) == 0)
 		return;
 	Client *c;
 	Client *scratch = NULL;
@@ -2742,7 +2740,7 @@ togglescratch(const Arg *arg)
 
 void
 toggletags(const Arg *arg) {
-	selmon->showtags ? hidetags(NULL) : showtags(NULL);
+	selmon->tagset[selmon->seltags] & TAGMASK ? hidetags(NULL) : showtags(NULL);
 }
 
 void
@@ -2750,7 +2748,6 @@ hidetags(const Arg *arg)
 {
 	selmon->curtagset[selmon->seltags] = selmon->tagset[selmon->seltags];
 	selmon->tagset[selmon->seltags] = 0;
-	selmon->showtags = 0;
 	focus(NULL);
 	arrange(selmon);
 }
@@ -2759,7 +2756,6 @@ void
 showtags(const Arg *arg)
 {
 	selmon->tagset[selmon->seltags] |= selmon->curtagset[selmon->seltags];
-	selmon->showtags = 1;
 	focus(NULL);
 	arrange(selmon);
 }
@@ -2819,7 +2815,7 @@ toggletag(const Arg *arg)
 void
 toggleview(const Arg *arg)
 {
-	if (!selmon->showtags)
+	if ((selmon->tagset[selmon->seltags] & TAGMASK) == 0)
 		showtags(NULL);
 
 	unsigned int newtagset = selmon->tagset[selmon->seltags] ^ (arg->ui & TAGMASK);
@@ -3357,9 +3353,6 @@ view(const Arg *arg)
 
 	if (selmon->showbar != selmon->pertag->showbars[selmon->pertag->curtag])
 		togglebar(NULL);
-
-	if (!selmon->showtags)
-		selmon->showtags = 1;
 
 	focus(NULL);
 	arrange(selmon);
