@@ -2700,7 +2700,7 @@ togglefloating(const Arg *arg)
 void
 togglescratch(const Arg *arg)
 {
-	if ((selmon->tagset[selmon->seltags] & TAGMASK) == 0)
+	if ((selmon->sel && selmon->sel->isfullscreen) || (selmon->tagset[selmon->seltags] & TAGMASK) == 0)
 		return;
 	int i = atoi(((char**)arg->v)[scratchlen - 1]);
 	int found = 0;
