@@ -1519,27 +1519,31 @@ manage(Window w, XWindowAttributes *wa)
 	int isscratchpad = 0;
 	for (int i = 0; i < LENGTH(scratchrules); i++) {
 		if (!c->mon->scratchclient[i]) {
-			if (c->name && !strcmp(c->name, scratchrules[i].title)
-					&& c->class && !strcmp(c->class, scratchrules[i].class)
-					&& c->instance && !strcmp(c->instance, scratchrules[i].instance)) {
-				c->mon->scratchclient[i] = c;
-				c->tags |= scratchtag;
-				c->isfloating = 1;
-				c->w = c->mon->mw * (scratchwp / 100.0);
-				c->h = c->mon->mh * (scratchhp / 100.0);
-				c->x = c->mon->wx + (c->mon->ww / 2 - WIDTH(c) / 2);
-				c->y = c->mon->wy + (c->mon->wh / 2 - HEIGHT(c) / 2);
-				isscratchpad = 1;
-				break;
-			}
+			if(scratchrules[i].title)
+				if (!c->name || strcmp(c->name, scratchrules[i].title))
+					continue;
+			if (scratchrules[i].class)
+				if (!c->class || strcmp(c->class, scratchrules[i].class))
+					continue;
+			if (scratchrules[i].instance)
+				if(!c->instance || strcmp(c->instance, scratchrules[i].instance))
+					continue;
+			c->mon->scratchclient[i] = c;
+			c->tags |= scratchtag;
+			c->w = c->mon->mw * (scratchwp / 100.0);
+			c->h = c->mon->mh * (scratchhp / 100.0);
+			c->x = c->mon->wx + (c->mon->ww / 2 - WIDTH(c) / 2);
+			c->y = c->mon->wy + (c->mon->wh / 2 - HEIGHT(c) / 2);
+			c->isfloating = 1;
+			isscratchpad = 1;
+			break;
 		}
 	}
-	 if (!isscratchpad && c->tags & scratchtag) {
+	if (!isscratchpad && c->tags & scratchtag) {
 		c->tags = c->mon->tagset[c->mon->seltags] & scratchtag ?
 			c->mon->tagset[c->mon->seltags] ^ scratchtag :
 			c->mon->tagset[c->mon->seltags];
 	}
-
 	if ((c->tags & TAGMASK) == 0) {
 		c->tags = c->mon->tagset[c->mon->seltags];
 		if (!c->tags)
