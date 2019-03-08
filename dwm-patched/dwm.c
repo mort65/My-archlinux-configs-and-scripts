@@ -1512,15 +1512,18 @@ manage(Window w, XWindowAttributes *wa)
 	c->bw = borderpx;
 
 	if (!strcmp(c->name, scratchname)) {
-		c->tags |= scratchtag;
-		c->isfloating = 1;
-		c->w = c->mon->mw * (scratchwp / 100.0);
-		c->h = c->mon->mh * (scratchhp / 100.0);
-		c->x = c->mon->wx + (c->mon->ww / 2 - WIDTH(c) / 2);
-		c->y = c->mon->wy + (c->mon->wh / 2 - HEIGHT(c) / 2);
 		XClassHint hint = { NULL, NULL };
 		XGetClassHint(dpy, c->win, &hint);
-		c->mon->scratchpad[atoi(hint.res_name)] = c;
+		int i = atoi(hint.res_name);
+		if (i >= 0 && i < LENGTH(c->mon->scratchpad)) {
+			c->mon->scratchpad[i] = c;
+			c->tags |= scratchtag;
+			c->isfloating = 1;
+			c->w = c->mon->mw * (scratchwp / 100.0);
+			c->h = c->mon->mh * (scratchhp / 100.0);
+			c->x = c->mon->wx + (c->mon->ww / 2 - WIDTH(c) / 2);
+			c->y = c->mon->wy + (c->mon->wh / 2 - HEIGHT(c) / 2);
+		}
 	} else if (c->tags & scratchtag) {
 		c->tags = c->mon->tagset[c->mon->seltags] & scratchtag ?
 			c->mon->tagset[c->mon->seltags] ^ scratchtag :
