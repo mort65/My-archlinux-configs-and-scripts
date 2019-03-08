@@ -79,7 +79,7 @@ static const Rule rules[] = {
 
         /*Floating windows*/
         { CLASS("St"),  0,   1,   1,   0,   0,   1,   1,   0 },
-        { CLASS_INSTANCE("ScratchPad(1|2)","0|1"),  0,   1,   1,   1,   0,   1,   1,   0 },
+        { CLASS_INSTANCE("ScratchPad","0|1"),  0,   1,   1,   1,   0,   1,   1,   0 },
 	{ CLASS("Wine|Lutris|Zenity"),   TAG(7),   1,   1,   0,   0,   0,   1,   0 },
         { CLASS("Mlconfig"),  0,   1,   1,   0,   0,   0,   1,   0 },
 	{ CLASS("Nitrogen|Dukto|Galculator|lxsu|lxsudo|Gpick"),   0,   0,   1,   0,   0,   0,   1,   0 },
@@ -232,9 +232,10 @@ static const unsigned int scratchlen = 11; /* length of scratchcmd* arrays */
 static const unsigned int scratchwp = 95; /* scratchpad width relative to monitor width in percent */
 static const unsigned int scratchhp = 90; /* scratchpad height relative to the monitor height in percent */
 static const char scratchname[] = "scratchpad";
+static const char scratchclass[] = "ScratchPad";
 static char *scratchcmds[][11] = {
-	{ "st", "-t", "scratchpad", "-c", "ScratchPad1", "-n", "0", NULL, NULL, NULL, "0" },
-	{ "st", "-t", "scratchpad", "-c", "ScratchPad2", "-n", "1", "-e", "cmus", NULL, "1" },
+	{ "st", "-t", "scratchpad", "-c", "ScratchPad", "-n", "0", NULL, NULL, NULL, "0" },
+	{ "st", "-t", "scratchpad", "-c", "ScratchPad", "-n", "1", "-e", "cmus", NULL, "1" },
 };
 
 

@@ -421,7 +421,7 @@ applyrules(Client *c)
 	c->tags = 0;
 	c->bordercolor = 0;
 	XGetClassHint(dpy, c->win, &ch);
-	class    = ch.res_class ? ch.res_class : broken;
+	class = ch.res_class ? ch.res_class : broken;
 	strncpy(c->class, class,  sizeof(c->class));
 	c->class[sizeof(c->class) - 1] = '\0';
 	instance = ch.res_name  ? ch.res_name  : broken;
@@ -1515,7 +1515,8 @@ manage(Window w, XWindowAttributes *wa)
 		XClassHint hint = { NULL, NULL };
 		XGetClassHint(dpy, c->win, &hint);
 		int i = atoi(hint.res_name);
-		if (i >= 0 && i < LENGTH(c->mon->scratchpad)) {
+		if (hint.res_class && !strcmp(hint.res_class, scratchclass)
+				&& i > -1 && i < LENGTH(c->mon->scratchpad)) {
 			c->mon->scratchpad[i] = c;
 			c->tags |= scratchtag;
 			c->isfloating = 1;
