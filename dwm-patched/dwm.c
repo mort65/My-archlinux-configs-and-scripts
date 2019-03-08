@@ -171,6 +171,7 @@ struct Monitor {
 	const Layout *lt[2];
 	Pertag *pertag;
 	unsigned int curtagset[2];
+	Client *scratchpad[2];
 };
 
 typedef struct {
@@ -929,7 +930,6 @@ createmon(void)
 {
 	Monitor *m;
 	unsigned int i;
-
 	m = ecalloc(1, sizeof(Monitor));
 	m->tagset[0] = m->tagset[1] = 1;
 	m->curtagset[0] = m->curtagset[1] = 1;
@@ -943,7 +943,6 @@ createmon(void)
 	strncpy(m->ltsymbol, layouts[0].symbol, sizeof m->ltsymbol);
 	m->pertag = ecalloc(1, sizeof(Pertag));
 	m->pertag->curtag = m->pertag->prevtag = 1;
-
 	for (i = 0; i <= LENGTH(tags); i++) {
 		m->pertag->ltidxs[i][0] = i ? &layouts[(int)deflts[i - 1][0]] : m->lt[0];
 		m->pertag->ltidxs[i][1] = i ? &layouts[(int)deflts[i - 1][1]] : m->lt[1];
@@ -952,7 +951,8 @@ createmon(void)
 		m->pertag->showbars[i] = i ? deflts[i - 1][4] : m->showbar;
 		m->pertag->sellts[i] = m->sellt;
 	}
-
+	for (i = 0; i < LENGTH(m->scratchpad); i++)
+		m->scratchpad[i] = NULL;
 	return m;
 }
 
@@ -1518,6 +1518,9 @@ manage(Window w, XWindowAttributes *wa)
 		c->h = c->mon->mh * (scratchhp / 100.0);
 		c->x = c->mon->wx + (c->mon->ww / 2 - WIDTH(c) / 2);
 		c->y = c->mon->wy + (c->mon->wh / 2 - HEIGHT(c) / 2);
+		XClassHint hint = { NULL, NULL };
+		XGetClassHint(dpy, c->win, &hint);
+		c->mon->scratchpad[atoi(hint.res_name)] = c;
 	} else if (c->tags & scratchtag) {
 		c->tags = c->mon->tagset[c->mon->seltags] & scratchtag ?
 			c->mon->tagset[c->mon->seltags] ^ scratchtag :
@@ -2581,7 +2584,8 @@ tile(Monitor *m)
 			h = (m->wh - my) / (MIN(n, m->nmaster) - i);
 			resize(c, m->wx, m->wy + my, mw - (2*c->bw), h - (2*c->bw), 0);
 			my += HEIGHT(c);
-		} else {
+		}
+		else {
 
 			smh = m->mh * m->smfact;
 			if(!(nexttiled(c->next)))
@@ -2685,56 +2689,34 @@ togglescratch(const Arg *arg)
 {
 	if ((selmon->tagset[selmon->seltags] & TAGMASK) == 0)
 		return;
+	int i = atoi(((char**)arg->v)[scratchlen - 1]);
+	int found = 0;
 	Client *c;
-	Client *scratch = NULL;
-	char *title = ((char**)arg->v)[scratchlen - 1];
-	char *instance = ((char**)arg->v)[scratchlen - 2];
-	char *class = ((char**)arg->v)[scratchlen - 3];
-	XClassHint hint = { NULL, NULL };
-	for (c = selmon->clients; c; c = c->next) {
-		if ((c->tags & scratchtag) == 0)
-			continue;
-		if (class || instance || title) {
-			XGetClassHint(dpy, c->win, &hint);
-			if (class && (!hint.res_class || (strcmp(class, hint.res_class) != 0))) {
-				if (ISVISIBLE(c))
-					c->tags = scratchtag;
-				continue;
-			}
-			if (instance && (!hint.res_name || (strcmp(instance, hint.res_name) != 0))) {
-				if (ISVISIBLE(c))
-					c->tags = scratchtag;
-				continue;
-			}
-			if (title && (!c->name || (strcmp(title, c->name) != 0))) {
-				if (ISVISIBLE(c))
-					c->tags = scratchtag;
-				continue;
-			}
-		}
-		if (scratch)
-			continue;
+	if (selmon->scratchpad[i])
+		for (c = selmon->clients; c && !(found = (c == selmon->scratchpad[i])); c = c->next);
+	if (found) {
+		c = selmon->scratchpad[i];
 		if (ISVISIBLE(c)) {
 			c->tags = scratchtag;
-		} else {
+			focus(NULL);
+			arrange(selmon);
+		}
+		else {
 			c->isfloating = 1;
 			c->w = c->mon->mw * (scratchwp / 100.0);
 			c->h = c->mon->mh * (scratchhp / 100.0);
 			c->x = c->mon->wx + (c->mon->ww / 2 - WIDTH(c) / 2);
 			c->y = c->mon->wy + (c->mon->wh / 2 - HEIGHT(c) / 2);
 			c->tags = scratchtag | selmon->tagset[selmon->seltags];
-		}
-		scratch = c;
-	}
-	if (scratch) {
-		focus(NULL);
-		arrange(selmon);
-		if (ISVISIBLE(scratch)) {
-			focus(scratch);
+			arrange(selmon);
+			focus(c);
 			restack(selmon);
 		}
-	} else
+	}
+	else {
+		selmon->scratchpad[i] = NULL;
 		spawn(arg);
+	}
 }
 
 

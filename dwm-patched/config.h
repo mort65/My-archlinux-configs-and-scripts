@@ -211,12 +211,6 @@ static const char *roficmd[] = { "rofi", "-modi", "combi#window#run#drun", "-sho
 static const char *termcmd[]  = { "mlterm", NULL, NULL, NULL, NULL, "1", NULL };
 static const char *termcmd1[] = { "urxvt", NULL, NULL, NULL, NULL, "1", NULL };
 static const char *termcmd2[] = { "st", NULL, NULL, NULL, NULL, "1", NULL };
-static const unsigned int scratchlen = 11; /* length of scratchcmd* arrays */
-static const unsigned int scratchwp = 95; /* scratchpad width relative to monitor width in percent */
-static const unsigned int scratchhp = 90; /* scratchpad height relative to the monitor height in percent */
-static const char scratchname[] = "scratchpad";
-static const char *scratchcmd1[] = { "st", "-t", scratchname, "-c", "ScratchPad1", NULL, NULL, NULL, "ScratchPad1", "st", NULL };
-static const char *scratchcmd2[] = { "st", "-t", scratchname, "-c", "ScratchPad2", "-e", "cmus", NULL, "ScratchPad2", "st",  NULL };
 static const char *firefox[] = { "firefox", NULL, NULL, NULL, "Firefox", NULL, NULL};
 static const char *filemanager[] = { "pcmanfm", NULL, NULL, NULL, "Pcmanfm", NULL, NULL};
 static const char *ranger[] = { "urxvt", "-e", "ranger", NULL, NULL, NULL, NULL };
@@ -234,6 +228,15 @@ static const char *audioplay[] = { "playerctl", "play-pause", NULL };
 static const char *lock[] = { "slock", NULL };
 static const char *lxtask[] = { "lxtask", NULL, NULL, NULL, "Lxtask", NULL, NULL };
 static const char *htop[] = { "mlterm", "-e", "htop", NULL, NULL, NULL, NULL };
+static const unsigned int scratchlen = 11; /* length of scratchcmd* arrays */
+static const unsigned int scratchwp = 95; /* scratchpad width relative to monitor width in percent */
+static const unsigned int scratchhp = 90; /* scratchpad height relative to the monitor height in percent */
+static const char scratchname[] = "scratchpad";
+static char *scratchcmds[][11] = {
+	{ "st", "-t", "scratchpad", "-c", "ScratchPad1", "-n", "0", NULL, NULL, NULL, "0" },
+	{ "st", "-t", "scratchpad", "-c", "ScratchPad2", "-n", "1", "-e", "cmus", NULL, "1" },
+};
+
 
 #include "selfrestart.c"
 #include "moveresize.c"
@@ -249,8 +252,8 @@ static Key keys[] = {
 	{ KeyPress,	 MODKEY|ShiftMask,                28,              spawn,          {.v = termcmd1 } }, // t
 	{ KeyPress,	 MODKEY|ALTMODKEY,                36,              runorraise,     {.v = termcmd2 } }, // Return
 	{ KeyPress,	 MODKEY|ALTMODKEY,                28,              spawn,          {.v = termcmd2 } }, // t
-        { KeyPress,	 MODKEY,                          49,              togglescratch,  {.v = scratchcmd1 } }, // grave `
-        { KeyPress,	 MODKEY,                           9,              togglescratch,  {.v = scratchcmd2 } }, // Escape
+        { KeyPress,	 MODKEY,                          49,              togglescratch,  {.v = scratchcmds[0] } }, // grave `
+        { KeyPress,	 MODKEY,                           9,              togglescratch,  {.v = scratchcmds[1] } }, // Escape
 	{ KeyPress,	 MODKEY,                          56,              togglebar,      {0} }, // b
 	{ KeyPress,	 MODKEY,                          52,              toggletags,     {0} }, // z
 	{ KeyPress,	 MODKEY|ShiftMask,                56,              spawn,          SHCMD("~/.script/dwm-toggle_dzen") }, // b
