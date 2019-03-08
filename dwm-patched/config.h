@@ -79,7 +79,7 @@ static const Rule rules[] = {
 
         /*Floating windows*/
         { CLASS("St"),  0,   1,   1,   0,   0,   1,   1,   0 },
-        { CLASS_INSTANCE("ScratchPad","0|1"),  0,   1,   1,   1,   0,   1,   1,   0 },
+        { CLASS_INSTANCE("ScratchPad","ScratchPad(1|2)"),  0,   1,   1,   1,   0,   1,   1,   0 },
 	{ CLASS("Wine|Lutris|Zenity"),   TAG(7),   1,   1,   0,   0,   0,   1,   0 },
         { CLASS("Mlconfig"),  0,   1,   1,   0,   0,   0,   1,   0 },
 	{ CLASS("Nitrogen|Dukto|Galculator|lxsu|lxsudo|Gpick"),   0,   0,   1,   0,   0,   0,   1,   0 },
@@ -228,16 +228,19 @@ static const char *audioplay[] = { "playerctl", "play-pause", NULL };
 static const char *lock[] = { "slock", NULL };
 static const char *lxtask[] = { "lxtask", NULL, NULL, NULL, "Lxtask", NULL, NULL };
 static const char *htop[] = { "mlterm", "-e", "htop", NULL, NULL, NULL, NULL };
+
 static const unsigned int scratchlen = 11; /* length of scratchcmd* arrays */
 static const unsigned int scratchwp = 95; /* scratchpad width relative to monitor width in percent */
 static const unsigned int scratchhp = 90; /* scratchpad height relative to the monitor height in percent */
 static const char scratchname[] = "scratchpad";
 static const char scratchclass[] = "ScratchPad";
-static char *scratchcmds[][11] = {
-	{ "st", "-t", "scratchpad", "-c", "ScratchPad", "-n", "0", NULL, NULL, NULL, "0" },
-	{ "st", "-t", "scratchpad", "-c", "ScratchPad", "-n", "1", "-e", "cmus", NULL, "1" },
-};
+static const char *scratchcmd1[] = { "st", "-t", "scratchpad", "-c", "ScratchPad", "-n", "ScratchPad1", NULL, NULL, NULL, "0" };
+static const char *scratchcmd2[] = { "st", "-t", "scratchpad", "-c", "ScratchPad", "-n", "ScratchPad2", "-e", "cmus", NULL, "1" };
 
+static ScratchRule scratchrules[] = {
+	{ scratchname, scratchclass, "ScratchPad1" },
+	{ scratchname, scratchclass, "ScratchPad2" },
+};
 
 #include "selfrestart.c"
 #include "moveresize.c"
@@ -245,16 +248,16 @@ static char *scratchcmds[][11] = {
 #include "zoomswap.c"
 static Key keys[] = {
 /*	 type            modifier                         key                function        argument */
- 	{ KeyPress,	 MODKEY,                          32,              spawn,          {.v = dmenucmd } }, // o
-	{ KeyPress,	 MODKEY,                          33,              spawn,          {.v = roficmd } }, // p
-	{ KeyPress,	 MODKEY|ControlMask,              36,              runorraise,     {.v = termcmd } }, // Return
-	{ KeyPress,	 MODKEY|ControlMask,              28,              spawn,          {.v = termcmd } }, // t
-	{ KeyPress,	 MODKEY|ShiftMask,                36,              runorraise,     {.v = termcmd1 } }, // Return
-	{ KeyPress,	 MODKEY|ShiftMask,                28,              spawn,          {.v = termcmd1 } }, // t
-	{ KeyPress,	 MODKEY|ALTMODKEY,                36,              runorraise,     {.v = termcmd2 } }, // Return
-	{ KeyPress,	 MODKEY|ALTMODKEY,                28,              spawn,          {.v = termcmd2 } }, // t
-        { KeyPress,	 MODKEY,                          49,              togglescratch,  {.v = scratchcmds[0] } }, // grave `
-        { KeyPress,	 MODKEY,                           9,              togglescratch,  {.v = scratchcmds[1] } }, // Escape
+ 	{ KeyPress,	 MODKEY,                          32,              spawn,          {.v = dmenucmd} }, // o
+	{ KeyPress,	 MODKEY,                          33,              spawn,          {.v = roficmd} }, // p
+	{ KeyPress,	 MODKEY|ControlMask,              36,              runorraise,     {.v = termcmd} }, // Return
+	{ KeyPress,	 MODKEY|ControlMask,              28,              spawn,          {.v = termcmd} }, // t
+	{ KeyPress,	 MODKEY|ShiftMask,                36,              runorraise,     {.v = termcmd1} }, // Return
+	{ KeyPress,	 MODKEY|ShiftMask,                28,              spawn,          {.v = termcmd1} }, // t
+	{ KeyPress,	 MODKEY|ALTMODKEY,                36,              runorraise,     {.v = termcmd2} }, // Return
+	{ KeyPress,	 MODKEY|ALTMODKEY,                28,              spawn,          {.v = termcmd2} }, // t
+        { KeyPress,	 MODKEY,                          49,              togglescratch,  {.v = scratchcmd1} }, // grave `
+        { KeyPress,	 MODKEY,                           9,              togglescratch,  {.v = scratchcmd2} }, // Escape
 	{ KeyPress,	 MODKEY,                          56,              togglebar,      {0} }, // b
 	{ KeyPress,	 MODKEY,                          52,              toggletags,     {0} }, // z
 	{ KeyPress,	 MODKEY|ShiftMask,                56,              spawn,          SHCMD("~/.script/dwm-toggle_dzen") }, // b

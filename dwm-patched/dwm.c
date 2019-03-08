@@ -171,7 +171,7 @@ struct Monitor {
 	const Layout *lt[2];
 	Pertag *pertag;
 	unsigned int curtagset[2];
-	Client *scratchpad[2];
+	Client *scratchclient[2];
 };
 
 typedef struct {
@@ -187,6 +187,12 @@ typedef struct {
 	int noswallow;
 	int monitor;
 } Rule;
+
+typedef struct {
+	const char *title;
+	const char *class;
+	const char *instance;
+} ScratchRule;
 
 typedef struct Systray   Systray;
 struct Systray {
@@ -951,8 +957,8 @@ createmon(void)
 		m->pertag->showbars[i] = i ? deflts[i - 1][4] : m->showbar;
 		m->pertag->sellts[i] = m->sellt;
 	}
-	for (i = 0; i < LENGTH(m->scratchpad); i++)
-		m->scratchpad[i] = NULL;
+	for (i = 0; i < LENGTH(m->scratchclient); i++)
+		m->scratchclient[i] = NULL;
 	return m;
 }
 
@@ -1510,22 +1516,25 @@ manage(Window w, XWindowAttributes *wa)
 	c->y = MAX(c->y, ((c->mon->by == c->mon->my) && (c->x + (c->w / 2) >= c->mon->wx)
 		&& (c->x + (c->w / 2) < c->mon->wx + c->mon->ww)) ? bh : c->mon->my);
 	c->bw = borderpx;
-
-	if (!strcmp(c->name, scratchname)) {
-		XClassHint hint = { NULL, NULL };
-		XGetClassHint(dpy, c->win, &hint);
-		int i = atoi(hint.res_name);
-		if (hint.res_class && !strcmp(hint.res_class, scratchclass)
-				&& i > -1 && i < LENGTH(c->mon->scratchpad)) {
-			c->mon->scratchpad[i] = c;
-			c->tags |= scratchtag;
-			c->isfloating = 1;
-			c->w = c->mon->mw * (scratchwp / 100.0);
-			c->h = c->mon->mh * (scratchhp / 100.0);
-			c->x = c->mon->wx + (c->mon->ww / 2 - WIDTH(c) / 2);
-			c->y = c->mon->wy + (c->mon->wh / 2 - HEIGHT(c) / 2);
+	int isscratchpad = 0;
+	for (int i = 0; i < LENGTH(scratchrules); i++) {
+		if (!c->mon->scratchclient[i]) {
+			if (c->name && !strcmp(c->name, scratchrules[i].title)
+					&& c->class && !strcmp(c->class, scratchrules[i].class)
+					&& c->instance && !strcmp(c->instance, scratchrules[i].instance)) {
+				c->mon->scratchclient[i] = c;
+				c->tags |= scratchtag;
+				c->isfloating = 1;
+				c->w = c->mon->mw * (scratchwp / 100.0);
+				c->h = c->mon->mh * (scratchhp / 100.0);
+				c->x = c->mon->wx + (c->mon->ww / 2 - WIDTH(c) / 2);
+				c->y = c->mon->wy + (c->mon->wh / 2 - HEIGHT(c) / 2);
+				isscratchpad = 1;
+				break;
+			}
 		}
-	} else if (c->tags & scratchtag) {
+	}
+	 if (!isscratchpad && c->tags & scratchtag) {
 		c->tags = c->mon->tagset[c->mon->seltags] & scratchtag ?
 			c->mon->tagset[c->mon->seltags] ^ scratchtag :
 			c->mon->tagset[c->mon->seltags];
@@ -2696,10 +2705,10 @@ togglescratch(const Arg *arg)
 	int i = atoi(((char**)arg->v)[scratchlen - 1]);
 	int found = 0;
 	Client *c;
-	if (selmon->scratchpad[i])
-		for (c = selmon->clients; c && !(found = (c == selmon->scratchpad[i])); c = c->next);
+	if (selmon->scratchclient[i])
+		for (c = selmon->clients; c && !(found = (c == selmon->scratchclient[i])); c = c->next);
 	if (found) {
-		c = selmon->scratchpad[i];
+		c = selmon->scratchclient[i];
 		if (ISVISIBLE(c)) {
 			c->tags = scratchtag;
 			focus(NULL);
@@ -2718,7 +2727,7 @@ togglescratch(const Arg *arg)
 		}
 	}
 	else {
-		selmon->scratchpad[i] = NULL;
+		selmon->scratchclient[i] = NULL;
 		spawn(arg);
 	}
 }
