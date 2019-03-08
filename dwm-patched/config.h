@@ -238,6 +238,7 @@ static const char *scratchcmd1[] = { "st", "-t", "scratchpad", "-c", "ScratchPad
 static const char *scratchcmd2[] = { "st", "-t", "scratchpad", "-c", "ScratchPad", "-n", "ScratchPad2", "-e", "cmus", NULL, "1" };
 
 static ScratchRule scratchrules[] = {
+       /* title        class         instance      */
 	{ scratchname, scratchclass, "ScratchPad1" },
 	{ scratchname, scratchclass, "ScratchPad2" },
 };
