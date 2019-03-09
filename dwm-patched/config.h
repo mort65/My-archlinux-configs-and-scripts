@@ -230,8 +230,8 @@ static const char *lxtask[] = { "lxtask", NULL, NULL, NULL, "Lxtask", NULL, NULL
 static const char *htop[] = { "mlterm", "-e", "htop", NULL, NULL, NULL, NULL };
 
 static const unsigned int scratchlen = 11; /* length of scratchcmd* arrays */
-static const unsigned int scratchwp = 95; /* scratchpad width relative to monitor width in percent */
-static const unsigned int scratchhp = 90; /* scratchpad height relative to the monitor height in percent */
+static const unsigned int scratchwp = 94; /* scratchpad width relative to monitor width in percent */
+static const unsigned int scratchhp = 92; /* scratchpad height relative to the monitor height in percent */
 static const char scratchname[] = "scratchpad";
 static const char scratchclass[] = "ScratchPad";
 static const char *scratchcmd1[] = { "st", "-t", "scratchpad", "-c", "ScratchPad", "-n", "ScratchPad1", NULL, NULL, NULL, "0" };

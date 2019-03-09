@@ -1532,8 +1532,6 @@ manage(Window w, XWindowAttributes *wa)
 			c->tags |= scratchtag;
 			c->w = c->mon->mw * (scratchwp / 100.0);
 			c->h = c->mon->mh * (scratchhp / 100.0);
-			c->x = c->mon->wx + (c->mon->ww / 2 - WIDTH(c) / 2);
-			c->y = c->mon->wy + (c->mon->wh / 2 - HEIGHT(c) / 2);
 			c->isfloating = 1;
 			isscratchpad = 1;
 			break;
@@ -1555,9 +1553,9 @@ manage(Window w, XWindowAttributes *wa)
 		}
 	}
 
-	if(c->iscentered) {
-		c->x = (c->mon->mw - WIDTH(c)) / 2;
-		c->y = (c->mon->mh - HEIGHT(c)) / 2;
+	if(c->iscentered || isscratchpad) {
+		c->x = c->mon->wx + gappx + ((c->mon->ww - WIDTH(c)) / 2);
+		c->y = c->mon->wy + gappx + ((c->mon->wh - HEIGHT(c)) / 2);
 	}
 
 	wc.border_width = c->bw;
@@ -2722,8 +2720,8 @@ togglescratch(const Arg *arg)
 			c->isfloating = 1;
 			c->w = c->mon->mw * (scratchwp / 100.0);
 			c->h = c->mon->mh * (scratchhp / 100.0);
-			c->x = c->mon->wx + (c->mon->ww / 2 - WIDTH(c) / 2);
-			c->y = c->mon->wy + (c->mon->wh / 2 - HEIGHT(c) / 2);
+			c->x = c->mon->wx + gappx + ((c->mon->ww - WIDTH(c)) / 2);
+			c->y = c->mon->wy + gappx + ((c->mon->wh - HEIGHT(c)) / 2);
 			c->tags = scratchtag | selmon->tagset[selmon->seltags];
 			arrange(selmon);
 			focus(c);
@@ -2787,10 +2785,8 @@ center(const Arg *ag)
 	if (!selmon->sel->isfloating)
 		togglefloating(NULL);
 	if (selmon->sel->isfloating) {
-		selmon->sel->x = (selmon->sel->mon->mw - WIDTH(selmon->sel)) / 2;
-		selmon->sel->y = (selmon->sel->mon->mh - HEIGHT(selmon->sel)) / 2;
-		/* if (selmon->showbar)
-			selmon->sel->y += bh; */
+		selmon->sel->x = selmon->wx + gappx + ((selmon->ww - WIDTH(selmon->sel)) / 2);
+		selmon->sel->y = selmon->wy + ((selmon->wh - HEIGHT(selmon->sel)) / 2);
 	}
 	arrange(selmon);
 }
