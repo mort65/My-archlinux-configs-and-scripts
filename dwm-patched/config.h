@@ -103,7 +103,7 @@ static const float mfact     = 0.50; /* factor of master area size [0.05..0.95] 
 static const float smfact     = 0.00; /* factor of tiled clients [0.00..0.95] */
 static const int nmaster     = 1;    /* number of clients in master area */
 static const int resizehints = 0;    /* 1 means respect size hints in tiled resizals */
-
+static const int centeroffset[] = {2, 2, 2, 6};  /* for centering clients on screen */
 /**
  * Layout variable names
  *
@@ -177,8 +177,8 @@ void ruleshook(Client *c)
     // Certain floating Wine windows always get positioned off-screen. When
     // that happens, this code will center them.
     if (!strcmp(c->class, "Wine") && c->x < 1) {
-        c->x = c->mon->mx + (c->mon->mw / 2 - WIDTH(c) / 2);
-        c->y = c->mon->my + (c->mon->mh / 2 - HEIGHT(c) / 2);
+        c->x = c->mon->mx + centeroffset[0] +  (c->mon->mw / 2 - WIDTH(c) / 2);
+        c->y = c->mon->my + centeroffset[1] + (c->mon->mh / 2 - HEIGHT(c) / 2);
     }
 
     // Mark windows that get created offscreen as urgent.
@@ -231,7 +231,7 @@ static const char *htop[] = { "mlterm", "-e", "htop", NULL, NULL, NULL, NULL };
 
 static const unsigned int scratchlen = 11; /* length of scratchcmd* arrays */
 static const unsigned int scratchwp = 94; /* scratchpad width relative to monitor width in percent */
-static const unsigned int scratchhp = 92; /* scratchpad height relative to the monitor height in percent */
+static const unsigned int scratchhp = 90; /* scratchpad height relative to the monitor height in percent */
 static const char scratchname[] = "scratchpad";
 static const char scratchclass[] = "ScratchPad";
 static const char *scratchcmd1[] = { "st", "-t", "scratchpad", "-c", "ScratchPad", "-n", "ScratchPad1", NULL, NULL, NULL, "0" };

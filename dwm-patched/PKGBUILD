@@ -58,12 +58,12 @@ package() {
 }
 
 md5sums=('9ea54bfbdbac2105420f11ee7a03b67a'
-         '93cf8ddb5b81edfe6153db7e39968e88'
+         'b90d2768ca18c0cb9ca3270f12f82c70'
          'd2825b098fe47b262a9c80867b7ad297'
          '8742b0e99c633724a73dcff43e521380'
          '80ad7825da7303599396512bb3284b03'
          'da9488d56f433adbe317c6185bf4771b'
-         '85696459c0c49a80e5f324d017709fdb'
+         'a7cda849542f4d12d31c2aa000abbf41'
          'e7e1b8940428f560ff8c5fe8d3c2cfd9'
          'b410e9a038520b0a117644dba003da62'
          'e3923d63de491ed6d1216cacf1ae9c1a'

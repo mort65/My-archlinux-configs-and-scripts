@@ -1532,6 +1532,8 @@ manage(Window w, XWindowAttributes *wa)
 			c->tags |= scratchtag;
 			c->w = c->mon->mw * (scratchwp / 100.0);
 			c->h = c->mon->mh * (scratchhp / 100.0);
+			c->x = c->mon->wx + centeroffset[2] + ((c->mon->ww - WIDTH(c)) / 2);
+			c->y = c->mon->wy + centeroffset[3] + ((c->mon->wh - HEIGHT(c)) / 2);
 			c->isfloating = 1;
 			isscratchpad = 1;
 			break;
@@ -1553,9 +1555,9 @@ manage(Window w, XWindowAttributes *wa)
 		}
 	}
 
-	if(c->iscentered || isscratchpad) {
-		c->x = c->mon->wx + gappx + ((c->mon->ww - WIDTH(c)) / 2);
-		c->y = c->mon->wy + gappx + ((c->mon->wh - HEIGHT(c)) / 2);
+	if(c->iscentered && !isscratchpad) {
+		c->x = c->mon->wx + centeroffset[0] + ((c->mon->ww - WIDTH(c)) / 2);
+		c->y = c->mon->wy + centeroffset[1] + ((c->mon->wh - HEIGHT(c)) / 2);
 	}
 
 	wc.border_width = c->bw;
@@ -2720,8 +2722,8 @@ togglescratch(const Arg *arg)
 			c->isfloating = 1;
 			c->w = c->mon->mw * (scratchwp / 100.0);
 			c->h = c->mon->mh * (scratchhp / 100.0);
-			c->x = c->mon->wx + gappx + ((c->mon->ww - WIDTH(c)) / 2);
-			c->y = c->mon->wy + gappx + ((c->mon->wh - HEIGHT(c)) / 2);
+			c->x = c->mon->wx + centeroffset[2] + ((c->mon->ww - WIDTH(c)) / 2);
+			c->y = c->mon->wy + centeroffset[3] + ((c->mon->wh - HEIGHT(c)) / 2);
 			c->tags = scratchtag | selmon->tagset[selmon->seltags];
 			arrange(selmon);
 			focus(c);
@@ -2786,12 +2788,12 @@ center(const Arg *arg)
 		togglefloating(NULL);
 	if (selmon->sel->isfloating) {
 		if (arg->i) {
-			selmon->sel->x = selmon->wx + gappx + ((selmon->ww - WIDTH(selmon->sel)) / 2);
-			selmon->sel->y = selmon->wy + ((selmon->wh - HEIGHT(selmon->sel)) / 2);
+			selmon->sel->x = selmon->wx + centeroffset[0] + ((selmon->ww - WIDTH(selmon->sel)) / 2);
+			selmon->sel->y = selmon->wy + centeroffset[1] + ((selmon->wh - HEIGHT(selmon->sel)) / 2);
 		}
 		else {
-			selmon->sel->x = selmon->mx + gappx + ((selmon->mw - WIDTH(selmon->sel)) / 2);
-			selmon->sel->y = selmon->my + ((selmon->mh - HEIGHT(selmon->sel)) / 2);
+			selmon->sel->x = selmon->mx + centeroffset[0] + ((selmon->mw - WIDTH(selmon->sel)) / 2);
+			selmon->sel->y = selmon->my + centeroffset[1] + ((selmon->mh - HEIGHT(selmon->sel)) / 2);
 		}
 	}
 	arrange(selmon);
