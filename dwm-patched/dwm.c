@@ -2778,15 +2778,21 @@ togglepermanent(const Arg *arg)
 }
 
 void
-center(const Arg *ag)
+center(const Arg *arg)
 {
 	if (!selmon->sel || selmon->sel->isfullscreen)
 		return;
 	if (!selmon->sel->isfloating)
 		togglefloating(NULL);
 	if (selmon->sel->isfloating) {
-		selmon->sel->x = selmon->wx + gappx + ((selmon->ww - WIDTH(selmon->sel)) / 2);
-		selmon->sel->y = selmon->wy + ((selmon->wh - HEIGHT(selmon->sel)) / 2);
+		if (arg->i) {
+			selmon->sel->x = selmon->wx + gappx + ((selmon->ww - WIDTH(selmon->sel)) / 2);
+			selmon->sel->y = selmon->wy + ((selmon->wh - HEIGHT(selmon->sel)) / 2);
+		}
+		else {
+			selmon->sel->x = selmon->mx + gappx + ((selmon->mw - WIDTH(selmon->sel)) / 2);
+			selmon->sel->y = selmon->my + ((selmon->mh - HEIGHT(selmon->sel)) / 2);
+		}
 	}
 	arrange(selmon);
 }

@@ -295,7 +295,8 @@ static Key keys[] = {
 	{ KeyPress,	 MODKEY|ShiftMask,                65,              togglefloating, {0} }, // space
 	{ KeyPress,	 MODKEY,                          57,              togglesticky,   {0} }, // n
 	{ KeyPress,	 MODKEY|ShiftMask,                57,              togglepermanent,{0} }, // n
-	{ KeyPress,	 MODKEY|ShiftMask,                58,              center,         {0} }, // m
+	{ KeyPress,	 MODKEY|ShiftMask,                58,              center,         {.i = 1} }, // m
+	{ KeyPress,	 MODKEY|ALTMODKEY,                58,              center,         {0} }, // m
 	{ KeyPress,	 MODKEY,                          19,              view,           {.ui = ~0 } }, // 0
 	{ KeyPress,	 MODKEY|ShiftMask,                19,              tag,            {.ui = ~0 } }, // 0
 	{ KeyPress,	 MODKEY|ControlMask|ShiftMask,    19,              tagall,         {.ui = ~0 } }, // 0
