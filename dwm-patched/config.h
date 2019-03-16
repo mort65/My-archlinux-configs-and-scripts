@@ -80,7 +80,8 @@ static const Rule rules[] = {
         /*Floating windows*/
         { CLASS("St"),  0,   1,   1,   0,   0,   1,   1,   0 },
         { CLASS_INSTANCE("ScratchPad","ScratchPad(1|2)"),  0,   1,   1,   1,   0,   1,   1,   0 },
-	{ CLASS("Wine|Lutris|Zenity"),   TAG(7),   1,   1,   0,   0,   0,   1,   0 },
+	{ CLASS("Wine|Zenity"),   TAG(7),   1,   1,   0,   0,   0,   1,   0 },
+	{ CLASS("Lutris"),   TAG(7),   1,   0,   0,   0,   0,   1,   0 },
         { CLASS("Mlconfig"),  0,   1,   1,   0,   0,   0,   1,   0 },
 	{ CLASS("Nitrogen|Dukto|Galculator|lxsu|lxsudo|Gpick"),   0,   0,   1,   0,   0,   0,   1,   0 },
         { TITLE("File Operation Progress"),   0,   0,   1,   0,   0,   0,   1,   0 },
