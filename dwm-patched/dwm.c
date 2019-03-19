@@ -794,7 +794,11 @@ clientmessage(XEvent *e)
 				|| (cme->data.l[0] == 2 /* _NET_WM_STATE_TOGGLE */ && !c->isfullscreen)));
 	} else if (cme->message_type == netatom[NetActiveWindow]) {
 		for (i = 0; i < LENGTH(tags) && !((1 << i) & c->tags); i++);
-		if (i < LENGTH(tags)) {
+		if (c->mon->sel && c->mon->sel->isfullscreen) {
+			if (c != selmon->sel && !c->isurgent)
+				seturgent(c, 1);
+		}
+		else if (i < LENGTH(tags)) {
 			const Arg a = {.ui = 1 << i};
 			view(&a);
 			focus(c);
@@ -1584,13 +1588,11 @@ manage(Window w, XWindowAttributes *wa)
 		(unsigned char *) &(c->win), 1);
 	XMoveResizeWindow(dpy, c->win, c->x + 2 * sw, c->y, c->w, c->h); /* some windows require this */
 	setclientstate(c, NormalState);
-	if (c->mon == selmon)
-	{
-		if (selmon->sel && selmon->sel->isfullscreen)
-			setfullscreen(selmon->sel, 0);
-		unfocus(selmon->sel, 0);
+	if ((!selmon->sel || !selmon->sel->isfullscreen) && (!c->mon->sel || !c->mon->sel->isfullscreen)) {
+		if (c->mon == selmon)
+			unfocus(selmon->sel, 0);
+		c->mon->sel = c;
 	}
-	c->mon->sel = c;
 	XkbGetState(dpy, XkbUseCoreKbd, &kbd_state);
 	c->kbdgrp = kbd_state.group;
 	updatewindowborder(c, -1, 0);
@@ -1599,17 +1601,19 @@ manage(Window w, XWindowAttributes *wa)
 	if (term)
 		swallow(term, c);
 
-	if (c->isurgent) {
-	    int i;
-	    for(i = 0; i < LENGTH(tags) && !((1 << i) & c->tags); i++);
-	    if(i < LENGTH(tags)) {
-		    const Arg a = {.ui = 1 << i};
-		    view(&a);
-		    focus(c);
-		    return;
+	if (!c->mon->sel || c == c->mon->sel) {
+		if (c->isurgent) {
+			int i;
+			for(i = 0; i < LENGTH(tags) && !((1 << i) & c->tags); i++);
+			if(i < LENGTH(tags)) {
+				const Arg a = {.ui = 1 << i};
+				view(&a);
+				focus(c);
+				return;
+			}
 		}
+		focus(NULL);
 	}
-	focus(NULL);
 }
 
 void
@@ -1758,6 +1762,13 @@ runorraise(const Arg *arg) {
 		    for (c = mon->clients; c; c = c->next) {
 			    XGetClassHint(dpy, c->win, &hint);
 			    if (hint.res_class && strcmp(app, hint.res_class) == 0) {
+				    if ((selmon->sel && selmon->sel->isfullscreen) || (c->mon->sel && c->mon->sel->isfullscreen)) {
+					    seturgent(c, 1);
+					    return;
+				    }
+				    else if (c->mon == selmon)
+					    unfocus(selmon->sel, 0);
+				    c->mon->sel = c;
 				    a.ui = c->tags;
 				    view(&a);
 				    focus(c);
