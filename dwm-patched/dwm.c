@@ -1601,7 +1601,7 @@ manage(Window w, XWindowAttributes *wa)
 	if (term)
 		swallow(term, c);
 
-	if (!c->mon->sel || c == c->mon->sel) {
+	if (c == c->mon->sel) {
 		if (c->isurgent) {
 			int i;
 			for(i = 0; i < LENGTH(tags) && !((1 << i) & c->tags); i++);
