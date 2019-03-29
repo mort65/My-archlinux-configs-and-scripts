@@ -78,7 +78,8 @@ static const Rule rules[] = {
         { CLASS("Tixati"),   TAG(9),   0,   0,   0,   0,   0,   1,   0 },
 
         /*Floating windows*/
-        { CLASS("St"),  0,   1,   1,   0,   0,   1,   1,   0 },
+        { CLASS("St"),   0,   1,   1,   0,   0,   1,   1,   0 },
+        { CLASS("KeePass2"),   0,   0,   1,   0,   0,   0,   0,   0 },
         { CLASS_INSTANCE("ScratchPad","ScratchPad(1|2)"),  0,   1,   1,   1,   0,   1,   1,   0 },
 	{ CLASS("Wine|Zenity"),   TAG(7),   1,   1,   0,   0,   0,   1,   0 },
 	{ CLASS("Lutris"),   TAG(8),   1,   0,   0,   0,   0,   1,   0 },
