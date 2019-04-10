@@ -213,6 +213,7 @@ static const char *roficmd[] = { "rofi", "-modi", "combi#window#run#drun", "-sho
 static const char *termcmd[]  = { "mlterm", NULL, NULL, NULL, NULL, "1", NULL };
 static const char *termcmd1[] = { "urxvt", NULL, NULL, NULL, NULL, "1", NULL };
 static const char *termcmd2[] = { "st", NULL, NULL, NULL, NULL, "1", NULL };
+static const char *termcmd3[] = { "uxterm", "+sb", NULL, NULL, NULL, "1", NULL };
 static const char *firefox[] = { "firefox", NULL, NULL, NULL, "Firefox", NULL, NULL};
 static const char *filemanager[] = { "pcmanfm", NULL, NULL, NULL, "Pcmanfm", NULL, NULL};
 static const char *ranger[] = { "urxvt", "-e", "ranger", NULL, NULL, NULL, NULL };
@@ -259,6 +260,8 @@ static Key keys[] = {
 	{ KeyPress,	 MODKEY|ShiftMask,                28,              spawn,          {.v = termcmd1} }, // t
 	{ KeyPress,	 MODKEY|ALTMODKEY,                36,              runorraise,     {.v = termcmd2} }, // Return
 	{ KeyPress,	 MODKEY|ALTMODKEY,                28,              spawn,          {.v = termcmd2} }, // t
+	{ KeyPress,	 ALTMODKEY,                       36,              runorraise,     {.v = termcmd3} }, // Return
+	{ KeyPress,	 ALTMODKEY,                       28,              spawn,          {.v = termcmd3} }, // t
         { KeyPress,	 MODKEY,                          49,              togglescratch,  {.v = scratchcmd1} }, // grave `
         { KeyPress,	 MODKEY,                           9,              togglescratch,  {.v = scratchcmd2} }, // Escape
 	{ KeyPress,	 MODKEY,                          56,              togglebar,      {0} }, // b
