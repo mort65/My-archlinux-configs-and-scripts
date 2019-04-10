@@ -1,0 +1,5 @@
+#!/bin/bash
+
+pkill -x --signal=SIGTERM 'compton' || exec /usr/bin/compton -b &
+
+exit 0

@@ -267,6 +267,7 @@ static Key keys[] = {
 	{ KeyPress,	 MODKEY,                          56,              togglebar,      {0} }, // b
 	{ KeyPress,	 MODKEY,                          52,              toggletags,     {0} }, // z
 	{ KeyPress,	 MODKEY|ShiftMask,                56,              spawn,          SHCMD("~/.script/dwm-toggle_dzen") }, // b
+	{ KeyPress,	 MODKEY|ShiftMask,                26,              spawn,          SHCMD("~/.script/dwm-toggle_compton") }, // e
 	{ KeyPress,	 MODKEY|ShiftMask,                44,              rotatestack,    {.i = +1 } }, // j
 	{ KeyPress,	 MODKEY|ShiftMask,                45,              rotatestack,    {.i = -1 } }, // k
 	{ KeyPress,	 MODKEY,                          44,              focusstack,     {.i = +1 } }, // j
