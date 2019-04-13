@@ -123,7 +123,7 @@ struct Client {
 	int basew, baseh, incw, inch, maxw, maxh, minw, minh;
 	int bw, oldbw;
 	unsigned int tags;
-	int isfixed, ispermanent, iscentered, isfloating, isurgent, neverfocus, oldstate, isfullscreen, isterminal, noswallow, issticky, bordercolor, needresize;
+	int isfixed, ispermanent, iscentered, isfloating, isurgent, neverfocus, oldstate, isfullscreen, isterminal, noswallow, issticky, bordercolor, noborder, needresize;
 	pid_t pid;
 	Client *next;
 	Client *snext;
@@ -189,6 +189,7 @@ typedef struct {
 	int bordercolor;
 	int isterminal;
 	int noswallow;
+	int noborder;
 	int monitor;
 } Rule;
 
@@ -429,6 +430,7 @@ applyrules(Client *c)
 	c->isfloating = 0;
 	c->tags = 0;
 	c->bordercolor = 0;
+	c->noborder = 0;
 	XGetClassHint(dpy, c->win, &ch);
 	class = ch.res_class ? ch.res_class : broken;
 	strncpy(c->class, class,  sizeof(c->class));
@@ -449,6 +451,7 @@ applyrules(Client *c)
 			c->isfloating = r->isfloating;
 			c->ispermanent = r->ispermanent;
 			c->bordercolor = r->bordercolor;
+			c->noborder = r->noborder;
 			c->ispermanent = r->ispermanent;
 			c->tags |= r->tags;
 			for (m = mons; m && m->num != r->monitor; m = m->next);
@@ -1521,7 +1524,10 @@ manage(Window w, XWindowAttributes *wa)
 	/* only fix client y-offset, if the client center might cover the bar */
 	c->y = MAX(c->y, ((c->mon->by == c->mon->my) && (c->x + (c->w / 2) >= c->mon->wx)
 		&& (c->x + (c->w / 2) < c->mon->wx + c->mon->ww)) ? bh : c->mon->my);
-	c->bw = borderpx;
+	if (c->noborder)
+		c->bw = 0;
+	else
+		c->bw = borderpx;
 	int isscratchpad = 0;
 	for (int i = 0; i < LENGTH(scratchrules); i++) {
 		if (!c->mon->scratchclient[i]) {
@@ -1922,7 +1928,11 @@ resizeclient(Client *c, int x, int y, int w, int h)
 		/* Remove border and gap if layout is monocle or only one client */
 		if (selmon->lt[selmon->sellt]->arrange == monocle || (n == 1 && !c->issticky && !c->ispermanent && !(c == mark))) {
 			gapoffset = 0;
-			gapincr = -2 * borderpx;
+			if (c->noborder)
+				gapincr = 0;
+
+			else
+				gapincr = -2 * borderpx;
 			wc.border_width = 0;
 		} else {
 			gapoffset = gappx;
