@@ -215,6 +215,8 @@ static const char *termcmd1[] = { "urxvt", NULL, NULL, NULL, NULL, "1", NULL };
 static const char *termcmd2[] = { "st", NULL, NULL, NULL, NULL, "1", NULL };
 static const char *termcmd3[] = { "uxterm", "+sb", NULL, NULL, NULL, "1", NULL };
 static const char *firefox[] = { "firefox", NULL, NULL, NULL, "Firefox", NULL, NULL};
+static const char *brave[] = { "brave", NULL, NULL, NULL, "Brave-browser", NULL, NULL};
+static const char *vivaldi[] = { "vivaldi-stable", NULL, NULL, NULL, "Vivaldi-stable", NULL, NULL};
 static const char *filemanager[] = { "pcmanfm", NULL, NULL, NULL, "Pcmanfm", NULL, NULL};
 static const char *ranger[] = { "urxvt", "-e", "ranger", NULL, NULL, NULL, NULL };
 static const char *nnn[] = { "urxvt", "-e", "nnnstart", NULL, NULL, NULL, NULL };
@@ -340,6 +342,8 @@ static Key keys[] = {
         { KeyPress,	 MODKEY|ControlMask,              26,              runorraise,     {.v = texteditor} }, // e
         { KeyPress,	 MODKEY|ControlMask,              119,             runorraise,     {.v = lxtask} }, // Delete
         { KeyPress,	 MODKEY|ControlMask,              25,              runorraise,     {.v = firefox} }, // w
+        { KeyPress,	 MODKEY|ShiftMask,                25,              runorraise,     {.v = vivaldi} }, // w
+        { KeyPress,	 MODKEY|ALTMODKEY,                25,              runorraise,     {.v = brave} }, // w
         { KeyPress,	 MODKEY,                          119,             spawn,          {.v = htop} }, // Delete
         { KeyPress,	 MODKEY,	                  67,              spawn,          SHCMD("jgmenu_run") }, // F1
         { KeyPress,	 MODKEY,	                  68,              spawn,          SHCMD("~/.script/dwm-app_menu") }, // F2
