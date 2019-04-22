@@ -40,7 +40,7 @@ fi
 TITLE="System Update"
 MSG=""
 CDATE=$(/usr/bin/date "+%a %b %d %H:%M")
-COMMAND="$( (/usr/bin/checkupdates; /usr/bin/yay -Qu 2>/dev/null || exit 1) | /usr/bin/sort -u | /usr/bin/wc -l)"
+COMMAND="$( (/usr/bin/checkupdates; /usr/bin/yay -Qu 2>/dev/null) | /usr/bin/sort -u | /usr/bin/wc -l)"
 
 case $COMMAND in
 	''|*[!0-9]*)
