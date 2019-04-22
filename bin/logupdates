@@ -8,7 +8,7 @@ isConnected() {
 			lo)	;;
 			*)
 				if [ "$(/usr/bin/cat "$interface"/carrier)" = 1 ] ;then
-					if /usr/bin/ping -q -w 30 -c 1 8.8.8.8 > /dev/null || printf "%s\n\n" "GET http://google.com HTTP/1.0" | /usr/bin/nc google.com 80 -w 30 > /dev/null 2>&1 ;then
+					if /usr/bin/ping -q -w 30 -c 1 8.8.8.8 > /dev/null 2>&1 || printf "%s\n\n" "GET http://google.com HTTP/1.0" | /usr/bin/nc google.com 80 -w 30 > /dev/null 2>&1 ;then
 						return 0
 					else
 						return 1
