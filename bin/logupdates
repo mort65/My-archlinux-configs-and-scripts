@@ -1,6 +1,27 @@
 #!/usr/bin/env sh
 #this script log available arch linux updates
 
+isConnected() {
+	OnLine=0
+	for interface in /sys/class/net/*
+	do
+		case "$interface" in
+			lo) ;;
+			*) if [ "$(cat "$interface"/carrier)" = 1 ]; then OnLine=1; fi ;;
+		esac
+	done
+	if [ "$OnLine" -eq 1 ]; then
+		if printf "%s\n\n" "GET http://google.com HTTP/1.0" | nc google.com 80 -w 30 > /dev/null 2>&1 ;then
+			return 0
+		fi
+	fi
+	return 1
+}
+
+if ! isConnected ;then
+	exit 1
+fi
+
 USERNAME=${SUDO_USER:-$(id -u -n)}
 HOMEDIR="/home/$USERNAME"
 
