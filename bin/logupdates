@@ -63,7 +63,7 @@ case $COMMAND in
 		else
 			MTIME="$(date -R -r "$HOMEDIR/.number_of_updates.txt")"
 			echo "$COMMAND" > "$HOMEDIR/.number_of_updates.txt"
-			# Restoring access/modification time
+			#Restoring access/modification time
 			/usr/bin/touch -d "$MTIME" "$HOMEDIR/.number_of_updates.txt"
 		fi
 		;;
