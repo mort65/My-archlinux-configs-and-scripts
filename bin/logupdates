@@ -37,8 +37,11 @@ if [ -r "$HOMEDIR/.dbus/Xdbus" ]; then
   . "$HOMEDIR/.dbus/Xdbus"
 fi
 
-TITLE="System Update"
 MSG=""
+MTIME=""
+NOTIF_INTERVAL_SEC=3600
+NOTIF_MIN_UPDATES=10
+TITLE="System Update"
 CDATE=$(/usr/bin/date "+%a %b %d %H:%M")
 COMMAND="$( (/usr/bin/checkupdates; /usr/bin/yay -Qu 2>/dev/null) | /usr/bin/sort -u | /usr/bin/wc -l)"
 
@@ -47,7 +50,7 @@ case $COMMAND in
 		exit 1
 		;;
 	*)
-		if [ "$COMMAND" -ne "0" ]; then
+		if [ "$COMMAND" -ge "$NOTIF_MIN_UPDATES" ] && [ "$(($(date "+%s") - $(date -r "$HOMEDIR/.number_of_updates.txt" "+%s")))" -ge "$NOTIF_INTERVAL_SEC" ]; then
 			if [ "$COMMAND" -eq "1" ]; then
 				MSG="an update is available"
 			elif [ "$COMMAND" -gt "1" ]; then
@@ -55,17 +58,13 @@ case $COMMAND in
 			else
 				exit 1
 			fi
-
-			if [ "$XDG_CURRENT_DESKTOP" = "KDE" ]; then
-				#/usr/bin/notify-send --expire-time=0 "$TITLE" "\- $CDATE \-\n$MSG" --icon=software-update-available
-				/usr/bin/notify-send --expire-time=30000 "$TITLE" "\- $CDATE \-\n$MSG" --icon=software-update-available
-			else
-				/usr/bin/notify-send --expire-time=30000 "$TITLE" "\- $CDATE \-\n$MSG" --icon=software-update-available
-			fi
+			/usr/bin/notify-send --expire-time=30000 "$TITLE" "\- $CDATE \-\n$MSG" --icon=software-update-available
 			echo "$COMMAND" > "$HOMEDIR/.number_of_updates.txt"
 		else
-			#clear content of the file
-			/usr/bin/truncate -s 0 "$HOMEDIR/.number_of_updates.txt"
+			MTIME="$(date -R -r "$HOMEDIR/.number_of_updates.txt")"
+			echo "$COMMAND" > "$HOMEDIR/.number_of_updates.txt"
+			# Restoring access/modification time
+			/usr/bin/touch -d "$MTIME" "$HOMEDIR/.number_of_updates.txt"
 		fi
 		;;
 esac
