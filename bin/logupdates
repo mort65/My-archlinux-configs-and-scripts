@@ -50,7 +50,7 @@ case $COMMAND in
 		exit 1
 		;;
 	*)
-		if [ "$COMMAND" -ge "$NOTIF_MIN_UPDATES" ] && [ "$(($(date "+%s") - $(date -r "$HOMEDIR/.number_of_updates.txt" "+%s")))" -ge "$NOTIF_INTERVAL_SEC" ]; then
+		if [ "$COMMAND" -ge "$NOTIF_MIN_UPDATES" ] && [ "$(($(/usr/bin/date "+%s") - $(/usr/bin/date -r "$HOMEDIR/.number_of_updates.txt" "+%s")))" -ge "$NOTIF_INTERVAL_SEC" ]; then
 			if [ "$COMMAND" -eq "1" ]; then
 				MSG="an update is available"
 			elif [ "$COMMAND" -gt "1" ]; then
@@ -61,7 +61,7 @@ case $COMMAND in
 			/usr/bin/notify-send --expire-time=30000 "$TITLE" "\- $CDATE \-\n$MSG" --icon=software-update-available
 			echo "$COMMAND" > "$HOMEDIR/.number_of_updates.txt"
 		else
-			MTIME="$(date -R -r "$HOMEDIR/.number_of_updates.txt")"
+			MTIME="$(/usr/bin/date -R -r "$HOMEDIR/.number_of_updates.txt")"
 			echo "$COMMAND" > "$HOMEDIR/.number_of_updates.txt"
 			#Restoring access/modification time
 			/usr/bin/touch -d "$MTIME" "$HOMEDIR/.number_of_updates.txt"
