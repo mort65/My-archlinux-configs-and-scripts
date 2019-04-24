@@ -50,7 +50,9 @@ case $COMMAND in
 		exit 1
 		;;
 	*)
-		if [ "$COMMAND" -ge "$NOTIF_MIN_UPDATES" ] && [ "$(($(/usr/bin/date "+%s") - $(/usr/bin/date -r "$HOMEDIR/.number_of_updates.txt" "+%s")))" -ge "$(( NOTIF_INTERVAL_MINS * 60 ))" ]; then
+		if [ "$COMMAND" -ge "$NOTIF_MIN_UPDATES" ] && \
+			[ "$(($(/usr/bin/date "+%s") - $(/usr/bin/date -r "$HOMEDIR/.number_of_updates.txt" "+%s")))" -ge \
+			"$(( NOTIF_INTERVAL_MINS * 60 ))" ]; then
 			if [ "$COMMAND" -eq "1" ]; then
 				MSG="an update is available"
 			elif [ "$COMMAND" -gt "1" ]; then
