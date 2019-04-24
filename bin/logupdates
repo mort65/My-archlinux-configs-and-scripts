@@ -39,7 +39,7 @@ fi
 
 MSG=""
 MTIME=""
-NOTIF_INTERVAL_SEC=3000
+NOTIF_INTERVAL_MINS=55
 NOTIF_MIN_UPDATES=10
 TITLE="System Update"
 CDATE=$(/usr/bin/date "+%a %b %d %H:%M")
@@ -50,7 +50,7 @@ case $COMMAND in
 		exit 1
 		;;
 	*)
-		if [ "$COMMAND" -ge "$NOTIF_MIN_UPDATES" ] && [ "$(($(/usr/bin/date "+%s") - $(/usr/bin/date -r "$HOMEDIR/.number_of_updates.txt" "+%s")))" -ge "$NOTIF_INTERVAL_SEC" ]; then
+		if [ "$COMMAND" -ge "$NOTIF_MIN_UPDATES" ] && [ "$(($(/usr/bin/date "+%s") - $(/usr/bin/date -r "$HOMEDIR/.number_of_updates.txt" "+%s")))" -ge "$(( NOTIF_INTERVAL_MINS * 60 ))" ]; then
 			if [ "$COMMAND" -eq "1" ]; then
 				MSG="an update is available"
 			elif [ "$COMMAND" -gt "1" ]; then
