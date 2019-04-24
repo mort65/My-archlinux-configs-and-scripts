@@ -39,7 +39,7 @@ fi
 
 MSG=""
 MTIME=""
-NOTIF_INTERVAL_MINS=1439
+NOTIF_INTERVAL_MINS=719
 NOTIF_MIN_UPDATES=10
 TITLE="System Update"
 CDATE=$(/usr/bin/date "+%a %b %d %H:%M")
