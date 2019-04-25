@@ -1,5 +1,16 @@
 #!/usr/bin/env sh
 #this script log available arch linux updates
+USERNAME=${SUDO_USER:-$(id -u -n)}
+HOMEDIR="/home/${USERNAME}"
+LOCKNAME="$(basename "$0").lock"
+LOCKPATH="${HOMEDIR}/.${LOCKNAME}"
+
+prepareLock() {
+	[ -f "$LOCKPATH" ] && return 1
+	touch "$LOCKPATH" || return 1
+	trap 'command rm -f "$LOCKPATH"' EXIT
+	return 0
+}
 
 isConnected() {
 	for interface in /sys/class/net/*
@@ -23,12 +34,8 @@ isConnected() {
 	return 1
 }
 
-if ! isConnected ;then
-	exit 1
-fi
-
-USERNAME=${SUDO_USER:-$(id -u -n)}
-HOMEDIR="/home/$USERNAME"
+prepareLock || exit 1
+isConnected || exit 1
 
 #enabling notify-send for cron
 export DISPLAY=:0.0
