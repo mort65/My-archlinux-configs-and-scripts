@@ -80,6 +80,7 @@ static const Rule rules[] = {
         /*Floating windows*/
         { CLASS("St"),   0,   1,   1,   0,   0,   1,   1,   0,   0 },
         { CLASS("KeePass2"),   0,   0,   1,   0,   0,   0,   0,   0,   0 },
+        { CLASS("Zenity|Qt4-ssh-askpass|Xdialog"),   0,   1,   1,   0,   0,   0,   0,   0,   0 },
         { CLASS_INSTANCE("ScratchPad","ScratchPad(1|2)"),  0,   1,   1,   1,   0,   1,   1,   0,   0 },
 	{ CLASS("Wine"),   TAG(7),   1,   1,   0,   0,   0,   1,   1,   0 },
 	{ CLASS("Lutris"),   TAG(8),   1,   0,   0,   0,   0,   1,   0,   0 },
@@ -217,15 +218,15 @@ static const char *termcmd3[] = { "uxterm", "+sb", NULL, NULL, NULL, "1", NULL }
 static const char *firefox[] = { "firefox", NULL, NULL, NULL, "Firefox", NULL, NULL};
 static const char *brave[] = { "brave", NULL, NULL, NULL, "Brave-browser", NULL, NULL};
 static const char *vivaldi[] = { "vivaldi-stable", NULL, NULL, NULL, "Vivaldi-stable", NULL, NULL};
-static const char *filemanager[] = { "pcmanfm", NULL, NULL, NULL, "Pcmanfm", NULL, NULL};
+static const char *filemanager[] = { "thunar", NULL, NULL, NULL, "Thunar", NULL, NULL};
 static const char *ranger[] = { "urxvt", "-e", "ranger", NULL, NULL, NULL, NULL };
 static const char *nnn[] = { "urxvt", "-e", "nnnstart", NULL, NULL, NULL, NULL };
 static const char *vifm[] = { "urxvt", "-e", "vifmrun", NULL, NULL, NULL, NULL };
 static const char *musicplayer[] = { "pragha", NULL, NULL, NULL, "Pragha", NULL, NULL};
 static const char *texteditor[] = { "geany", NULL, NULL, NULL, "Geany", NULL, NULL };
-static const char *volumeup[] = { "amixer", "set", "Master", "5%+", NULL };
-static const char *volumedown[] = { "amixer", "set", "Master", "5%-", NULL };
-static const char *volumemute[] = { "amixer", "set", "Master", "toggle", NULL };
+static const char *volumeup[] = { "pactl", "set-sink-volume", "0", "+10%", NULL };
+static const char *volumedown[] = { "pactl", "set-sink-volume", "0", "-10%", NULL };
+static const char *volumemute[] = { "pactl", "set-sink-mute", "0", "toggle", NULL };
 static const char *audionext[] = { "playerctl", "next", NULL };
 static const char *audioprev[] = { "playerctl", "previous", NULL };
 static const char *audiostop[] = { "playerctl", "stop", NULL };
@@ -330,6 +331,8 @@ static Key keys[] = {
 	/*{ KeyPress,	 MODKEY|ShiftMask,                24,              quit,           {0} },*/ // q
 	{ KeyPress,	 MODKEY|ShiftMask,                24,              spawn,          SHCMD("~/.script/dwm-logout_menu") }, // q
 	{ KeyPress,	 MODKEY|ShiftMask,                127,             spawn,          SHCMD("~/.script/dwm-rofi_runit_exit_menu") }, // Pause
+	{ KeyPress,	 MODKEY|ControlMask,              71,              spawn,          SHCMD("~/.script/dmenumount_android") }, // F5
+	{ KeyPress,	 MODKEY|ControlMask,              75,              spawn,          SHCMD("~/.script/dmenuumount_android") }, // F9
 	{ KeyPress,	 MODKEY,                          53,              spawn,          SHCMD("xkill") }, // x
 	{ KeyPress,	 MODKEY|ControlMask|ShiftMask,    24,              quit,           {1} }, // q
 	{ KeyPress,	 MODKEY|ShiftMask,                78,              spawn,          {.v = lock} }, // scroll_lock
