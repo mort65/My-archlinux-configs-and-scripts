@@ -68,7 +68,7 @@ static const Rule rules[] = {
 	{ CLASS("Gimp"),  0,   1,   0,   0,  0,  0,  1,  0,   0 },
         { CLASS("URxvt|Urxvt-tabbed"),  0,   0,   0,   1,   0,   1,   1,   0,   0 },
         { CLASS("UXTerm|XTerm|rxvt|Lxterminal"),  0,   0,   0,   0,   0,   1,   1,   0,   0 },
-	{ CLASS("vlc|smplayer|mpv|smplayer"),   TAG(1)|TAG(3)|TAG(4),   0,   0,   0,   0,   0,  1,  0,   0 },
+	{ CLASS("MPlayer|smplayer|mpv|smplayer"),   TAG(1)|TAG(3)|TAG(4),   0,   0,   0,   0,   0,  1,  0,   0 },
 	{ CLASS("Firefox|Chromium|Google-chrome|Vivaldi-stable|Brave-browser"),   TAG(2),  0,   0,   0,   0,  0,  1,  0,   0 },
         { CLASS("Thunar|Pcmanfm|pcmanfm-qt"),   TAG(3),   0,   0,   0,   0,   0,   1,   0,   0 },
 	{ CLASS("Pragha"),  TAG(5),   0,   0,   0,   0,   0,   1,   0,   0 },
