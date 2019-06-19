@@ -48,7 +48,6 @@ TempFile = /tmp/tile_winlist
 def initialize():
     desk_output = commands.getoutput("wmctrl -d").split("\n")
     desk_list = [line.split()[0] for line in desk_output]
-    offset = map(lambda x: int(x), desk_output[0].split()[7].split(','))
     current =  filter(lambda x: x.split()[1] == "*" , desk_output)[0].split()
 
     desktop = current[0]
@@ -63,7 +62,7 @@ def initialize():
     for desk in desk_list:
         win_list[desk] = map(lambda y: hex(int(y.split()[0],16)) , filter(lambda x: x.split()[1] == desk, win_output ))
 
-    return (desktop,orig_x,orig_y,width,height,win_list,offset[0],offset[1])
+    return (desktop,orig_x,orig_y,width,height,win_list)
 
 def get_active_window():
     return str(hex(int(commands.getoutput("xdotool getactivewindow 2>/dev/null").split()[0])))
@@ -98,11 +97,13 @@ WinTitle = Config.getint("default","WinTitle")
 WinBorder = Config.getint("default","WinBorder")
 MwFactor = Config.getfloat("default","MwFactor")
 TempFile = Config.get("default","TempFile")
-(Desktop,OrigXstr,OrigYstr,MaxWidthStr,MaxHeightStr,WinList,OffsetX,OffsetY) = initialize()
+(Desktop,OrigXstr,OrigYstr,MaxWidthStr,MaxHeightStr,WinList) = initialize()
 MaxWidth = int(MaxWidthStr) - LeftPadding - RightPadding
 MaxHeight = int(MaxHeightStr) - TopPadding - BottomPadding
-OrigX = int(OrigXstr) + LeftPadding
-OrigY = int(OrigYstr) + TopPadding
+OffsetX = int(OrigXstr)
+OffsetY = int(OrigYstr)
+OrigX = OffsetX + LeftPadding
+OrigY = OffsetY + TopPadding
 OldWinList = retrieve(TempFile)
 
 
