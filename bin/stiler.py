@@ -22,6 +22,21 @@ import os
 import commands
 import pickle
 import ConfigParser
+import socket
+
+def get_lock(process_name):
+    # Without holding a reference to our socket somewhere it gets garbage
+    # collected when the function exits
+    get_lock._lock_socket = socket.socket(socket.AF_UNIX, socket.SOCK_DGRAM)
+
+    try:
+        get_lock._lock_socket.bind('\0' + process_name)
+        print 'I got the lock'
+    except socket.error:
+        print 'lock exists'
+        sys.exit()
+
+get_lock('stiler.py')
 
 def initconfig():
     rcfile=os.getenv('HOME')+"/.stilerrc"
@@ -183,6 +198,36 @@ def get_center_tile(wincount):
         layout.append((x,y,width,height))
 
     return layout
+    
+def get_left_tile(wincount):
+    layout = []
+    width=int(MaxWidth*MwFactor)
+    height=MaxHeight-WinTitle-WinBorder
+    x=OrigX
+    y=OrigY
+    layout.append((x,y,width,height))
+    
+    width=int(MaxWidth*(1-MwFactor))-2*WinBorder
+    x=int(MaxWidth*MwFactor)+OrigX+2*WinBorder
+    for n in range(0,wincount-1):
+        layout.append((x,y,width,height))
+    
+    return layout
+    
+def get_right_tile(wincount):
+    layout = []
+    width=int(MaxWidth*(1-MwFactor))-2*WinBorder
+    height=MaxHeight-WinTitle-WinBorder
+    x=int(MaxWidth*MwFactor)+OrigX+2*WinBorder
+    y=OrigY
+    layout.append((x,y,width,height))
+    
+    width=int(MaxWidth*MwFactor)
+    x=OrigX  
+    for n in range(0,wincount-1):
+        layout.append((x,y,width,height))
+    
+    return layout
 
 
 def get_max_all(wincount):
@@ -219,21 +264,14 @@ def raise_window(windowid):
 
 
 def left():
-    Width=int(MaxWidth*MwFactor)
-    Height=MaxHeight-WinTitle-WinBorder
-    PosX=OrigX
-    PosY=OrigY
-    move_active(PosX,PosY,Width,Height)
-    raise_window(":ACTIVE:")
+    winlist = create_win_list()
+    arrange(get_left_tile(len(winlist)),winlist)
 
 
 def right():
-    Width=int(MaxWidth*(1-MwFactor))-2*WinBorder
-    Height=MaxHeight-WinTitle-WinBorder
-    PosX=int(MaxWidth*MwFactor)+OrigX+2*WinBorder
-    PosY=OrigY
-    move_active(PosX,PosY,Width,Height)
-    raise_window(":ACTIVE:")
+    winlist = create_win_list()
+    arrange(get_right_tile(len(winlist)),winlist)
+
 
 
 def center():
@@ -288,6 +326,10 @@ def arrange_mode(wins):
         arrange(get_max_all(len(wins)),wins)
     elif Mode == "center":
         arrange(get_center_tile(len(wins)),wins)
+    elif Mode == "left":
+        arrange(get_left_tile(len(wins)),wins)
+    elif Mode == "right":
+        arrange(get_right_tile(len(wins)),wins)
     else:
         arrange(get_simple_tile(len(wins)),wins)
 
@@ -307,17 +349,11 @@ def swap():
 
 def vertical():
     winlist = create_win_list()
-    active = get_active_window()
-    winlist.remove(active)
-    winlist.insert(0,active)
     arrange(get_vertical_tile(len(winlist)),winlist)
 
 
 def horiz():
     winlist = create_win_list()
-    active = get_active_window()
-    winlist.remove(active)
-    winlist.insert(0,active)
     arrange(get_horiz_tile(len(winlist)),winlist)
 
 
@@ -370,6 +406,10 @@ def set_mode(mode):
         max_all()
     elif mode == "center":
         center()
+    elif mode == "left":
+        left()
+    elif mode == "right":
+        right()
     else:
         return
     
@@ -378,12 +418,8 @@ def set_mode(mode):
        
 if len(sys.argv) < 2:
     set_mode(Mode)
-elif sys.argv[1] in ("simple", "horizontal", "vertical", "max_all", "center"):
+elif sys.argv[1] in ("simple", "horizontal", "vertical", "max_all", "center", "left", "right"):
     set_mode(sys.argv[1])
-elif sys.argv[1] == "left":
-    left()
-elif sys.argv[1] == "right":
-    right()
 elif sys.argv[1] == "swap":
     swap()
 elif sys.argv[1] == "cycle":
@@ -392,13 +428,22 @@ elif sys.argv[1] == "maximize":
     maximize()
 elif sys.argv[1] == "inc_mwfactor":
     MwFactor=setmwfactor(MwFactor+0.05)
-    set_mode("simple")
+    if Mode in ("simple", "left", "right"):
+        set_mode(Mode)
+    else:
+        set_mode("simple")
 elif sys.argv[1] == "dec_mwfactor":
     MwFactor=setmwfactor(MwFactor-0.05)
-    set_mode("simple")
+    if Mode in ("simple", "left", "right"):
+        set_mode(Mode)
+    else:
+        set_mode("simple")
 elif sys.argv[1] == "reset_mwfactor":
     MwFactor=setmwfactor(OrigMwFactor)
-    set_mode("simple")
+    if Mode in ("simple", "left", "right"):
+        set_mode(Mode)
+    else:
+        set_mode("simple")
 elif sys.argv[1] == "dec_cfactor":
     CFactor=setcfactor(CFactor-0.05)
     set_mode("center")
@@ -408,5 +453,6 @@ elif sys.argv[1] == "inc_cfactor":
 elif sys.argv[1] == "reset_cfactor":
     CFactor=setcfactor(OrigCFactor)
     set_mode("center")
+
 
 
