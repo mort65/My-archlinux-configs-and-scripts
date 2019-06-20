@@ -37,6 +37,7 @@ WinTitle = 21
 WinBorder = 1
 MwFactor = 0.65
 TempFile = /tmp/tile_winlist
+TempFile2 = /tmp/temp_varlist
 """)
         cfg.close()
 
@@ -86,6 +87,12 @@ def retrieve(file):
         dict = {}
         return (dict)
 
+    
+def get_temp_var(var_list,index,def_value):
+    if var_list == {}:
+        return def_value
+    return var_list[index]
+
 
 # Get all global variables
 Config = initconfig()
@@ -95,14 +102,17 @@ LeftPadding = Config.getint("default","LeftPadding")
 RightPadding = Config.getint("default","RightPadding")
 WinTitle = Config.getint("default","WinTitle")
 WinBorder = Config.getint("default","WinBorder")
-MwFactor = Config.getfloat("default","MwFactor")
+OrigMwFactor = Config.getfloat("default","MwFactor")
 TempFile = Config.get("default","TempFile")
+TempFile2 = Config.get("default","TempFile2")
 (Desktop,OrigXstr,OrigYstr,MaxWidthStr,MaxHeightStr,WinList) = initialize()
 MaxWidth = int(MaxWidthStr) - LeftPadding - RightPadding
 MaxHeight = int(MaxHeightStr) - TopPadding - BottomPadding
 OrigX = int(OrigXstr) + LeftPadding
 OrigY = int(OrigYstr) + TopPadding
 OldWinList = retrieve(TempFile)
+OldVarList = retrieve(TempFile2)
+MwFactor=get_temp_var(OldVarList,0,OrigMwFactor)
 
 
 def get_simple_tile(wincount):
@@ -186,7 +196,7 @@ def left():
     #Width=MaxWidth/2-1
     #PosX=LeftPadding
     #PosY=TopPadding
-    Width=int(MaxWidth*MwFactor)-2*WinBorder
+    Width=int(MaxWidth*MwFactor)
     Height=MaxHeight-WinTitle-WinBorder
     PosX=OrigX
     PosY=OrigY
@@ -215,7 +225,6 @@ def compare_win_list(newlist,oldlist):
         if oldlist.count(window) == 0:
             templist.append(window)
     return templist
-
 
 def create_win_list():
     Windows = WinList[Desktop]
@@ -291,7 +300,13 @@ def max_all():
     winlist.remove(active)
     winlist.insert(0,active)
     arrange(get_max_all(len(winlist)),winlist)
-
+ 
+   
+def setmwfactor(mf):
+    if mf < 0.05 or mf > 0.95:
+        return MwFactor
+    store([mf],TempFile2)
+    return mf
 
 
 if sys.argv[1] == "left":
@@ -312,5 +327,14 @@ elif sys.argv[1] == "maximize":
     maximize()
 elif sys.argv[1] == "max_all":
     max_all()
+elif sys.argv[1] == "inc_mwfactor":
+    MwFactor=setmwfactor(MwFactor+0.05)
+    simple()
+elif sys.argv[1] == "dec_mwfactor":
+    MwFactor=setmwfactor(MwFactor-0.05)
+    simple()
+elif sys.argv[1] == "reset_mwfactor":
+    MwFactor=setmwfactor(OrigMwFactor)
+    simple()
 
 
