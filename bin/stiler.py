@@ -46,7 +46,13 @@ TempFile2 = /tmp/temp_varlist
     config.read(rcfile)
     return config
 
-
+def getvalue(value,minvalue,maxvalue):
+    if value < minvalue:
+        return minvalue
+    elif value > maxvalue:
+        return maxvalue
+    return value
+    
 def initialize():
     desk_output = commands.getoutput("wmctrl -d").split("\n")
     desk_list = [line.split()[0] for line in desk_output]
@@ -114,8 +120,8 @@ OrigY = int(OrigYstr) + TopPadding
 OldWinList = retrieve(TempFile)
 OldVarList = retrieve(TempFile2)
 Mode=get_temp_var(OldVarList,0,"Simple")
-MwFactor=get_temp_var(OldVarList,1,OrigMwFactor)
-CFactor=get_temp_var(OldVarList,2,OrigCFactor)
+MwFactor=getvalue(get_temp_var(OldVarList,1,OrigMwFactor),0.25,0.90)
+CFactor=getvalue(get_temp_var(OldVarList,2,OrigCFactor),0.3,1.0)
 
 
 def store_vars(*args):
@@ -164,6 +170,17 @@ def get_horiz_tile(wincount):
         layout.append((x,y,width,height))
 
     return layout
+    
+def get_center_tile(wincount):
+    layout = []
+    width=int(MaxWidth*CFactor)
+    height=int(MaxHeight*CFactor)-WinTitle
+    x=int(MaxWidth/2)+OrigX-int(width/2)
+    y=int(MaxHeight/2)+OrigY-int(height/2)-WinTitle
+    for n in range(0,wincount):
+        layout.append((x,y,width,height))
+
+    return layout
 
 
 def get_max_all(wincount):
@@ -194,7 +211,7 @@ def raise_window(windowid):
     if windowid == ":ACTIVE:":
         command = "wmctrl -a :ACTIVE: "
     else:
-        command - "wmctrl -i -a " + windowid
+        command = "wmctrl -i -a " + windowid
 
     os.system(command)
 
@@ -218,12 +235,11 @@ def right():
 
 
 def center():
-    Width=int(MaxWidth*CFactor)
-    Height=int(MaxHeight*CFactor)-WinTitle
-    PosX=int(MaxWidth/2)+OrigX-int(Width/2)
-    PosY=int(MaxHeight/2)+OrigY-int(Height/2)-WinTitle
-    move_active(PosX,PosY,Width,Height)
-    raise_window(":ACTIVE:")
+    winlist = create_win_list()
+    active = get_active_window()
+    winlist.remove(active)
+    winlist.insert(0,active)
+    arrange(get_center_tile(len(winlist)),winlist)
     
 
 def compare_win_list(newlist,oldlist):
@@ -268,6 +284,8 @@ def arrange_mode(wins):
         arrange(get_vertical_tile(len(wins)),wins)
     elif Mode == "max_all":
         arrange(get_max_all(len(wins)),wins)
+    elif Mode == "center":
+        arrange(get_center_tile(len(wins)),wins)
     else:
         arrange(get_simple_tile(len(wins)),wins)
 
@@ -306,6 +324,7 @@ def cycle():
     winlist.insert(0,winlist[len(winlist)-1])
     winlist = winlist[:-1]
     arrange_mode(winlist)
+    raise_window(winlist[0])
 
 
 def maximize():
@@ -325,16 +344,14 @@ def max_all():
 
   
 def setmwfactor(mf):
-    if mf < 0.05 or mf > 0.95:
-        return MwFactor
+    mf = getvalue(mf,0.25,0.90)
     store_vars(Mode,mf,CFactor)
     
     return mf
 
 
 def setcfactor(cf):
-    if cf < 0.1 or cf > 1:
-        cf = CFactor
+    cf = getvalue(cf,0.3,1.0)
     store_vars(Mode,MwFactor,cf)
     
     return cf
@@ -349,6 +366,8 @@ def set_mode(mode):
         vertical()
     elif mode == "max_all":
         max_all()
+    elif mode == "center":
+        center()
     else:
         return
     
@@ -357,14 +376,12 @@ def set_mode(mode):
        
 if len(sys.argv) < 2:
     set_mode(Mode)
-elif sys.argv[1] in ("simple", "horizontal", "vertical", "max_all"):
+elif sys.argv[1] in ("simple", "horizontal", "vertical", "max_all", "center"):
     set_mode(sys.argv[1])
 elif sys.argv[1] == "left":
     left()
 elif sys.argv[1] == "right":
     right()
-elif sys.argv[1] == "center":
-    center()
 elif sys.argv[1] == "swap":
     swap()
 elif sys.argv[1] == "cycle":
@@ -382,12 +399,12 @@ elif sys.argv[1] == "reset_mwfactor":
     set_mode("simple")
 elif sys.argv[1] == "dec_cfactor":
     CFactor=setcfactor(CFactor-0.05)
-    center()
+    set_mode("center")
 elif sys.argv[1] == "inc_cfactor":
     CFactor=setcfactor(CFactor+0.05)
-    center()
+    set_mode("center")
 elif sys.argv[1] == "reset_cfactor":
     CFactor=setcfactor(OrigCFactor)
-    center()
+    set_mode("center")
 
 
