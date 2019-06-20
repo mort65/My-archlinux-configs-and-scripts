@@ -133,7 +133,7 @@ def get_simple_tile(wincount):
 
     x=OrigX + int((MaxWidth*MwFactor)+(2*WinBorder))
     width=int((MaxWidth*(1-MwFactor))-2*WinBorder)
-    height=int(MaxHeight/rows - WinTitle-WinBorder)
+    height=int(MaxHeight/rows-WinTitle-WinBorder)
 
     for n in range(0,rows):
         y= OrigY+int((MaxHeight/rows)*(n))
@@ -383,5 +383,8 @@ elif sys.argv[1] == "dec_cfactor":
 elif sys.argv[1] == "inc_cfactor":
     CFactor=setcfactor(CFactor+0.05)
     center()
+elif sys.argv[1] == "reset_cfactor":
+	CFactor=setcfactor(OrigCFactor)
+	center()
 
 
