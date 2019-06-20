@@ -36,6 +36,7 @@ RightPadding = 0
 WinTitle = 21
 WinBorder = 1
 MwFactor = 0.65
+CFactor = 0.75
 TempFile = /tmp/tile_winlist
 TempFile2 = /tmp/temp_varlist
 """)
@@ -102,6 +103,7 @@ RightPadding = Config.getint("default","RightPadding")
 WinTitle = Config.getint("default","WinTitle")
 WinBorder = Config.getint("default","WinBorder")
 OrigMwFactor = Config.getfloat("default","MwFactor")
+OrigCFactor = Config.getfloat("default","CFactor")
 TempFile = Config.get("default","TempFile")
 TempFile2 = Config.get("default","TempFile2")
 (Desktop,OrigXstr,OrigYstr,MaxWidthStr,MaxHeightStr,WinList) = initialize()
@@ -113,6 +115,7 @@ OldWinList = retrieve(TempFile)
 OldVarList = retrieve(TempFile2)
 Mode=get_temp_var(OldVarList,0,"Simple")
 MwFactor=get_temp_var(OldVarList,1,OrigMwFactor)
+CFactor=get_temp_var(OldVarList,2,OrigCFactor)
 
 
 def store_vars(*args):
@@ -213,6 +216,15 @@ def right():
     move_active(PosX,PosY,Width,Height)
     raise_window(":ACTIVE:")
 
+
+def center():
+    Width=int(MaxWidth*CFactor)
+    Height=int(MaxHeight*CFactor)-WinTitle
+    PosX=int(MaxWidth/2)+OrigX-int(Width/2)
+    PosY=int(MaxHeight/2)+OrigY-int(Height/2)-WinTitle
+    move_active(PosX,PosY,Width,Height)
+    raise_window(":ACTIVE:")
+    
 
 def compare_win_list(newlist,oldlist):
     templist = []
@@ -315,8 +327,15 @@ def max_all():
 def setmwfactor(mf):
     if mf < 0.05 or mf > 0.95:
         return MwFactor
-    store_vars(Mode,mf)
+    store_vars(Mode,mf,CFactor)
     return mf
+
+
+def setcfactor(cf):
+    if cf < 0.1 or cf > 1:
+        cf = CFactor
+    store_vars(Mode,MwFactor,cf)
+    return cf
     
 
 def set_mode(mode):
@@ -330,7 +349,7 @@ def set_mode(mode):
         max_all()
     else:
         return
-    store_vars(mode,MwFactor)
+    store_vars(mode,MwFactor,CFactor)
 
        
 if len(sys.argv) < 2:
@@ -341,6 +360,8 @@ elif sys.argv[1] == "left":
     left()
 elif sys.argv[1] == "right":
     right()
+elif sys.argv[1] == "center":
+    center()
 elif sys.argv[1] == "swap":
     swap()
 elif sys.argv[1] == "cycle":
@@ -356,5 +377,11 @@ elif sys.argv[1] == "dec_mwfactor":
 elif sys.argv[1] == "reset_mwfactor":
     MwFactor=setmwfactor(OrigMwFactor)
     set_mode("simple")
+elif sys.argv[1] == "dec_cfactor":
+    CFactor=setcfactor(CFactor-0.05)
+    center()
+elif sys.argv[1] == "inc_cfactor":
+    CFactor=setcfactor(CFactor+0.05)
+    center()
 
 
