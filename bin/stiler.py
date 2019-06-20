@@ -120,8 +120,10 @@ OrigY = int(OrigYstr) + TopPadding
 OldWinList = retrieve(TempFile)
 OldVarList = retrieve(TempFile2)
 Mode=get_temp_var(OldVarList,0,"Simple")
-MwFactor=getvalue(get_temp_var(OldVarList,1,OrigMwFactor),0.25,0.90)
-CFactor=getvalue(get_temp_var(OldVarList,2,OrigCFactor),0.3,1.0)
+MinMwFactor, MaxMwFactor = 0.25, 0.90
+MinCFactor, MaxCFactor = 0.3, 1.0
+MwFactor=getvalue(get_temp_var(OldVarList,1,OrigMwFactor),MinMwFactor,MaxMwFactor)
+CFactor=getvalue(get_temp_var(OldVarList,2,OrigCFactor),MinCFactor,MaxCFactor)
 
 
 def store_vars(*args):
@@ -344,14 +346,14 @@ def max_all():
 
   
 def setmwfactor(mf):
-    mf = getvalue(mf,0.25,0.90)
+    mf = getvalue(mf,MinMwFactor,MaxMwFactor)
     store_vars(Mode,mf,CFactor)
     
     return mf
 
 
 def setcfactor(cf):
-    cf = getvalue(cf,0.3,1.0)
+    cf = getvalue(cf,MinCFactor,MaxCFactor)
     store_vars(Mode,MwFactor,cf)
     
     return cf
