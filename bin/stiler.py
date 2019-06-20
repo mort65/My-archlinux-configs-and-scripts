@@ -31,9 +31,9 @@ def get_lock(process_name):
 
     try:
         get_lock._lock_socket.bind('\0' + process_name)
-        print 'I got the lock'
+        #print 'I got the lock'
     except socket.error:
-        print 'lock exists'
+        #print 'lock exists'
         sys.exit()
 
 get_lock('stiler.py')
@@ -357,10 +357,10 @@ def horiz():
     arrange(get_horiz_tile(len(winlist)),winlist)
 
 
-def cycle():
+def cycle(n):
     winlist = create_win_list()
-    winlist.insert(0,winlist[len(winlist)-1])
-    winlist = winlist[:-1]
+    #n = n % len(winlist)
+    winlist = winlist[n:] + winlist[:n]
     arrange_mode(winlist)
     raise_window(winlist[0])
 
@@ -423,7 +423,9 @@ elif sys.argv[1] in ("simple", "horizontal", "vertical", "max_all", "center", "l
 elif sys.argv[1] == "swap":
     swap()
 elif sys.argv[1] == "cycle":
-    cycle()
+    cycle(1)
+elif sys.argv[1] == "reverse_cycle":
+    cycle(-1)
 elif sys.argv[1] == "maximize":
     maximize()
 elif sys.argv[1] == "inc_mwfactor":
