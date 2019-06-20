@@ -328,6 +328,7 @@ def setmwfactor(mf):
     if mf < 0.05 or mf > 0.95:
         return MwFactor
     store_vars(Mode,mf,CFactor)
+    
     return mf
 
 
@@ -335,6 +336,7 @@ def setcfactor(cf):
     if cf < 0.1 or cf > 1:
         cf = CFactor
     store_vars(Mode,MwFactor,cf)
+    
     return cf
     
 
@@ -349,6 +351,7 @@ def set_mode(mode):
         max_all()
     else:
         return
+    
     store_vars(mode,MwFactor,CFactor)
 
        
@@ -384,7 +387,7 @@ elif sys.argv[1] == "inc_cfactor":
     CFactor=setcfactor(CFactor+0.05)
     center()
 elif sys.argv[1] == "reset_cfactor":
-	CFactor=setcfactor(OrigCFactor)
-	center()
+    CFactor=setcfactor(OrigCFactor)
+    center()
 
 
