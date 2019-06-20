@@ -100,10 +100,8 @@ TempFile = Config.get("default","TempFile")
 (Desktop,OrigXstr,OrigYstr,MaxWidthStr,MaxHeightStr,WinList) = initialize()
 MaxWidth = int(MaxWidthStr) - LeftPadding - RightPadding
 MaxHeight = int(MaxHeightStr) - TopPadding - BottomPadding
-OffsetX = int(OrigXstr)
-OffsetY = int(OrigYstr)
-OrigX = OffsetX + LeftPadding
-OrigY = OffsetY + TopPadding
+OrigX = int(OrigXstr) + LeftPadding
+OrigY = int(OrigYstr) + TopPadding
 OldWinList = retrieve(TempFile)
 
 
@@ -185,23 +183,25 @@ def raise_window(windowid):
 
 
 def left():
-    Width=MaxWidth/2-1
-    Height=MaxHeight - WinTitle -WinBorder
+    #Width=MaxWidth/2-1
     #PosX=LeftPadding
     #PosY=TopPadding
-    PosX=LeftPadding + OffsetX
-    PosY=TopPadding + OffsetY
+    Width=int(MaxWidth*MwFactor)-2*WinBorder
+    Height=MaxHeight-WinTitle-WinBorder
+    PosX=OrigX
+    PosY=OrigY
     move_active(PosX,PosY,Width,Height)
     raise_window(":ACTIVE:")
 
 
 def right():
-    Width=MaxWidth/2-1
-    Height=MaxHeight - WinTitle - WinBorder
+    #Width=MaxWidth/2-1
     #PosX=MaxWidth/2
     #PosY=TopPadding
-    PosX=MaxWidth/2 + OffsetX
-    PosY=TopPadding + OffsetY
+    Width=int(MaxWidth*(1-MwFactor))-2*WinBorder
+    Height=MaxHeight-WinTitle-WinBorder
+    PosX=int(MaxWidth*MwFactor)+OrigX+2*WinBorder
+    PosY=OrigY
     move_active(PosX,PosY,Width,Height)
     raise_window(":ACTIVE:")
 
@@ -277,9 +277,11 @@ def cycle():
 
 def maximize():
     Width=MaxWidth
-    Height=MaxHeight - WinTitle -WinBorder
-    PosX=LeftPadding + OffsetX
-    PosY=TopPadding + OffsetY
+    Height=MaxHeight-WinTitle-WinBorder
+    #PosX=LeftPadding
+    #PosY=TopPadding
+    PosX=OrigX
+    PosY=OrigY
     move_active(PosX,PosY,Width,Height)
     raise_window(":ACTIVE:")
 
