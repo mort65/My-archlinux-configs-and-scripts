@@ -360,7 +360,7 @@ def horiz():
 def cycle(n):
     winlist = create_win_list()
     #n = n % len(winlist)
-    winlist = winlist[n:] + winlist[:n]
+    winlist = winlist[-n:] + winlist[:-n]
     arrange_mode(winlist)
     raise_window(winlist[0])
 
