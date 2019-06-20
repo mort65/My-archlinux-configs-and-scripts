@@ -93,7 +93,6 @@ def get_temp_var(var_list,index,def_value):
         return def_value
     return var_list[index]
 
-
 # Get all global variables
 Config = initconfig()
 BottomPadding = Config.getint("default","BottomPadding")
@@ -112,7 +111,12 @@ OrigX = int(OrigXstr) + LeftPadding
 OrigY = int(OrigYstr) + TopPadding
 OldWinList = retrieve(TempFile)
 OldVarList = retrieve(TempFile2)
-MwFactor=get_temp_var(OldVarList,0,OrigMwFactor)
+Mode=get_temp_var(OldVarList,0,"Simple")
+MwFactor=get_temp_var(OldVarList,1,OrigMwFactor)
+
+
+def store_vars(*args):
+    store(args,TempFile2)
 
 
 def get_simple_tile(wincount):
@@ -158,6 +162,7 @@ def get_horiz_tile(wincount):
 
     return layout
 
+
 def get_max_all(wincount):
     layout = []
     x = OrigX
@@ -168,7 +173,6 @@ def get_max_all(wincount):
         layout.append((x,y,width,height))
 
     return layout
-
 
 
 def move_active(PosX,PosY,Width,Height):
@@ -193,9 +197,6 @@ def raise_window(windowid):
 
 
 def left():
-    #Width=MaxWidth/2-1
-    #PosX=LeftPadding
-    #PosY=TopPadding
     Width=int(MaxWidth*MwFactor)
     Height=MaxHeight-WinTitle-WinBorder
     PosX=OrigX
@@ -205,9 +206,6 @@ def left():
 
 
 def right():
-    #Width=MaxWidth/2-1
-    #PosX=MaxWidth/2
-    #PosY=TopPadding
     Width=int(MaxWidth*(1-MwFactor))-2*WinBorder
     Height=MaxHeight-WinTitle-WinBorder
     PosX=int(MaxWidth*MwFactor)+OrigX+2*WinBorder
@@ -225,6 +223,7 @@ def compare_win_list(newlist,oldlist):
         if oldlist.count(window) == 0:
             templist.append(window)
     return templist
+
 
 def create_win_list():
     Windows = WinList[Desktop]
@@ -248,6 +247,19 @@ def arrange(layout,windows):
     store(WinList,TempFile)
 
 
+def arrange_mode(wins):
+    if Mode == "simple":
+        arrange(get_simple_tile(len(wins)),wins)
+    elif Mode == "horizontal":
+        arrange(get_horiz_tile(len(wins)),wins)
+    elif Mode == "vertical":
+        arrange(get_vertical_tile(len(wins)),wins)
+    elif Mode == "max_all":
+        arrange(get_max_all(len(wins)),wins)
+    else:
+        arrange(get_simple_tile(len(wins)),wins)
+
+
 def simple():
     Windows = create_win_list()
     arrange(get_simple_tile(len(Windows)),Windows)
@@ -258,7 +270,7 @@ def swap():
     active = get_active_window()
     winlist.remove(active)
     winlist.insert(0,active)
-    arrange(get_simple_tile(len(winlist)),winlist)
+    arrange_mode(winlist)
 
 
 def vertical():
@@ -281,14 +293,12 @@ def cycle():
     winlist = create_win_list()
     winlist.insert(0,winlist[len(winlist)-1])
     winlist = winlist[:-1]
-    arrange(get_simple_tile(len(winlist)),winlist)
+    arrange_mode(winlist)
 
 
 def maximize():
     Width=MaxWidth
     Height=MaxHeight-WinTitle-WinBorder
-    #PosX=LeftPadding
-    #PosY=TopPadding
     PosX=OrigX
     PosY=OrigY
     move_active(PosX,PosY,Width,Height)
@@ -300,41 +310,51 @@ def max_all():
     winlist.remove(active)
     winlist.insert(0,active)
     arrange(get_max_all(len(winlist)),winlist)
- 
-   
+
+  
 def setmwfactor(mf):
     if mf < 0.05 or mf > 0.95:
         return MwFactor
-    store([mf],TempFile2)
+    store_vars(Mode,mf)
     return mf
+    
 
+def set_mode(mode):
+    if mode == "simple":
+        simple()
+    elif mode == "horizontal":
+        horiz()
+    elif mode == "vertical":
+        vertical()
+    elif mode == "max_all":
+        max_all()
+    else:
+        return
+    store_vars(mode,MwFactor)
 
-if sys.argv[1] == "left":
+       
+if len(sys.argv) < 2:
+    set_mode(Mode)
+elif sys.argv[1] in ("simple", "horizontal", "vertical", "max_all"):
+    set_mode(sys.argv[1])
+elif sys.argv[1] == "left":
     left()
 elif sys.argv[1] == "right":
     right()
-elif sys.argv[1] == "simple":
-    simple()
-elif sys.argv[1] == "vertical":
-    vertical()
-elif sys.argv[1] == "horizontal":
-    horiz()
 elif sys.argv[1] == "swap":
     swap()
 elif sys.argv[1] == "cycle":
     cycle()
 elif sys.argv[1] == "maximize":
     maximize()
-elif sys.argv[1] == "max_all":
-    max_all()
 elif sys.argv[1] == "inc_mwfactor":
     MwFactor=setmwfactor(MwFactor+0.05)
-    simple()
+    set_mode("simple")
 elif sys.argv[1] == "dec_mwfactor":
     MwFactor=setmwfactor(MwFactor-0.05)
-    simple()
+    set_mode("simple")
 elif sys.argv[1] == "reset_mwfactor":
     MwFactor=setmwfactor(OrigMwFactor)
-    simple()
+    set_mode("simple")
 
 
