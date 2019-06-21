@@ -56,7 +56,7 @@ def getvalue(value,minvalue,maxvalue):
         return maxvalue
     return value
     
-def initialize():
+def initialize(id_exclude_set,id_include_set):
     desk_output = commands.getoutput("wmctrl -d").split("\n")
     desk_list = [line.split()[0] for line in desk_output]
     current =  filter(lambda x: x.split()[1] == "*" , desk_output)[0].split()
@@ -70,27 +70,45 @@ def initialize():
     win_output = commands.getoutput("wmctrl -lGx").split("\n")
     new_win_output = []
     excluded_win_output = []
-
+    idws = [int(win.split()[0],16) for win in win_output]
+    new_idexcludeset = set()
+    new_idincludeset = set()
+    for idw in id_exclude_set:
+        if int(idw,16) in idws:
+            new_idexcludeset.add(idw)
+    for idw in id_include_set:
+        if int(idw,16) in idws:
+            new_idincludeset.add(idw)
+    id_exclude_set = [int(idw,16) for idw in new_idexcludeset]
+    id_include_set = [int(idw,16) for idw in new_idincludeset]
     for win in win_output:
         try:
+            if int(win.split()[0],16) in id_exclude_set:
+                excluded_win_output.append(win)
+                continue
+            if int(win.split()[0],16) in id_include_set:
+                new_win_output.append(win)
+                continue
+            
             type_output = commands.getoutput("xprop -id " + win.split()[0] + " _NET_WM_WINDOW_TYPE").split("\n")[0].split(" = ")
             if len(type_output) > 1 and type_output[1] in TypeExcludeList:
                 excluded_win_output.append(win)
+                continue
+
+            instance_class_list =  win.split()[6].split('.')
+            instance_class_list.extend(['',''])
+            for exclude in PropExcludeList:
+                if exclude[0] and exclude[1]:
+                    if instance_class_list[0] == exclude[0] and instance_class_list[1] == exclude[1]:
+                        excluded_win_output.append(win)
+                        break
+                elif exclude[0] or exclude[1]:
+                    if (instance_class_list[0] and exclude[0] and instance_class_list[0] == exclude[0]) or \
+                    (instance_class_list[1] and exclude[1] and instance_class_list[1] == exclude[1]):
+                        excluded_win_output.append(win)
+                        break
             else:
-                instance_class_list =  win.split()[6].split('.')
-                instance_class_list.extend(['',''])
-                for exclude in PropExcludeList:
-                    if exclude[0] and exclude[1]:
-                        if instance_class_list[0] == exclude[0] and instance_class_list[1] == exclude[1]:
-                            excluded_win_output.append(win)
-                            break
-                    elif exclude[0] or exclude[1]:
-                        if (instance_class_list[0] and exclude[0] and instance_class_list[0] == exclude[0]) or \
-                        (instance_class_list[1] and exclude[1] and instance_class_list[1] == exclude[1]):
-                            excluded_win_output.append(win)
-                            break
-                else:
-                    new_win_output.append(win)
+                new_win_output.append(win)
                 
         except IndexError:
             new_win_output.append(win)   
@@ -102,7 +120,7 @@ def initialize():
         win_list[desk] = map(lambda y: hex(int(y.split()[0],16)) , filter(lambda x: x.split()[1] == desk, new_win_output ))
         excluded_win_list[desk] = map(lambda y: hex(int(y.split()[0],16)) , filter(lambda x: x.split()[1] == desk, excluded_win_output ))
 
-    return (desktop,orig_x,orig_y,width,height,win_list,excluded_win_list)
+    return (desktop,orig_x,orig_y,width,height,win_list,excluded_win_list,new_idexcludeset,new_idincludeset)
 
 
 def get_active_window():
@@ -159,11 +177,7 @@ PropExcludeList = [("veracrypt","Veracrypt"),("dukto","Dukto"),("nitrogen","Nitr
 ("keepass2","KeePass2"),("galculator","Galculator"),("ultracopier","ultracopier"),\
 ('',"openssh-askpass"),('',"Wine"),('',"Zenity"),('',"Lutris"),("mlconfig","Mlconfig"),("st","St")]#instance,class
 
-(Desktop,OrigXstr,OrigYstr,MaxWidthStr,MaxHeightStr,WinList,ExcludedWinList) = initialize()
-MaxWidth = int(MaxWidthStr) - LeftPadding - RightPadding
-MaxHeight = int(MaxHeightStr) - TopPadding - BottomPadding
-OrigX = int(OrigXstr) + LeftPadding
-OrigY = int(OrigYstr) + TopPadding
+
 OldWinList = retrieve(TempFile)
 OldVarList = retrieve(TempFile2)
 Mode=get_temp_var(OldVarList,0,"Simple")
@@ -171,6 +185,13 @@ MinMwFactor, MaxMwFactor = 0.25, 0.90
 MinCFactor, MaxCFactor = 0.3, 1.0
 MwFactor=getvalue(get_temp_var(OldVarList,1,OrigMwFactor),MinMwFactor,MaxMwFactor)
 CFactor=getvalue(get_temp_var(OldVarList,2,OrigCFactor),MinCFactor,MaxCFactor)
+OldIdExcludeSet=get_temp_var(OldVarList,3,set())
+OldIdIncludeSet=get_temp_var(OldVarList,4,set())
+(Desktop,OrigXstr,OrigYstr,MaxWidthStr,MaxHeightStr,WinList,ExcludedWinList,IdExcludeSet,IdIncludeSet) = initialize(OldIdExcludeSet,OldIdIncludeSet)
+MaxWidth = int(MaxWidthStr) - LeftPadding - RightPadding
+MaxHeight = int(MaxHeightStr) - TopPadding - BottomPadding
+OrigX = int(OrigXstr) + LeftPadding
+OrigY = int(OrigYstr) + TopPadding
 
 Reset=False
 
@@ -329,7 +350,43 @@ def raise_window(windowid):
 
     os.system(command)
 
+def exclude_win(windowid):
+    winlist = create_win_list()
+    if windowid in winlist:
+        winlist.remove(windowid)
+    IdExcludeSet.add(windowid)
+    if windowid in IdIncludeSet:
+        IdIncludeSet.remove(windowid)
+    store_vars(Mode,MwFactor,CFactor,IdExcludeSet,IdIncludeSet)
+    arrange_mode(winlist,Mode)
+    
 
+def include_win(windowid):
+    winlist = create_win_list()
+    if not windowid in winlist:
+        winlist.append(windowid)
+    if windowid in IdExcludeSet:
+        IdExcludeSet.remove(windowid)
+    IdIncludeSet.add(windowid)
+    store_vars(Mode,MwFactor,CFactor,IdExcludeSet,IdIncludeSet)
+    arrange_mode(winlist,Mode)
+    
+def toggle_exclude_win(windowid):
+    winlist = create_win_list()
+    if windowid in winlist:
+        winlist.remove(windowid)
+        IdExcludeSet.add(windowid)
+        if windowid in IdIncludeSet:
+            IdIncludeSet.remove(windowid)
+    else:
+        winlist.append(windowid)
+        if windowid in IdExcludeSet:
+            IdExcludeSet.remove(windowid)
+        IdIncludeSet.add(windowid)
+    store_vars(Mode,MwFactor,CFactor,IdExcludeSet,IdIncludeSet)
+    arrange_mode(winlist,Mode)
+                
+    
 def left():
     winlist = create_win_list()
     arrange_mode(winlist,"left")
@@ -338,7 +395,6 @@ def left():
 def right():
     winlist = create_win_list()
     arrange_mode(winlist,"right")
-
 
 
 def center():
@@ -478,14 +534,14 @@ def max_all():
   
 def setmwfactor(mf):
     mf = getvalue(mf,MinMwFactor,MaxMwFactor)
-    store_vars(Mode,mf,CFactor)
+    store_vars(Mode,mf,CFactor,IdExcludeSet,IdIncludeSet)
     
     return mf
 
 
 def setcfactor(cf):
     cf = getvalue(cf,MinCFactor,MaxCFactor)
-    store_vars(Mode,MwFactor,cf)
+    store_vars(Mode,MwFactor,cf,IdExcludeSet,IdIncludeSet)
     
     return cf
     
@@ -515,7 +571,7 @@ def set_mode(mode):
     else:
         return
     
-    store_vars(mode,MwFactor,CFactor)
+    store_vars(mode,MwFactor,CFactor,IdExcludeSet,IdIncludeSet)
 
        
 if len(sys.argv) < 2:
@@ -539,6 +595,12 @@ elif sys.argv[1] == "unmaximize":
 elif sys.argv[1] == "normalize":
     Reset = True
     normalize()
+elif sys.argv[1] == "exclude":
+    exclude_win(get_active_window())
+elif sys.argv[1] == "include":
+    include_win(get_active_window())
+elif sys.argv[1] == "toggle_exclude":
+    toggle_exclude_win(get_active_window())
 elif sys.argv[1] == "inc_mwfactor":
     Reset = True
     MwFactor=setmwfactor(MwFactor+0.05)
