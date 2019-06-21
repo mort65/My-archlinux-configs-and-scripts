@@ -22,6 +22,7 @@ import os
 import commands
 import pickle
 import socket
+import time
 
 def get_lock(process_name):
     # Without holding a reference to our socket somewhere it gets garbage
@@ -33,7 +34,17 @@ def get_lock(process_name):
         #print 'I got the lock'
     except socket.error:
         #print 'lock exists'
-        sys.exit()
+        count = 0
+        while True:
+            time.sleep(1)
+            try:
+                get_lock._lock_socket.bind('\0' + process_name)
+                break
+            except socket.error:
+                count+=1
+                if count == 10:
+                    sys.exit()
+
 
 get_lock('stiler.py')
 
@@ -62,7 +73,7 @@ def initialize():
 
     for win in win_output:
         try:
-            if commands.getoutput("xprop -id "+win.split()[0]+" _NET_WM_WINDOW_TYPE").split("\n")[0].split(" = ")[1] in TypeExcludeList:
+            if commands.getoutput("xprop -id " + win.split()[0] + " _NET_WM_WINDOW_TYPE").split("\n")[0].split(" = ")[1] in TypeExcludeList:
                 excluded_win_output.append(win)
             else:
                 instance_class_list =  win.split()[6].split('.')
