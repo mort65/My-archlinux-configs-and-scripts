@@ -55,7 +55,7 @@ def getvalue(value,minvalue,maxvalue):
     elif value > maxvalue:
         return maxvalue
     return value
-    
+
 def initialize(id_exclude_set,id_include_set):
     desk_output = commands.getoutput("wmctrl -d").split("\n")
     desk_list = [line.split()[0] for line in desk_output]
@@ -89,7 +89,7 @@ def initialize(id_exclude_set,id_include_set):
             if int(win.split()[0],16) in id_include_set:
                 new_win_output.append(win)
                 continue
-            
+
             type_output = commands.getoutput("xprop -id " + win.split()[0] + " _NET_WM_WINDOW_TYPE").split("\n")[0].split(" = ")
             if len(type_output) > 1 and type_output[1] in TypeExcludeList:
                 excluded_win_output.append(win)
@@ -109,9 +109,9 @@ def initialize(id_exclude_set,id_include_set):
                         break
             else:
                 new_win_output.append(win)
-                
+
         except IndexError:
-            new_win_output.append(win)   
+            new_win_output.append(win)
 
     win_list = {}
     excluded_win_list = {}
@@ -145,7 +145,7 @@ def retrieve(file):
         dict = {}
         return (dict)
 
-    
+
 def get_temp_var(var_list,index,def_value):
     if var_list == {}:
         return def_value
@@ -242,7 +242,7 @@ def get_horiz_tile(wincount):
         layout.append((x,y,width,height))
 
     return layout
-    
+
 def get_center_tile(wincount):
     layout = []
     width=int(MaxWidth*CFactor)
@@ -253,7 +253,7 @@ def get_center_tile(wincount):
         layout.append((x,y,width,height))
 
     return layout
-    
+
 def get_left_tile(wincount):
     layout = []
     width=int(MaxWidth*MwFactor)
@@ -261,14 +261,14 @@ def get_left_tile(wincount):
     x=OrigX
     y=OrigY
     layout.append((x,y,width,height))
-    
+
     width=int(MaxWidth*(1-MwFactor))-2*WinBorder
     x=int(MaxWidth*MwFactor)+OrigX+2*WinBorder
     for n in range(0,wincount-1):
         layout.append((x,y,width,height))
-    
+
     return layout
-    
+
 def get_right_tile(wincount):
     layout = []
     width=int(MaxWidth*(1-MwFactor))-2*WinBorder
@@ -276,12 +276,12 @@ def get_right_tile(wincount):
     x=int(MaxWidth*MwFactor)+OrigX+2*WinBorder
     y=OrigY
     layout.append((x,y,width,height))
-    
+
     width=int(MaxWidth*MwFactor)
-    x=OrigX  
+    x=OrigX
     for n in range(0,wincount-1):
         layout.append((x,y,width,height))
-    
+
     return layout
 
 
@@ -313,7 +313,7 @@ def unmaximize_win(windowid):
         command = "wmctrl -r :ACTIVE: -b remove,maximized_vert,maximized_horz"
     else:
         command = "wmctrl -r " + windowid + " -b remove,maximized_vert,maximized_horz -i"
-    
+
     os.system(command)
 
 
@@ -322,24 +322,24 @@ def normalize_win(windowid):
         command = "wmctrl -r :ACTIVE: -b remove,hidden,shaded"
     else:
         command = "wmctrl -r " + windowid + " -b remove,hidden,shaded -i"
-    
+
     os.system(command)
-    
+
 def maximize_win(windowid):
     if windowid == ":ACTIVE:":
         command = "wmctrl -r :ACTIVE: -b add,maximized_vert,maximized_horz"
     else:
         command = "wmctrl -r " + windowid + " -b add,maximized_vert,maximized_horz -i"
-    
+
     os.system(command)
-    
+
 def toggle_maximize_win(windowid):
     if windowid == ":ACTIVE:":
         command = "wmctrl -r :ACTIVE: -b toggle,maximized_vert,maximized_horz"
     else:
         command = "wmctrl -r " + windowid + " -b toggle,maximized_vert,maximized_horz -i"
-    
-    os.system(command) 
+
+    os.system(command)
 
 
 def raise_window(windowid):
@@ -359,7 +359,7 @@ def exclude_win(windowid):
         IdIncludeSet.remove(windowid)
     store_vars(Mode,MwFactor,CFactor,IdExcludeSet,IdIncludeSet)
     arrange_mode(winlist,Mode)
-    
+
 
 def include_win(windowid):
     winlist = create_win_list()
@@ -370,7 +370,7 @@ def include_win(windowid):
     IdIncludeSet.add(windowid)
     store_vars(Mode,MwFactor,CFactor,IdExcludeSet,IdIncludeSet)
     arrange_mode(winlist,Mode)
-    
+
 def toggle_exclude_win(windowid):
     winlist = create_win_list()
     if windowid in winlist:
@@ -385,8 +385,8 @@ def toggle_exclude_win(windowid):
         IdIncludeSet.add(windowid)
     store_vars(Mode,MwFactor,CFactor,IdExcludeSet,IdIncludeSet)
     arrange_mode(winlist,Mode)
-                
-    
+
+
 def left():
     winlist = create_win_list()
     arrange_mode(winlist,"left")
@@ -405,7 +405,7 @@ def center():
         winlist.insert(0,active)
 
     arrange_mode(winlist,"center")
-    
+
 
 def compare_win_list(newlist,oldlist):
     templist = []
@@ -433,6 +433,22 @@ def create_win_list():
     return Windows
 
 
+def ischanged():
+    if OldWinList == {}:
+        return True
+    OldWindows = OldWinList[Desktop]
+    Windows = WinList[Desktop]
+    if Windows == OldWindows:
+        return False
+    for window in OldWindows:
+        if Windows.count(window) == 0:
+            return True
+    for window in Windows:
+        if OldWindows.count(window) == 0:
+            return True
+    return False
+
+
 def arrange(layout,windows):
     for win , lay  in zip(windows,layout):
         move_window(win,lay[0],lay[1],lay[2],lay[3])
@@ -442,20 +458,20 @@ def arrange(layout,windows):
 def unmaximize_wins(winlist):
     for win in winlist:
         unmaximize_win(win)
-        
+
 
 def normalize_wins(winlist):
     for win in winlist:
         normalize_win(win)
-        
+
 
 def raise_wins(winlist):
     for win in winlist:
-        raise_window(win)   
+        raise_window(win)
 
 
 def arrange_mode(wins,mode):
-    
+
     if Reset:
         unmaximize_wins(WinList[Desktop])
         normalize_wins(WinList[Desktop])
@@ -478,9 +494,9 @@ def arrange_mode(wins,mode):
         arrange(get_right_tile(len(wins)),wins)
     else:
         arrange(get_simple_tile(len(wins)),wins)
-        
+
     if Reset:
-        raise_wins(ExcludedWinList[Desktop])        
+        raise_wins(ExcludedWinList[Desktop])
 
 
 def simple():
@@ -517,7 +533,7 @@ def cycle(n):
 def maximize():
     maximize_win(":ACTIVE:")
     raise_window(":ACTIVE:")
-    
+
 def toggle_maximize():
     toggle_maximize_win(":ACTIVE:")
     raise_window(":ACTIVE:")
@@ -531,27 +547,27 @@ def max_all():
     arrange_mode(winlist,"max_all")
     raise_window(winlist[0])
 
-  
+
 def setmwfactor(mf):
     mf = getvalue(mf,MinMwFactor,MaxMwFactor)
     store_vars(Mode,mf,CFactor,IdExcludeSet,IdIncludeSet)
-    
+
     return mf
 
 
 def setcfactor(cf):
     cf = getvalue(cf,MinCFactor,MaxCFactor)
     store_vars(Mode,MwFactor,cf,IdExcludeSet,IdIncludeSet)
-    
+
     return cf
-    
+
 def normalize():
     set_mode(Mode)
-    
+
 def unmaximize():
     unmaximize_win(":ACTIVE:")
     raise_window(":ACTIVE:")
-    
+
 
 def set_mode(mode):
     if mode == "simple":
@@ -570,12 +586,13 @@ def set_mode(mode):
         right()
     else:
         return
-    
+
     store_vars(mode,MwFactor,CFactor,IdExcludeSet,IdIncludeSet)
 
-       
+
 if len(sys.argv) < 2:
-    set_mode(Mode)
+    if ischanged():
+        set_mode(Mode)
 elif sys.argv[1] in ("simple", "horizontal", "vertical", "max_all", "center", "left", "right"):
     Reset = True
     Mode = sys.argv[1]
