@@ -73,7 +73,8 @@ def initialize():
 
     for win in win_output:
         try:
-            if commands.getoutput("xprop -id " + win.split()[0] + " _NET_WM_WINDOW_TYPE").split("\n")[0].split(" = ")[1] in TypeExcludeList:
+            type_output = commands.getoutput("xprop -id " + win.split()[0] + " _NET_WM_WINDOW_TYPE").split("\n")[0].split(" = ")
+            if len(type_output) > 1 and type_output[1] in TypeExcludeList:
                 excluded_win_output.append(win)
             else:
                 instance_class_list =  win.split()[6].split('.')
@@ -93,7 +94,7 @@ def initialize():
                 
         except IndexError:
             new_win_output.append(win)   
-    
+
     win_list = {}
     excluded_win_list = {}
 
@@ -154,7 +155,10 @@ OrigCFactor = 0.8
 TempFile = "/tmp/tile_winlist"
 TempFile2 = "/tmp/temp_varlist"
 TypeExcludeList = ["_NET_WM_WINDOW_TYPE_DIALOG", "_NET_WM_WINDOW_TYPE_SPLASH", "_NET_WM_WINDOW_TYPE_NOTIFICATION","_NET_WM_WINDOW_TYPE_TOOLBAR"]
-PropExcludeList = [("veracrypt","Veracrypt")]#instance,class
+PropExcludeList = [("veracrypt","Veracrypt"),("dukto","Dukto"),("nitrogen","Nitrogen"),\
+("keepass2","KeePass2"),("galculator","Galculator"),("ultracopier","ultracopier"),\
+('',"openssh-askpass"),('',"Wine"),('',"Zenity"),('',"Lutris"),("mlconfig","Mlconfig"),\
+('ScratchPad1','ScratchPad')]#instance,class
 (Desktop,OrigXstr,OrigYstr,MaxWidthStr,MaxHeightStr,WinList,ExcludedWinList) = initialize()
 MaxWidth = int(MaxWidthStr) - LeftPadding - RightPadding
 MaxHeight = int(MaxHeightStr) - TopPadding - BottomPadding
