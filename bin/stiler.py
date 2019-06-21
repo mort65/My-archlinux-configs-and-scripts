@@ -133,7 +133,7 @@ def get_temp_var(var_list,index,def_value):
         return def_value
     return var_list[index]
 
-# global variables
+# Global variables
 
 #BottomPadding = 0
 #TopPadding = 0
@@ -158,6 +158,7 @@ TypeExcludeList = ["_NET_WM_WINDOW_TYPE_DIALOG", "_NET_WM_WINDOW_TYPE_SPLASH", "
 PropExcludeList = [("veracrypt","Veracrypt"),("dukto","Dukto"),("nitrogen","Nitrogen"),\
 ("keepass2","KeePass2"),("galculator","Galculator"),("ultracopier","ultracopier"),\
 ('',"openssh-askpass"),('',"Wine"),('',"Zenity"),('',"Lutris"),("mlconfig","Mlconfig"),("st","St")]#instance,class
+
 (Desktop,OrigXstr,OrigYstr,MaxWidthStr,MaxHeightStr,WinList,ExcludedWinList) = initialize()
 MaxWidth = int(MaxWidthStr) - LeftPadding - RightPadding
 MaxHeight = int(MaxHeightStr) - TopPadding - BottomPadding
