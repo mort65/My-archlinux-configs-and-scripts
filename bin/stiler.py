@@ -477,7 +477,8 @@ def arrange_mode(wins,mode):
         normalize_wins(WinList[Desktop])
         raise_wins(WinList[Desktop])
         raise_window(WinList[Desktop][0])
-
+    if len(wins) == 0:
+        return
     if mode == "simple":
         arrange(get_simple_tile(len(wins)),wins)
     elif Mode == "horizontal":
@@ -591,6 +592,8 @@ def set_mode(mode):
 
 
 if len(sys.argv) < 2:
+    set_mode(Mode)
+elif sys.argv[1] in ("-d","--daemon"):
     if ischanged():
         set_mode(Mode)
 elif sys.argv[1] in ("simple", "horizontal", "vertical", "max_all", "center", "left", "right"):

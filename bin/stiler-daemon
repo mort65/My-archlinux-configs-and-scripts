@@ -2,7 +2,7 @@
 
 while true ;do
 	if ! pidof -x "stiler.py" >/dev/null 2>&1 ;then
-		~/bin/stiler.py
+		~/bin/stiler.py -d
 	fi
 	sleep 1
 done
