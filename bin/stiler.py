@@ -54,6 +54,7 @@ MwFactor = 0.65
 CFactor = 0.75
 TempFile = /tmp/tile_winlist
 TempFile2 = /tmp/temp_varlist
+ExcludeList =
 """)
         cfg.close()
 
@@ -79,13 +80,46 @@ def initialize():
     orig_x =  current[7].split(",")[0]
     orig_y =  current[7].split(",")[1]
 
-    win_output = commands.getoutput("wmctrl -lG").split("\n")
+    win_output = commands.getoutput("wmctrl -lGx").split("\n")
+    new_win_output = []
+    floating_win_output = []
+    new_exclude_list = []
+    for exclude in ExcludeList:
+        if exclude:
+            new_exclude_list.append(exclude.split('.'))
+    for win in win_output:
+        try:
+            if commands.getoutput("xprop -id "+win.split()[0]+" _NET_WM_WINDOW_TYPE").split("\n")[0].split(" = ")[1] in \
+            ("_NET_WM_WINDOW_TYPE_DIALOG", "_NET_WM_WINDOW_TYPE_SPLASH", "_NET_WM_WINDOW_TYPE_NOTIFICATION","_NET_WM_WINDOW_TYPE_TOOLBAR"):
+                floating_win_output.append(win)
+            else:
+                instance_class = win.split()[6]
+                instance_class_list = instance_class.split('.')
+                if instance_class in ExcludeList:
+                    floating_win_output.append(win)
+                else:
+                    for exclude in new_exclude_list:
+                        exclude.append('')
+                        if not exclude[0] or not exclude[1]:
+                            if (instance_class_list[0] and exclude[0] and instance_class_list[0] == exclude[0]) or \
+                            (instance_class_list[1] and exclude[1] and instance_class_list[1] == exclude[1]):
+                                floating_win_output.append(win)
+                                break
+                    else:
+                        new_win_output.append(win)
+                
+        except IndexError:
+            new_win_output.append(win)   
+    
     win_list = {}
+    floating_win_list = {}
 
     for desk in desk_list:
-        win_list[desk] = map(lambda y: hex(int(y.split()[0],16)) , filter(lambda x: x.split()[1] == desk, win_output ))
+        win_list[desk] = map(lambda y: hex(int(y.split()[0],16)) , filter(lambda x: x.split()[1] == desk, new_win_output ))
+        floating_win_list[desk] = map(lambda y: hex(int(y.split()[0],16)) , filter(lambda x: x.split()[1] == desk, floating_win_output ))
 
-    return (desktop,orig_x,orig_y,width,height,win_list)
+    return (desktop,orig_x,orig_y,width,height,win_list,floating_win_list)
+
 
 def get_active_window():
     return str(hex(int(commands.getoutput("xdotool getactivewindow 2>/dev/null").split()[0])))
@@ -127,7 +161,8 @@ OrigMwFactor = Config.getfloat("default","MwFactor")
 OrigCFactor = Config.getfloat("default","CFactor")
 TempFile = Config.get("default","TempFile")
 TempFile2 = Config.get("default","TempFile2")
-(Desktop,OrigXstr,OrigYstr,MaxWidthStr,MaxHeightStr,WinList) = initialize()
+ExcludeList = Config.get("default","ExcludeList").split(",")
+(Desktop,OrigXstr,OrigYstr,MaxWidthStr,MaxHeightStr,WinList,FloatingWinList) = initialize()
 MaxWidth = int(MaxWidthStr) - LeftPadding - RightPadding
 MaxHeight = int(MaxHeightStr) - TopPadding - BottomPadding
 OrigX = int(OrigXstr) + LeftPadding
@@ -139,6 +174,7 @@ MinMwFactor, MaxMwFactor = 0.25, 0.90
 MinCFactor, MaxCFactor = 0.3, 1.0
 MwFactor=getvalue(get_temp_var(OldVarList,1,OrigMwFactor),MinMwFactor,MaxMwFactor)
 CFactor=getvalue(get_temp_var(OldVarList,2,OrigCFactor),MinCFactor,MaxCFactor)
+Reset=False
 
 
 def store_vars(*args):
@@ -248,38 +284,72 @@ def move_active(PosX,PosY,Width,Height):
 
 
 def move_window(windowid,PosX,PosY,Width,Height):
-    command =  " wmctrl -i -r " + windowid +  " -e 0," + str(PosX) + "," + str(PosY)+ "," + str(Width) + "," + str(Height)
+    command =  " wmctrl -r " + windowid +  " -e 0," + str(PosX) + "," + str(PosY)+ "," + str(Width) + "," + str(Height) + " -i"
     os.system(command)
-    command = "wmctrl -i -r " + windowid + " -b remove,hidden,shaded"
+    command = "wmctrl -r " + windowid + " -b remove,hidden,shaded -i"
     os.system(command)
+
+def unmaximize_win(windowid):
+    if windowid == ":ACTIVE:":
+        command = "wmctrl -r :ACTIVE: -b remove,maximized_vert,maximized_horz"
+    else:
+        command = "wmctrl -r " + windowid + " -b remove,maximized_vert,maximized_horz -i"
+    
+    os.system(command)
+
+
+def normalize_win(windowid):
+    if windowid == ":ACTIVE:":
+        command = "wmctrl -r :ACTIVE: -b remove,hidden,shaded"
+    else:
+        command = "wmctrl -r " + windowid + " -b remove,hidden,shaded -i"
+    
+    os.system(command)
+    
+def maximize_win(windowid):
+    if windowid == ":ACTIVE:":
+        command = "wmctrl -r :ACTIVE: -b add,maximized_vert,maximized_horz"
+    else:
+        command = "wmctrl -r " + windowid + " -b add,maximized_vert,maximized_horz -i"
+    
+    os.system(command)
+    
+def toggle_maximize_win(windowid):
+    if windowid == ":ACTIVE:":
+        command = "wmctrl -r :ACTIVE: -b toggle,maximized_vert,maximized_horz"
+    else:
+        command = "wmctrl -r " + windowid + " -b toggle,maximized_vert,maximized_horz -i"
+    
+    os.system(command) 
 
 
 def raise_window(windowid):
     if windowid == ":ACTIVE:":
         command = "wmctrl -a :ACTIVE: "
     else:
-        command = "wmctrl -i -a " + windowid
+        command = "wmctrl -a " + windowid + " -i"
 
     os.system(command)
 
 
 def left():
     winlist = create_win_list()
-    arrange(get_left_tile(len(winlist)),winlist)
+    arrange_mode(winlist,"left")
 
 
 def right():
     winlist = create_win_list()
-    arrange(get_right_tile(len(winlist)),winlist)
+    arrange_mode(winlist,"right")
 
 
 
 def center():
     winlist = create_win_list()
     active = get_active_window()
-    winlist.remove(active)
-    winlist.insert(0,active)
-    arrange(get_center_tile(len(winlist)),winlist)
+    if active in winlist:
+        winlist.remove(active)
+        winlist.insert(0,active)
+    arrange_mode(winlist,"center")
     
 
 def compare_win_list(newlist,oldlist):
@@ -314,29 +384,53 @@ def arrange(layout,windows):
     WinList[Desktop]=windows
     store(WinList,TempFile)
 
+def unmaximize_wins(winlist):
+    for win in winlist:
+        unmaximize_win(win)
+        
 
-def arrange_mode(wins):
-    if Mode == "simple":
+def normalize_wins(winlist):
+    for win in winlist:
+        normalize_win(win)
+        
+
+def raise_wins(winlist):
+    for win in winlist:
+        raise_window(win)   
+
+
+def arrange_mode(wins,mode):
+    
+    if Reset:
+        unmaximize_wins(WinList[Desktop])
+        normalize_wins(WinList[Desktop])
+        raise_wins(WinList[Desktop])
+        raise_window(WinList[Desktop][0])
+
+    if mode == "simple":
         arrange(get_simple_tile(len(wins)),wins)
     elif Mode == "horizontal":
         arrange(get_horiz_tile(len(wins)),wins)
-    elif Mode == "vertical":
+    elif mode == "vertical":
         arrange(get_vertical_tile(len(wins)),wins)
-    elif Mode == "max_all":
+    elif mode == "max_all":
         arrange(get_max_all(len(wins)),wins)
-    elif Mode == "center":
+    elif mode == "center":
         arrange(get_center_tile(len(wins)),wins)
-    elif Mode == "left":
+    elif mode == "left":
         arrange(get_left_tile(len(wins)),wins)
-    elif Mode == "right":
+    elif mode == "right":
         arrange(get_right_tile(len(wins)),wins)
     else:
         arrange(get_simple_tile(len(wins)),wins)
+        
+    if Reset:
+        raise_wins(FloatingWinList[Desktop])        
 
 
 def simple():
     Windows = create_win_list()
-    arrange(get_simple_tile(len(Windows)),Windows)
+    arrange_mode(Windows,"simple")
 
 
 def swap():
@@ -344,41 +438,43 @@ def swap():
     active = get_active_window()
     winlist.remove(active)
     winlist.insert(0,active)
-    arrange_mode(winlist)
+    arrange_mode(winlist,Mode)
 
 
 def vertical():
     winlist = create_win_list()
-    arrange(get_vertical_tile(len(winlist)),winlist)
+    arrange_mode(winlist,"vertical")
 
 
 def horiz():
     winlist = create_win_list()
-    arrange(get_horiz_tile(len(winlist)),winlist)
+    arrange_mode(winlist,"horizontal")
 
 
 def cycle(n):
     winlist = create_win_list()
     #n = n % len(winlist)
     winlist = winlist[-n:] + winlist[:-n]
-    arrange_mode(winlist)
+    arrange_mode(winlist,Mode)
     raise_window(winlist[0])
 
 
 def maximize():
-    Width=MaxWidth
-    Height=MaxHeight-WinTitle-WinBorder
-    PosX=OrigX
-    PosY=OrigY
-    move_active(PosX,PosY,Width,Height)
+    maximize_win(":ACTIVE:")
+    raise_window(":ACTIVE:")
+    
+def toggle_maximize():
+    toggle_maximize_win(":ACTIVE:")
     raise_window(":ACTIVE:")
 
 def max_all():
     winlist = create_win_list()
     active = get_active_window()
-    winlist.remove(active)
-    winlist.insert(0,active)
-    arrange(get_max_all(len(winlist)),winlist)
+    if active in winlist:
+        winlist.remove(active)
+        winlist.insert(0,active)
+    arrange_mode(winlist,"max_all")
+    raise_window(winlist[0])
 
   
 def setmwfactor(mf):
@@ -393,6 +489,13 @@ def setcfactor(cf):
     store_vars(Mode,MwFactor,cf)
     
     return cf
+    
+def normalize():
+    set_mode(Mode)
+    
+def unmaximize():
+    unmaximize_win(":ACTIVE:")
+    raise_window(":ACTIVE:")
     
 
 def set_mode(mode):
@@ -419,6 +522,8 @@ def set_mode(mode):
 if len(sys.argv) < 2:
     set_mode(Mode)
 elif sys.argv[1] in ("simple", "horizontal", "vertical", "max_all", "center", "left", "right"):
+    Reset = True
+    Mode = sys.argv[1]
     set_mode(sys.argv[1])
 elif sys.argv[1] == "swap":
     swap()
@@ -428,33 +533,45 @@ elif sys.argv[1] == "reverse_cycle":
     cycle(-1)
 elif sys.argv[1] == "maximize":
     maximize()
+elif sys.argv[1] == "toggle_maximize":
+    toggle_maximize()
+elif sys.argv[1] == "unmaximize":
+    unmaximize()
+elif sys.argv[1] == "normalize":
+    Reset = True
+    normalize()
 elif sys.argv[1] == "inc_mwfactor":
+    Reset = True
     MwFactor=setmwfactor(MwFactor+0.05)
     if Mode in ("simple", "left", "right"):
         set_mode(Mode)
     else:
         set_mode("simple")
 elif sys.argv[1] == "dec_mwfactor":
+    Reset = True
     MwFactor=setmwfactor(MwFactor-0.05)
     if Mode in ("simple", "left", "right"):
         set_mode(Mode)
     else:
         set_mode("simple")
 elif sys.argv[1] == "reset_mwfactor":
+    Reset = True
     MwFactor=setmwfactor(OrigMwFactor)
     if Mode in ("simple", "left", "right"):
         set_mode(Mode)
     else:
         set_mode("simple")
 elif sys.argv[1] == "dec_cfactor":
+    Reset = True
     CFactor=setcfactor(CFactor-0.05)
     set_mode("center")
 elif sys.argv[1] == "inc_cfactor":
+    Reset = True
     CFactor=setcfactor(CFactor+0.05)
     set_mode("center")
 elif sys.argv[1] == "reset_cfactor":
+    Reset = True
     CFactor=setcfactor(OrigCFactor)
     set_mode("center")
-
 
 
