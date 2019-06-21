@@ -34,15 +34,15 @@ def get_lock(process_name):
         #print 'I got the lock'
     except socket.error:
         #print 'lock exists'
-        count = 0
+        count = 0.0
         while True:
-            time.sleep(1)
+            time.sleep(0.1)
             try:
                 get_lock._lock_socket.bind('\0' + process_name)
                 break
             except socket.error:
-                count+=1
-                if count == 5:
+                count += 0.1
+                if count >= 5.0:
                     sys.exit()
 
 
