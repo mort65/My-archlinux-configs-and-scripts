@@ -42,7 +42,7 @@ def get_lock(process_name):
                 break
             except socket.error:
                 count += 0.1
-                if count >= 5.0:
+                if count >= 3.0:
                     sys.exit()
 
 
