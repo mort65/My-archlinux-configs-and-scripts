@@ -1,0 +1,8 @@
+#!/bin/sh
+
+while true ;do
+	if ! pidof -x "stiler.py" >/dev/null 2>&1 ;then
+		~/bin/stiler.py
+	fi
+	sleep 1
+done
