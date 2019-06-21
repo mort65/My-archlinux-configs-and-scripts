@@ -21,7 +21,6 @@ import sys
 import os
 import commands
 import pickle
-import ConfigParser
 import socket
 
 def get_lock(process_name):
@@ -38,29 +37,6 @@ def get_lock(process_name):
 
 get_lock('stiler.py')
 
-def initconfig():
-    rcfile=os.getenv('HOME')+"/.stilerrc"
-    if not os.path.exists(rcfile):
-        cfg=open(rcfile,'w')
-        cfg.write("""#Tweak these values
-[default]
-BottomPadding = 0
-TopPadding = 0
-LeftPadding = 0
-RightPadding = 0
-WinTitle = 21
-WinBorder = 1
-MwFactor = 0.65
-CFactor = 0.75
-TempFile = /tmp/tile_winlist
-TempFile2 = /tmp/temp_varlist
-ExcludeList =
-""")
-        cfg.close()
-
-    config=ConfigParser.RawConfigParser()
-    config.read(rcfile)
-    return config
 
 def getvalue(value,minvalue,maxvalue):
     if value < minvalue:
@@ -82,43 +58,39 @@ def initialize():
 
     win_output = commands.getoutput("wmctrl -lGx").split("\n")
     new_win_output = []
-    floating_win_output = []
-    new_exclude_list = []
-    for exclude in ExcludeList:
-        if exclude:
-            new_exclude_list.append(exclude.split('.'))
+    excluded_win_output = []
+
     for win in win_output:
         try:
-            if commands.getoutput("xprop -id "+win.split()[0]+" _NET_WM_WINDOW_TYPE").split("\n")[0].split(" = ")[1] in \
-            ("_NET_WM_WINDOW_TYPE_DIALOG", "_NET_WM_WINDOW_TYPE_SPLASH", "_NET_WM_WINDOW_TYPE_NOTIFICATION","_NET_WM_WINDOW_TYPE_TOOLBAR"):
-                floating_win_output.append(win)
+            if commands.getoutput("xprop -id "+win.split()[0]+" _NET_WM_WINDOW_TYPE").split("\n")[0].split(" = ")[1] in TypeExcludeList:
+                excluded_win_output.append(win)
             else:
-                instance_class = win.split()[6]
-                instance_class_list = instance_class.split('.')
-                if instance_class in ExcludeList:
-                    floating_win_output.append(win)
+                instance_class_list =  win.split()[6].split('.')
+                instance_class_list.extend(['',''])
+                for exclude in PropExcludeList:
+                    if exclude[0] and exclude[1]:
+                        if instance_class_list[0] == exclude[0] and instance_class_list[1] == exclude[1]:
+                            excluded_win_output.append(win)
+                            break
+                    elif exclude[0] or exclude[1]:
+                        if (instance_class_list[0] and exclude[0] and instance_class_list[0] == exclude[0]) or \
+                        (instance_class_list[1] and exclude[1] and instance_class_list[1] == exclude[1]):
+                            excluded_win_output.append(win)
+                            break
                 else:
-                    for exclude in new_exclude_list:
-                        exclude.append('')
-                        if not exclude[0] or not exclude[1]:
-                            if (instance_class_list[0] and exclude[0] and instance_class_list[0] == exclude[0]) or \
-                            (instance_class_list[1] and exclude[1] and instance_class_list[1] == exclude[1]):
-                                floating_win_output.append(win)
-                                break
-                    else:
-                        new_win_output.append(win)
+                    new_win_output.append(win)
                 
         except IndexError:
             new_win_output.append(win)   
     
     win_list = {}
-    floating_win_list = {}
+    excluded_win_list = {}
 
     for desk in desk_list:
         win_list[desk] = map(lambda y: hex(int(y.split()[0],16)) , filter(lambda x: x.split()[1] == desk, new_win_output ))
-        floating_win_list[desk] = map(lambda y: hex(int(y.split()[0],16)) , filter(lambda x: x.split()[1] == desk, floating_win_output ))
+        excluded_win_list[desk] = map(lambda y: hex(int(y.split()[0],16)) , filter(lambda x: x.split()[1] == desk, excluded_win_output ))
 
-    return (desktop,orig_x,orig_y,width,height,win_list,floating_win_list)
+    return (desktop,orig_x,orig_y,width,height,win_list,excluded_win_list)
 
 
 def get_active_window():
@@ -149,20 +121,30 @@ def get_temp_var(var_list,index,def_value):
         return def_value
     return var_list[index]
 
-# Get all global variables
-Config = initconfig()
-BottomPadding = Config.getint("default","BottomPadding")
-TopPadding = Config.getint("default","TopPadding")
-LeftPadding = Config.getint("default","LeftPadding")
-RightPadding = Config.getint("default","RightPadding")
-WinTitle = Config.getint("default","WinTitle")
-WinBorder = Config.getint("default","WinBorder")
-OrigMwFactor = Config.getfloat("default","MwFactor")
-OrigCFactor = Config.getfloat("default","CFactor")
-TempFile = Config.get("default","TempFile")
-TempFile2 = Config.get("default","TempFile2")
-ExcludeList = Config.get("default","ExcludeList").split(",")
-(Desktop,OrigXstr,OrigYstr,MaxWidthStr,MaxHeightStr,WinList,FloatingWinList) = initialize()
+# global variables
+
+#BottomPadding = 0
+#TopPadding = 0
+#LeftPadding = 0
+#RightPadding = 0
+#WinTitle = 21
+#WinBorder = 1
+#MwFactor = 0.65
+#CFactor = 0.75
+#TempFile = "/tmp/tile_winlist"
+BottomPadding = 0
+TopPadding = 0
+LeftPadding = 0
+RightPadding = 0
+WinTitle = 23
+WinBorder = 1
+OrigMwFactor = 0.5
+OrigCFactor = 0.8
+TempFile = "/tmp/tile_winlist"
+TempFile2 = "/tmp/temp_varlist"
+TypeExcludeList = ["_NET_WM_WINDOW_TYPE_DIALOG", "_NET_WM_WINDOW_TYPE_SPLASH", "_NET_WM_WINDOW_TYPE_NOTIFICATION","_NET_WM_WINDOW_TYPE_TOOLBAR"]
+PropExcludeList = [("veracrypt","Veracrypt")]
+(Desktop,OrigXstr,OrigYstr,MaxWidthStr,MaxHeightStr,WinList,ExcludedWinList) = initialize()
 MaxWidth = int(MaxWidthStr) - LeftPadding - RightPadding
 MaxHeight = int(MaxHeightStr) - TopPadding - BottomPadding
 OrigX = int(OrigXstr) + LeftPadding
@@ -174,6 +156,7 @@ MinMwFactor, MaxMwFactor = 0.25, 0.90
 MinCFactor, MaxCFactor = 0.3, 1.0
 MwFactor=getvalue(get_temp_var(OldVarList,1,OrigMwFactor),MinMwFactor,MaxMwFactor)
 CFactor=getvalue(get_temp_var(OldVarList,2,OrigCFactor),MinCFactor,MaxCFactor)
+
 Reset=False
 
 
@@ -349,6 +332,7 @@ def center():
     if active in winlist:
         winlist.remove(active)
         winlist.insert(0,active)
+
     arrange_mode(winlist,"center")
     
 
@@ -425,7 +409,7 @@ def arrange_mode(wins,mode):
         arrange(get_simple_tile(len(wins)),wins)
         
     if Reset:
-        raise_wins(FloatingWinList[Desktop])        
+        raise_wins(ExcludedWinList[Desktop])        
 
 
 def simple():
