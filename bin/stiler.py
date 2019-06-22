@@ -516,6 +516,7 @@ def arrange_mode(wins,mode):
         raise_window(WinList[Desktop][0])
     if len(wins) == 0:
         return
+
     if mode == "simple":
         arrange(get_simple_tile(len(wins)),wins)
     elif Mode == "horizontal":
