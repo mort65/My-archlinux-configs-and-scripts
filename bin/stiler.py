@@ -187,6 +187,7 @@ MwFactor=getvalue(get_temp_var(OldVarList,1,OrigMwFactor),MinMwFactor,MaxMwFacto
 CFactor=getvalue(get_temp_var(OldVarList,2,OrigCFactor),MinCFactor,MaxCFactor)
 OldIdExcludeSet=get_temp_var(OldVarList,3,set())
 OldIdIncludeSet=get_temp_var(OldVarList,4,set())
+OldDesktop=get_temp_var(OldVarList,5,set())
 (Desktop,OrigXstr,OrigYstr,MaxWidthStr,MaxHeightStr,WinList,ExcludedWinList,IdExcludeSet,IdIncludeSet) = initialize(OldIdExcludeSet,OldIdIncludeSet)
 MaxWidth = int(MaxWidthStr) - LeftPadding - RightPadding
 MaxHeight = int(MaxHeightStr) - TopPadding - BottomPadding
@@ -357,7 +358,7 @@ def exclude_win(windowid):
         IdIncludeSet.remove(windowid)
     if windowid in winlist:
         winlist.remove(windowid)
-    store_vars(Mode,MwFactor,CFactor,IdExcludeSet,IdIncludeSet)
+    store_vars(Mode,MwFactor,CFactor,IdExcludeSet,IdIncludeSet,Desktop)
     arrange_mode(winlist,Mode)
 
 
@@ -368,7 +369,7 @@ def include_win(windowid):
     IdIncludeSet.add(windowid)
     if not windowid in winlist:
         winlist.append(windowid)
-    store_vars(Mode,MwFactor,CFactor,IdExcludeSet,IdIncludeSet)
+    store_vars(Mode,MwFactor,CFactor,IdExcludeSet,IdIncludeSet,Desktop)
     arrange_mode(winlist,Mode)
 
 def toggle_exclude_win(windowid):
@@ -384,8 +385,8 @@ def toggle_exclude_win(windowid):
             IdExcludeSet.remove(windowid)
         if not windowid in winlist:
             winlist.append(windowid)
-        
-    store_vars(Mode,MwFactor,CFactor,IdExcludeSet,IdIncludeSet)
+
+    store_vars(Mode,MwFactor,CFactor,IdExcludeSet,IdIncludeSet,Desktop)
     arrange_mode(winlist,Mode)
 
 
@@ -436,6 +437,8 @@ def create_win_list():
 
 
 def ischanged():
+    if not Desktop == OldDesktop:
+        return True
     if OldWinList == {}:
         return True
     OldWindows = OldWinList[Desktop]
@@ -553,14 +556,14 @@ def max_all():
 
 def setmwfactor(mf):
     mf = getvalue(mf,MinMwFactor,MaxMwFactor)
-    store_vars(Mode,mf,CFactor,IdExcludeSet,IdIncludeSet)
+    store_vars(Mode,mf,CFactor,IdExcludeSet,IdIncludeSet,Desktop)
 
     return mf
 
 
 def setcfactor(cf):
     cf = getvalue(cf,MinCFactor,MaxCFactor)
-    store_vars(Mode,MwFactor,cf,IdExcludeSet,IdIncludeSet)
+    store_vars(Mode,MwFactor,cf,IdExcludeSet,IdIncludeSet,Desktop)
 
     return cf
 
@@ -590,7 +593,7 @@ def set_mode(mode):
     else:
         return
 
-    store_vars(mode,MwFactor,CFactor,IdExcludeSet,IdIncludeSet)
+    store_vars(mode,MwFactor,CFactor,IdExcludeSet,IdIncludeSet,Desktop)
 
 
 if len(sys.argv) < 2:
