@@ -352,37 +352,39 @@ def raise_window(windowid):
 
 def exclude_win(windowid):
     winlist = create_win_list()
-    if windowid in winlist:
-        winlist.remove(windowid)
     IdExcludeSet.add(windowid)
     if windowid in IdIncludeSet:
         IdIncludeSet.remove(windowid)
+    if windowid in winlist:
+        winlist.remove(windowid)
     store_vars(Mode,MwFactor,CFactor,IdExcludeSet,IdIncludeSet)
     arrange_mode(winlist,Mode)
 
 
 def include_win(windowid):
     winlist = create_win_list()
-    if not windowid in winlist:
-        winlist.append(windowid)
     if windowid in IdExcludeSet:
         IdExcludeSet.remove(windowid)
     IdIncludeSet.add(windowid)
+    if not windowid in winlist:
+        winlist.append(windowid)
     store_vars(Mode,MwFactor,CFactor,IdExcludeSet,IdIncludeSet)
     arrange_mode(winlist,Mode)
 
 def toggle_exclude_win(windowid):
     winlist = create_win_list()
-    if windowid in winlist:
-        winlist.remove(windowid)
-        IdExcludeSet.add(windowid)
-        if windowid in IdIncludeSet:
+    if windowid in IdIncludeSet:
             IdIncludeSet.remove(windowid)
+            IdExcludeSet.add(windowid)
+            if windowid in winlist:
+                winlist.remove(windowid)
     else:
-        winlist.append(windowid)
+        IdIncludeSet.add(windowid)
         if windowid in IdExcludeSet:
             IdExcludeSet.remove(windowid)
-        IdIncludeSet.add(windowid)
+        if not windowid in winlist:
+            winlist.append(windowid)
+        
     store_vars(Mode,MwFactor,CFactor,IdExcludeSet,IdIncludeSet)
     arrange_mode(winlist,Mode)
 
