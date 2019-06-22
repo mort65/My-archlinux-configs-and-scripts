@@ -180,7 +180,7 @@ PropExcludeList = [("veracrypt","Veracrypt"),("dukto","Dukto"),("nitrogen","Nitr
 
 OldWinList = retrieve(TempFile)
 OldVarList = retrieve(TempFile2)
-Mode=get_temp_var(OldVarList,0,"Simple")
+Mode=get_temp_var(OldVarList,0,"simple")
 MinMwFactor, MaxMwFactor = 0.25, 0.90
 MinCFactor, MaxCFactor = 0.3, 1.0
 MwFactor=getvalue(get_temp_var(OldVarList,1,OrigMwFactor),MinMwFactor,MaxMwFactor)
