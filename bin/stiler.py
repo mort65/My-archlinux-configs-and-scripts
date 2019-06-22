@@ -155,7 +155,7 @@ def retrieve(file):
             obj = pickle.load(f)
         f.close()
         return(obj)
-    
+
     except:
         f = open(file,'w')
         f.close
@@ -166,7 +166,7 @@ def retrieve(file):
 def get_temp_var(var_list,index,def_value):
     if var_list == {}:
         return def_value
-    
+
     return var_list[index]
 
 # Global variables
@@ -225,7 +225,7 @@ def get_simple_tile(wincount):
     if rows == 0:
         layout.append((OrigX,OrigY,MaxWidth,MaxHeight-WinTitle-WinBorder))
         return layout
-    
+
     else:
         layout.append((OrigX,OrigY,int(MaxWidth*MwFactor),MaxHeight-WinTitle-WinBorder))
 
@@ -451,12 +451,12 @@ def create_win_list():
 
     if OldWinList == {}:
         pass
-    
+
     else:
         OldWindows = OldWinList[Desktop]
         if Windows == OldWindows:
             pass
-        
+
         else:
             Windows = compare_win_list(Windows,OldWindows)
 
@@ -466,23 +466,23 @@ def create_win_list():
 def ischanged():
     if not Desktop == OldDesktop:
         return True
-    
+
     if OldWinList == {}:
         return True
-    
+
     OldWindows = OldWinList[Desktop]
     Windows = WinList[Desktop]
     if Windows == OldWindows:
         return False
-    
+
     for window in OldWindows:
         if Windows.count(window) == 0:
             return True
-    
+
     for window in Windows:
         if OldWindows.count(window) == 0:
             return True
-    
+
     return False
 
 
@@ -629,7 +629,7 @@ def set_mode(mode):
     store_vars(mode,MwFactor,CFactor,IdExcludeSet,IdIncludeSet,Desktop)
 
 
-if len(sys.argv) < 2:
+if len(sys.argv) < 2 or sys.argv[1] == '':
     set_mode(Mode)
 elif sys.argv[1] in ("-d","--daemon","daemon"):
     if ischanged():
