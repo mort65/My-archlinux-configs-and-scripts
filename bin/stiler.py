@@ -598,7 +598,7 @@ def set_mode(mode):
 
 if len(sys.argv) < 2:
     set_mode(Mode)
-elif sys.argv[1] in ("-d","--daemon"):
+elif sys.argv[1] in ("-d","--daemon","daemon"):
     if ischanged():
         set_mode(Mode)
 elif sys.argv[1] in ("simple", "horizontal", "vertical", "max_all", "center", "left", "right"):
