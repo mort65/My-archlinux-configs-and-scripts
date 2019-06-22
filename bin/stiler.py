@@ -71,16 +71,16 @@ def initialize(id_exclude_set,id_include_set):
     new_win_output = []
     excluded_win_output = []
     idws = [int(win.split()[0],16) for win in win_output]
-    new_idexcludeset = set()
-    new_idincludeset = set()
+    new_id_exclude_set = set()
+    new_id_include_set = set()
     for idw in id_exclude_set:
         if int(idw,16) in idws:
-            new_idexcludeset.add(idw)
+            new_id_exclude_set.add(idw)
     for idw in id_include_set:
         if int(idw,16) in idws:
-            new_idincludeset.add(idw)
-    id_exclude_set = [int(idw,16) for idw in new_idexcludeset]
-    id_include_set = [int(idw,16) for idw in new_idincludeset]
+            new_id_include_set.add(idw)
+    id_exclude_set = [int(idw,16) for idw in new_id_exclude_set]
+    id_include_set = [int(idw,16) for idw in new_id_include_set]
     for win in win_output:
         try:
             if int(win.split()[0],16) in id_exclude_set:
@@ -120,7 +120,7 @@ def initialize(id_exclude_set,id_include_set):
         win_list[desk] = map(lambda y: hex(int(y.split()[0],16)) , filter(lambda x: x.split()[1] == desk, new_win_output ))
         excluded_win_list[desk] = map(lambda y: hex(int(y.split()[0],16)) , filter(lambda x: x.split()[1] == desk, excluded_win_output ))
 
-    return (desktop,orig_x,orig_y,width,height,win_list,excluded_win_list,new_idexcludeset,new_idincludeset)
+    return (desktop,orig_x,orig_y,width,height,win_list,excluded_win_list,new_id_exclude_set,new_id_include_set)
 
 
 def get_active_window():
