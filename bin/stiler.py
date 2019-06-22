@@ -35,11 +35,13 @@ def get_lock(process_name):
     except socket.error:
         #print 'lock exists'
         count = 0.0
+
         while True:
             time.sleep(0.1)
             try:
                 get_lock._lock_socket.bind('\0' + process_name)
                 break
+
             except socket.error:
                 count += 0.1
                 if count >= 3.0:
@@ -52,8 +54,10 @@ get_lock('stiler.py')
 def getvalue(value,minvalue,maxvalue):
     if value < minvalue:
         return minvalue
+
     elif value > maxvalue:
         return maxvalue
+
     return value
 
 def initialize(id_exclude_set,id_include_set):
@@ -73,19 +77,24 @@ def initialize(id_exclude_set,id_include_set):
     idws = [int(win.split()[0],16) for win in win_output]
     new_id_exclude_set = set()
     new_id_include_set = set()
+
     for idw in id_exclude_set:
         if int(idw,16) in idws:
             new_id_exclude_set.add(idw)
+
     for idw in id_include_set:
         if int(idw,16) in idws:
             new_id_include_set.add(idw)
+
     id_exclude_set = [int(idw,16) for idw in new_id_exclude_set]
     id_include_set = [int(idw,16) for idw in new_id_include_set]
+
     for win in win_output:
         try:
             if int(win.split()[0],16) in id_exclude_set:
                 excluded_win_output.append(win)
                 continue
+
             if int(win.split()[0],16) in id_include_set:
                 new_win_output.append(win)
                 continue
@@ -95,18 +104,25 @@ def initialize(id_exclude_set,id_include_set):
                 excluded_win_output.append(win)
                 continue
 
-            instance_class_list =  win.split()[6].split('.')
+            instance_class = win.split()[6]
+            if not instance_class:
+                new_win_output.append(win)
+                continue
+
+            instance_class_list = instance_class.split('.')
             instance_class_list.extend(['',''])
             for exclude in PropExcludeList:
                 if exclude[0] and exclude[1]:
-                    if instance_class_list[0] == exclude[0] and instance_class_list[1] == exclude[1]:
+                    if (exclude[0] + '.' + exclude[1]) == instance_class:
                         excluded_win_output.append(win)
                         break
+
                 elif exclude[0] or exclude[1]:
                     if (instance_class_list[0] and exclude[0] and instance_class_list[0] == exclude[0]) or \
                     (instance_class_list[1] and exclude[1] and instance_class_list[1] == exclude[1]):
                         excluded_win_output.append(win)
                         break
+
             else:
                 new_win_output.append(win)
 
@@ -139,6 +155,7 @@ def retrieve(file):
             obj = pickle.load(f)
         f.close()
         return(obj)
+    
     except:
         f = open(file,'w')
         f.close
@@ -149,6 +166,7 @@ def retrieve(file):
 def get_temp_var(var_list,index,def_value):
     if var_list == {}:
         return def_value
+    
     return var_list[index]
 
 # Global variables
@@ -207,6 +225,7 @@ def get_simple_tile(wincount):
     if rows == 0:
         layout.append((OrigX,OrigY,MaxWidth,MaxHeight-WinTitle-WinBorder))
         return layout
+    
     else:
         layout.append((OrigX,OrigY,int(MaxWidth*MwFactor),MaxHeight-WinTitle-WinBorder))
 
@@ -244,6 +263,7 @@ def get_horiz_tile(wincount):
 
     return layout
 
+
 def get_center_tile(wincount):
     layout = []
     width=int(MaxWidth*CFactor)
@@ -254,6 +274,7 @@ def get_center_tile(wincount):
         layout.append((x,y,width,height))
 
     return layout
+
 
 def get_left_tile(wincount):
     layout = []
@@ -269,6 +290,7 @@ def get_left_tile(wincount):
         layout.append((x,y,width,height))
 
     return layout
+
 
 def get_right_tile(wincount):
     layout = []
@@ -326,6 +348,7 @@ def normalize_win(windowid):
 
     os.system(command)
 
+
 def maximize_win(windowid):
     if windowid == ":ACTIVE:":
         command = "wmctrl -r :ACTIVE: -b add,maximized_vert,maximized_horz"
@@ -333,6 +356,7 @@ def maximize_win(windowid):
         command = "wmctrl -r " + windowid + " -b add,maximized_vert,maximized_horz -i"
 
     os.system(command)
+
 
 def toggle_maximize_win(windowid):
     if windowid == ":ACTIVE:":
@@ -350,6 +374,7 @@ def raise_window(windowid):
         command = "wmctrl -a " + windowid + " -i"
 
     os.system(command)
+
 
 def exclude_win(windowid):
     winlist = create_win_list()
@@ -426,10 +451,12 @@ def create_win_list():
 
     if OldWinList == {}:
         pass
+    
     else:
         OldWindows = OldWinList[Desktop]
         if Windows == OldWindows:
             pass
+        
         else:
             Windows = compare_win_list(Windows,OldWindows)
 
@@ -439,18 +466,23 @@ def create_win_list():
 def ischanged():
     if not Desktop == OldDesktop:
         return True
+    
     if OldWinList == {}:
         return True
+    
     OldWindows = OldWinList[Desktop]
     Windows = WinList[Desktop]
     if Windows == OldWindows:
         return False
+    
     for window in OldWindows:
         if Windows.count(window) == 0:
             return True
+    
     for window in Windows:
         if OldWindows.count(window) == 0:
             return True
+    
     return False
 
 
