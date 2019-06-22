@@ -3,6 +3,7 @@ HISTFILE=~/.histfile
 HISTSIZE=1000
 SAVEHIST=2000
 
+
 # End of lines configured by zsh-newuser-install
 # The following lines were added by compinstall
 zstyle :compinstall filename "/home/$(id -u -n)/.zshrc"
@@ -12,19 +13,39 @@ compinit
 
 autoload -Uz up-line-or-beginning-search down-line-or-beginning-search
 
+setopt appendhistory autocd no_beep extendedglob nomatch notify hist_ignore_space hist_ignore_all_dups
+
 zle -N up-line-or-beginning-search
 zle -N down-line-or-beginning-search
 
-[[ -n "$key[Up]"   ]] && bindkey -- "$key[Up]"   up-line-or-beginning-search
-[[ -n "$key[Down]" ]] && bindkey -- "$key[Down]" down-line-or-beginning-search
+[[ -n "$key[Up]"   ]] && bindkey -v "$key[Up]"   up-line-or-beginning-search
+[[ -n "$key[Down]" ]] && bindkey -v "$key[Down]" down-line-or-beginning-search
 
-bindkey '\eOA' up-line-or-beginning-search # or ^[OA
-bindkey '\eOB' down-line-or-beginning-search # or ^[OB
+bindkey -v '\eOA' up-line-or-beginning-search # or ^[OA
+bindkey -v '\eOB' down-line-or-beginning-search # or ^[OB
 
-# End of lines added by compinstall
+bindkey '^k' vi-cmd-mode
 
-setopt appendhistory autocd no_beep extendedglob nomatch notify hist_ignore_space hist_ignore_all_dups
-bindkey -v
+#Change Cursor on different mods
+zle-keymap-select () {
+    if [ "$TERM" = "xterm-256color" ]; then
+        if [ $KEYMAP = vicmd ]; then
+            # the command mode for vi
+            echo -ne "\e[2 q"
+        else
+            # the insert mode for vi
+            echo -ne "\e[5 q"
+        fi
+    fi
+}
+zle -N zle-keymap-select
+
+# Use beam shape cursor for each new prompt.
+_fix_cursor() {
+   echo -ne '\e[5 q'
+}
+precmd_functions+=(_fix_cursor)
+
 
 # If you come from bash you might have to change your $PATH.
 # export PATH=$HOME/bin:/usr/local/bin:$PATH
@@ -37,6 +58,8 @@ ZSH=/usr/share/oh-my-zsh/
 # See https://github.com/robbyrussell/oh-my-zsh/wiki/Themes
 #ZSH_THEME="agnoster"
 ZSH_THEME="rkj-custom"
+#ZSH_THEME="powerline"
+#ZSH_THEME="bullet-train"
 
 # Uncomment the following line to use case-sensitive completion.
 # CASE_SENSITIVE="true"
@@ -61,7 +84,7 @@ DISABLE_AUTO_UPDATE="true"
 # ENABLE_CORRECTION="true"
 
 # Uncomment the following line to display red dots whilst waiting for completion.
-COMPLETION_WAITING_DOTS="true"
+#COMPLETION_WAITING_DOTS="true"
 
 # Uncomment the following line if you want to disable marking untracked files
 # under VCS as dirty. This makes repository status check for large repositories
@@ -80,7 +103,7 @@ COMPLETION_WAITING_DOTS="true"
 # Custom plugins may be added to ~/.oh-my-zsh/custom/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
-plugins=(git archlinux python sudo systemd web-search wd)
+plugins=(vi-mode git archlinux python systemd web-search wd sudo)
 
 
 # User configuration
@@ -146,6 +169,11 @@ Reset=`/usr/bin/tput sgr0`
 fpath=( ~/.zfuncs "${fpath[@]}" )
 #mark the function in zfuncs to be automatically loaded upon its first reference
 autoload -Uz syncit
+autoload -Uz ranger
+#autoload -Uz nnn
+autoload -Uz winestart
+autoload -Uz wine32start
+autoload -Uz wine64start
 
 
 
@@ -173,6 +201,8 @@ jdatestatus()
  return
 }
 
+#force terminal to use 256-colors
+export TERM="xterm-256color"
 
 ##Prompt
 #####################################
@@ -187,9 +217,10 @@ jdatestatus()
 
 alias c='/usr/bin/clear'
 
-alias rm='rm -i'
-alias cp='cp -i'
-alias mv='mv -i'
+alias rm='timeout 3 rm -Iv --one-file-system'
+alias cp='cp -iv'
+alias mv='timeout 8 mv -iv'
+alias mkdir='mkdir -p -v'
 
 # ls, the common ones I use a lot shortened for rapid fire usage
 alias l='ls -lFh'     #size,show type,human readable
@@ -203,7 +234,7 @@ alias lart='ls -1Fcart'
 alias lrt='ls -1Fcrt'
 
 alias zshrc='$EDITOR ~/.zshrc' # Quick access to the ~/.zshrc file
-alias notes='$EDITOR ~/.note/Arch_Notes.txt'
+alias notes='$EDITOR ~/notes/arch_notes.txt'
 # Alias definitions.
 # You may want to put all your additions into a separate file like
 # ~/.bash_aliases, instead of adding them here directly.
@@ -260,18 +291,18 @@ alias ping='/usr/bin/ping -c 5'
 alias fastping='/usr/bin/ping -c 100 -s.2'
 
 # Show open ports
-alias ports='/usr/bin/netstat -tulanp'
+alias ports='/usr/bin/ss -tulanp'
 
 #update system faster
-alias yupdate='/usr/bin/yaourt -Syyua'
+alias yupdate='/usr/bin/yay -Syyua'
 alias pupdate='/usr/bin/sudo pacman -Syyu'
 
 
 # reboot / halt / poweroff
-alias reboot='/usr/bin/sudo /sbin/reboot'
-alias poweroff='/usr/bin/sudo /sbin/poweroff'
-alias halt='/usr/bin/sudo /sbin/halt'
-alias shutdown='/usr/bin/sudo /sbin/shutdown'
+#alias reboot='/usr/bin/sudo /sbin/reboot'
+#alias poweroff='/usr/bin/sudo /sbin/poweroff'
+#alias halt='/usr/bin/sudo /sbin/halt'
+#alias shutdown='/usr/bin/sudo /sbin/shutdown'
 
 ## pass options to free ##
 alias meminfo='/usr/bin/free -l -t -h'
@@ -316,19 +347,51 @@ alias py="/usr/bin/python"
 alias py3="/usr/bin/python3"
 alias py2="/usr/bin/python2"
 alias ver="/usr/bin/uname -r"
-#alias mpv="/usr/bin/mpv --sub-scale=0.75 --volume-max=200"
 
 # When using sudo, use alias expansion (otherwise sudo ignores your aliases)
 alias sudo='/usr/bin/sudo '
 
+alias def="/usr/bin/sdcv"
+
+alias vifmstart="vifmrun"
+
+alias xterm="xterm +sb"
+alias uxterm="uxterm +sb"
+
+alias mplayer="mplayer -softvol -softvol-max 300"
+alias pkexec='pkexec env DISPLAY=$DISPLAY XAUTHORITY=$XAUTHORITY'
+alias rsync-cp="rsync -ah --partial --info=progress2"
+alias rsync-mv="rsync -ah --partial --remove-source-files --info=progress2"
+alias stilerd="nohup stiler-daemon &> /dev/null &"
 ##Env:
 #####################################
 
 export PATH=$PATH:$HOME/bin
 export VISUAL="vim"
-export EDITOR=vim
+export EDITOR="vim"
+export TERMINAL="mlterm"
+export BROWSER="brave"
+export FILEMANAGER="thunar"
+export SUDO_ASKPASS="/usr/bin/qt4-ssh-askpass"
+#NNN
+###################################
 
-####################################
-echo '\n'
+export NNN_BMS="\`:~;d:~/Downloads;D:/data;H:/mnt/home1;R:/mnt/root1;M:/run/media/${USERNAME};p:~/Pictures;m:~/Music;v:~/Videos;N:/mnt;"
+export NNN_COPIER="$HOME/.script/nnnscripts/nnn-copier.sh"
+export NNN_SCRIPT="$HOME/.script/nnnscripts"
+#export NNN_OPENER="xdg-open"
+export NNN_USE_EDITOR=1
+export NNN_RESTRICT_0B=1
+export NNN_RESTRICT_NAV_OPEN=1
+#export NNN_IDLE_TIMEOUT=1800
+export NNN_CONTEXT_COLORS="4563"
+alias ncp="< $HOME/.nnncp tr '\0' '\n'"
+
+#Wine
+###################################
+alias ds2backup="~/.script/wine/ds2savebackup -i"
+alias ds2sofsbackup="~/.script/wine/ds2sofs_savebackup -i"
+#Enable Vi-mode
+bindkey -v
+
 neofetch
-

@@ -1,0 +1,22 @@
+#!/bin/sh
+
+
+if [ -n "$1" ] ;then
+	case "$1" in
+		m|-m|menu|-menu)
+			echo "Select session ************"
+			echo "  1) dwm"
+			echo "  2) xfce4"
+			read -r n
+			case $n in
+				1) startx ~/.xinitrc dwm;;
+				2) startx ~/.xinitrc xfce4;;
+  				*) echo "invalid option";;
+			esac
+			;;
+		*) startx ~/.xinitrc "$1";;
+	esac
+else
+	SESSION="$(cat ~/.session)"
+	startx ~/.xinitrc "$SESSION"
+fi

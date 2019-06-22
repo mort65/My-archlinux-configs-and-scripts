@@ -1,0 +1,13 @@
+#!/usr/bin/zsh
+
+a64winestart() {
+	export WINEARCH="win64"
+	if [ "$#" -ge 1 ]; then
+		export WINEPREFIX="$1"
+	fi
+	if [ "$#" -le 1 ]; then
+		/usr/bin/wine explorer
+	else
+		/usr/bin/wine "${@:2}"
+	fi
+}

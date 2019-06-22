@@ -1,0 +1,10 @@
+#!/usr/bin/zsh
+ranger() {
+    if [ -z "$RANGER_LEVEL" ]; then
+        /usr/bin/ranger "$@"
+	return
+    else
+        exit
+    fi
+}
+

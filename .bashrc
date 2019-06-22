@@ -20,6 +20,21 @@ HISTFILESIZE=2000
 # update the values of LINES and COLUMNS.
 shopt -s checkwinsize
 
+#tab-complete commands, names and file names
+complete -cf sudo
+
+#invoke the manual for the command preceding the cursor by pressing Alt+h
+bind '"\eh": "\C-a\eb\ed\C-y\e#man \C-y\C-m\C-p\C-p\C-a\C-d\C-e"'
+
+#automatically search the official repositories, when an unrecognized command entered
+#requires pkgfile or command-not-found
+source /usr/share/doc/pkgfile/command-not-found.bash
+
+#auto "cd" when entering just a path
+shopt -s autocd
+
+#Enable Vi-mode
+set -o vi
 
 # uncomment for a colored prompt, if the terminal has the capability; turned
 # off by default to not distract the user: the focus in a terminal window
@@ -109,7 +124,7 @@ local UC=$W                 # user's color
 
 #returns exitcode of last command if it is not zero.
 exitstatus()
-{   
+{
     local LASTEXIT=$?
     if [[ $LASTEXIT != 0 ]]; then
         tput setaf 1;echo $LASTEXIT
@@ -127,7 +142,7 @@ jdatestatus()
  else
     echo "$(date '+%h %d %B %Y %H:%M %p')"
  fi
- return	
+ return
 }
 
 
@@ -138,7 +153,7 @@ if [ "$color_prompt" = yes ]; then
 else
 	PS1='[\u@\h \W]\$ '
 fi
-unset color_prompt force_color_prompt 
+unset color_prompt force_color_prompt
 #PS1="${EMW}\n[${EMG}\$(jdate '+%h %b %d %Y') ${EMW}]${EMW}\n[${EMG}\d ${EMG}\@${EMW}] \n${EMW} [${UC}\u${EMW}@${UC}\h ${EMB}\${NEW_PWD}${EMW}]${R}\$(exitstatus)${UC}\\$ ${NONE}"
 
 #PS1="${EMW}\n[${EMG}\$(lsb_release -d) ${EMW}]${EMW}\n[${EMG}\d ${EMG}\@${EMW}] \n${EMW} [${UC}\u${EMW}@${UC}\h ${EMB}\${NEW_PWD}${EMW}]${R}\$(exitstatus)${UC}\\$ ${NONE}"
@@ -149,11 +164,11 @@ unset color_prompt force_color_prompt
 
 PROMPT_COMMAND=bash_prompt_command
 bash_prompt
-unset bash_prompt 
+unset bash_prompt
 
 # colored GCC warnings and errors
 export GCC_COLORS='error=01;31:warning=01;35:note=01;36:caret=01;32:locus=01:quote=01'
- 
+
 # enable color support of ls and also add handy aliases
 if [ -x /usr/bin/dircolors ]; then
     test -r ~/.dircolors && eval "$(dircolors -b ~/.dircolors)" || eval "$(dircolors -b)"
@@ -210,11 +225,11 @@ alias del='rm -iv'
 alias cd..='cd ..'
 
 ## a quick way to get out of current directory ##
-alias ..='cd ..' 
-alias ...='cd ../../../' 
-alias ....='cd ../../../../' 
-alias .....='cd ../../../../' 
-alias .4='cd ../../../../' 
+alias ..='cd ..'
+alias ...='cd ../../../'
+alias ....='cd ../../../../'
+alias .....='cd ../../../../'
+alias .4='cd ../../../../'
 alias .5='cd ../../../../..'
 
 ## Colorize the grep command output for ease of use (good for log files)##
@@ -239,9 +254,9 @@ alias nowtime=now
 alias nowdate='date +"%d-%m-%Y"'
 
 # Set vim as default
-alias vi=vim 
-alias svi='sudo vi' 
-alias vis='vim "+set si"' 
+alias vi=vim
+alias svi='sudo vi'
+alias vis='vim "+set si"'
 alias edit='vim'
 
 # Stop after sending count ECHO_REQUEST packets #
@@ -250,37 +265,31 @@ alias ping='ping -c 5'
 alias fastping='ping -c 100 -s.2'
 
 # Show open ports
-alias ports='netstat -tulanp'
+alias ports='ss -tulanp'
 
-#update system faster
-alias yupdate='yaourt -Syyua'
-alias pupdate='sudo pacman -Syyu'
-alias update='yaourt -Syyua'
-
-# reboot / halt / poweroff
 alias reboot='sudo /sbin/reboot'
 alias poweroff='sudo /sbin/poweroff'
 alias halt='sudo /sbin/halt'
 alias shutdown='sudo /sbin/shutdown'
 
-## pass options to free ## 
+## pass options to free ##
 alias meminfo='free -l -t -h'
- 
+
 ## get top process eating memory
 alias psmem='ps auxf | sort -nr -k 4'
 alias psmem10='ps auxf | sort -nr -k 4 | head -10'
- 
+
 ## get top process eating cpu ##
 alias pscpu='ps auxf | sort -nr -k 3'
 alias pscpu10='ps auxf | sort -nr -k 3 | head -10'
- 
+
 ## Get server cpu info ##
 alias cpuinfo='lscpu'
- 
+
 ## older system use /proc/cpuinfo ##
 ##alias cpuinfo='less /proc/cpuinfo' ##
 
-## get GPU ram on desktop / laptop## 
+## get GPU ram on desktop / laptop##
 #alias gpumeminfo='grep -i --color memory /var/log/Xorg.0.log'
 
 ## this one saved by butt so many times ##
@@ -299,8 +308,14 @@ alias upta="$HOME/bin/update-arch -tsya"
 alias upm="$HOME/bin/update-mirrors"
 alias tf="$HOME/bin/totalfiles"
 alias ver="/usr/bin/uname -r"
+alias cp="cp -i"
+alias mv="mv -i"
+alias rsync-cp="rsync -ah --partial --info=progress2"
+alias rsync-mv="rsync -ah --partial --remove-source-files --info=progress2"
+alias stilerd="nohup stiler-daemon &> /dev/null &"
 #alias mpv="/usr/bin/mpv --sub-scale=0.75 --volume-max=200"
- 
+
+
 # When using sudo, use alias expansion (otherwise sudo ignores your aliases)
 alias sudo='/usr/bin/sudo '
 #####################################
@@ -316,16 +331,53 @@ if ! shopt -oq posix; then
   fi
 fi
 
+##funcs:
+#####################################
+#Preventing nested ranger instances
+ranger() {
+    if [ -z "$RANGER_LEVEL" ]; then
+        /usr/bin/ranger "$@"
+    else
+        exit
+    fi
+}
+export -f ranger
 
-
+#Preventing nested nnn instances
+nnn() {
+    if [ "$SHLVL" -le 1 ]; then
+        /usr/bin/nnn "$@"
+	return
+    else
+        exit
+    fi
+}
+export -f nnn
 
 ##Env:
 #####################################
+export USERNAME=${SUDO_USER:-$(id -u -n)}
 
 export PATH=$PATH:$HOME/bin
 export VISUAL="vim"
-export EDITOR=vim
+export EDITOR="vim"
+export TERMINAL="mlterm"
+export BROWSER="brave"
+export FILEMANAGER="thunar"
 
-####################################
-echo -e '\n'
-neofetch
+#NNN
+###################################
+
+export NNN_BMS="\`:~;d:~/Downloads;D:/data;H:/mnt/home1;R:/mnt/root1;M:/run/media/${USERNAME};p:~/Pictures;m:~/Music;v:~/Videos;N:/mnt;"
+export NNN_COPIER="$HOME/.script/nnnscripts/nnn-copier.sh"
+export NNN_SCRIPT="$HOME/.script/nnnscripts"
+#export NNN_OPENER="xdg-open"
+export NNN_USE_EDITOR=1
+export NNN_RESTRICT_0B=1
+export NNN_RESTRICT_NAV_OPEN=1
+export NNN_IDLE_TIMEOUT=1800
+export NNN_CONTEXT_COLORS="4563"
+alias ncp="< $HOME/.nnncp tr '\0' '\n'"
+
+
+

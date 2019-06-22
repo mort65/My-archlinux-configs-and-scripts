@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/zsh
 username=${SUDO_USER:-$(id -u -n)}
 HOMEDIR="/home/$USERNAME"
 syncit() {

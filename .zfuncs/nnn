@@ -1,0 +1,10 @@
+#!/usr/bin/zsh
+nnn() {
+    if [ "$SHLVL" -le 1 ]; then
+        /usr/bin/nnn "$@"
+	return
+    else
+        exit
+    fi
+}
+
