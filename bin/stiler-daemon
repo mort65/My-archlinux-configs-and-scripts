@@ -2,6 +2,16 @@
 
 while true ;do
 	if ! pidof -x "stiler.py" >/dev/null 2>&1 ;then
+		~/bin/stiler.py
+		break
+	fi
+	sleep 1
+done
+
+sleep 1
+
+while true ;do
+	if ! pidof -x "stiler.py" >/dev/null 2>&1 ;then
 		~/bin/stiler.py -d
 	fi
 	sleep 1
