@@ -616,7 +616,7 @@ def cycle_focus(n):
     active = get_active_window()
     if active and active in winlist:
         index = winlist.index(active)
-        if index > -1 and (index + n) < len(winlist):
+        if index + n < len(winlist):
             index += n
         else:
             index = 0
