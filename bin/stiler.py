@@ -198,6 +198,7 @@ def get_temp_var(var_list,index,def_value):
 
     return var_list[index]
 
+
 # Global variables
 
 #BottomPadding = 0
@@ -493,7 +494,7 @@ def create_win_list(actual = False):
     return Windows
 
 
-def ischanged():
+def is_changed():
     if not Desktop == OldDesktop:
         return True
 
@@ -502,16 +503,8 @@ def ischanged():
 
     OldWindows = OldWinList[Desktop]
     Windows = WinList[Desktop]
-    if Windows == OldWindows:
-        return False
-
-    for window in OldWindows:
-        if Windows.count(window) == 0:
-            return True
-
-    for window in Windows:
-        if OldWindows.count(window) == 0:
-            return True
+    if not Windows == OldWindows:
+        return True
 
     return False
 
@@ -631,9 +624,11 @@ def maximize():
     maximize_win(":ACTIVE:")
     raise_window(":ACTIVE:")
 
+
 def toggle_maximize():
     toggle_maximize_win(":ACTIVE:")
     raise_window(":ACTIVE:")
+
 
 def max_all():
     winlist = create_win_list()
@@ -659,8 +654,10 @@ def setcfactor(cf):
 
     return cf
 
+
 def normalize():
     set_mode(Mode[Desktop])
+
 
 def unmaximize():
     unmaximize_win(":ACTIVE:")
@@ -708,7 +705,7 @@ elif sys.argv[1] == "reset":
     Reset = True
     set_mode(Mode[Desktop])
 elif sys.argv[1] == "daemon":
-    if ischanged():
+    if is_changed():
         set_mode(Mode[Desktop])
 elif sys.argv[1] in ("simple", "horizontal", "vertical", "max_all", "center", "left", "right"):
     Reset = True
