@@ -157,13 +157,15 @@ def initialize(id_exclude_set,id_include_set):
             new_win_output.append(win)
 
     win_list = {}
+    actual_win_list = {}
     excluded_win_list = {}
 
     for desk in desk_list:
-        win_list[desk] = map(lambda y: hex(int(y.split()[0],16)) , filter(lambda x: x.split()[1] == desk, new_win_output ))
-        excluded_win_list[desk] = map(lambda y: hex(int(y.split()[0],16)) , filter(lambda x: x.split()[1] == desk, excluded_win_output ))
+        win_list[desk] = map(lambda y: hex(int(y.split()[0],16)) , filter(lambda x: x.split()[1] == desk, new_win_output))
+        actual_win_list[desk] = map(lambda y: hex(int(y.split()[0],16)) , filter(lambda x: x.split()[1] == desk, win_output))
+        excluded_win_list[desk] = map(lambda y: hex(int(y.split()[0],16)) , filter(lambda x: x.split()[1] == desk, excluded_win_output))
 
-    return (desktop,orig_x,orig_y,width,height,win_list,excluded_win_list,new_id_exclude_set,new_id_include_set)
+    return (desktop,orig_x,orig_y,width,height,actual_win_list,win_list,excluded_win_list,new_id_exclude_set,new_id_include_set)
 
 
 def get_active_window():
@@ -209,7 +211,7 @@ def get_temp_var(var_list,index,def_value):
 #TempFile = "/tmp/tile_winlist"
 BottomPadding = 0
 TopPadding = -2
-LeftPadding = 0
+LeftPadding = -2
 RightPadding = 0
 WinTitle = 23
 WinBorder = 3
@@ -220,7 +222,8 @@ TempFile2 = "/tmp/temp_varlist"
 TypeExcludeList = ["_NET_WM_WINDOW_TYPE_DIALOG", "_NET_WM_WINDOW_TYPE_SPLASH", "_NET_WM_WINDOW_TYPE_NOTIFICATION","_NET_WM_WINDOW_TYPE_TOOLBAR"]
 PropExcludeList = [("veracrypt","Veracrypt"),("dukto","Dukto"),("nitrogen","Nitrogen"),\
 ("keepass2","KeePass2"),("galculator","Galculator"),("ultracopier","ultracopier"),\
-('',"openssh-askpass"),('',"Wine"),('',"Zenity"),('',"Lutris"),("mlconfig","Mlconfig"),("st","St"),('',"mpv")]#(instance,class)
+('',"openssh-askpass"),('',"Wine"),('',"Zenity"),('',"Lutris"),("mlconfig","Mlconfig"),\
+("st","St"),('',"mpv"),("brave-browser","Brave-browser"),("gcr-prompter","Gcr-prompter")]#(instance,class)
 OrigMode={"0":"simple","1":"horizontal"}
 
 
@@ -234,7 +237,7 @@ CFactor=getvalue(get_temp_var(OldVarList,2,OrigCFactor),MinCFactor,MaxCFactor)
 OldIdExcludeSet=get_temp_var(OldVarList,3,set())
 OldIdIncludeSet=get_temp_var(OldVarList,4,set())
 OldDesktop=get_temp_var(OldVarList,5,set())
-(Desktop,OrigXstr,OrigYstr,MaxWidthStr,MaxHeightStr,WinList,ExcludedWinList,IdExcludeSet,IdIncludeSet) = initialize(OldIdExcludeSet,OldIdIncludeSet)
+(Desktop,OrigXstr,OrigYstr,MaxWidthStr,MaxHeightStr,ActualWinList,WinList,ExcludedWinList,IdExcludeSet,IdIncludeSet) = initialize(OldIdExcludeSet,OldIdIncludeSet)
 WinList = compare_win_dict(WinList,OldWinList)
 MaxWidth = int(MaxWidthStr) - LeftPadding - RightPadding
 MaxHeight = int(MaxHeightStr) - TopPadding - BottomPadding
@@ -355,9 +358,15 @@ def move_active(PosX,PosY,Width,Height):
 
 
 def move_window(windowid,PosX,PosY,Width,Height):
-    command =  " wmctrl -r " + windowid +  " -e 0," + str(PosX) + "," + str(PosY)+ "," + str(Width) + "," + str(Height) + " -i"
+    command =  "wmctrl -r " + windowid +  " -e 0," + str(PosX) + "," + str(PosY)+ "," + str(Width) + "," + str(Height) + " -i"
     os.system(command)
     command = "wmctrl -r " + windowid + " -b remove,hidden,shaded -i"
+    os.system(command)
+
+def focus_window(windowid):
+    command = "xdotool mousemove --sync --window " + windowid + " 1 1"
+    os.system(command)
+    command = "xdotool windowfocus " + windowid
     os.system(command)
 
 def unmaximize_win(windowid):
@@ -464,8 +473,11 @@ def center():
     arrange_mode(winlist,"center")
 
 
-def create_win_list():
-    Windows = WinList[Desktop]
+def create_win_list(actual = False):
+    if actual:
+        Windows = ActualWinList[Desktop]
+    else:
+        Windows = WinList[Desktop]
 
     if OldWinList == {}:
         pass
@@ -598,6 +610,23 @@ def cycle(n):
     raise_window(winlist[0])
 
 
+def cycle_focus(n):
+    winlist = create_win_list(actual=True)
+    #n = n % len(winlist)
+    active = get_active_window()
+    if active and active in winlist:
+        index = winlist.index(active)
+        if index > -1 and (index + n) < len(winlist):
+            index += n
+        else:
+            index = 0
+    else:
+        index = 0
+
+    raise_window(winlist[index])
+    focus_window(winlist[index])
+
+
 def maximize():
     maximize_win(":ACTIVE:")
     raise_window(":ACTIVE:")
@@ -670,7 +699,8 @@ Options:
          inc_mwfactor,dec_mwfactor,reset_mwfactor,
          inc_cfactor,dec_cfactor,reset_cfactor,
          exclude,include,toggle_exclude,
-         swap,cycle,reverse_cycle,
+         cycle_focus,rcycle_focus,
+         swap,cycle,rcycle,
          reset,daemon\
          """)
     sys.exit()
@@ -688,7 +718,11 @@ elif sys.argv[1] == "swap":
     swap()
 elif sys.argv[1] == "cycle":
     cycle(1)
-elif sys.argv[1] == "reverse_cycle":
+elif sys.argv[1] == "cycle_focus":
+    cycle_focus(1)
+elif sys.argv[1] == "rcycle_focus":
+    cycle_focus(-1)
+elif sys.argv[1] == "rcycle":
     cycle(-1)
 elif sys.argv[1] == "maximize":
     maximize()
