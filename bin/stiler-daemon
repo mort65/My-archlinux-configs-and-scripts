@@ -5,7 +5,7 @@ running=$(pgrep -cx "$me");
 
 while true ;do
 	if ! pidof -x "stiler.py" >/dev/null 2>&1 ;then
-		~/bin/stiler.py
+		~/bin/stiler.py reset
 		break
 	fi
 	sleep 1
@@ -15,7 +15,7 @@ sleep 1
 
 while true ;do
 	if ! pidof -x "stiler.py" >/dev/null 2>&1 ;then
-		~/bin/stiler.py -d
+		~/bin/stiler.py daemon
 	fi
 	sleep 1
 done

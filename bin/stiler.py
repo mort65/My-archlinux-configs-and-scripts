@@ -185,7 +185,7 @@ TopPadding = 0
 LeftPadding = 0
 RightPadding = 0
 WinTitle = 23
-WinBorder = 1
+WinBorder = 3
 OrigMwFactor = 0.5
 OrigCFactor = 0.8
 TempFile = "/tmp/tile_winlist"
@@ -194,11 +194,12 @@ TypeExcludeList = ["_NET_WM_WINDOW_TYPE_DIALOG", "_NET_WM_WINDOW_TYPE_SPLASH", "
 PropExcludeList = [("veracrypt","Veracrypt"),("dukto","Dukto"),("nitrogen","Nitrogen"),\
 ("keepass2","KeePass2"),("galculator","Galculator"),("ultracopier","ultracopier"),\
 ('',"openssh-askpass"),('',"Wine"),('',"Zenity"),('',"Lutris"),("mlconfig","Mlconfig"),("st","St")]#(instance,class)
+OrigMode={"0":"simple","1":"horizontal"}
 
 
 OldWinList = retrieve(TempFile)
 OldVarList = retrieve(TempFile2)
-Mode=get_temp_var(OldVarList,0,"simple")
+Mode=get_temp_var(OldVarList,0,OrigMode)
 MinMwFactor, MaxMwFactor = 0.25, 0.90
 MinCFactor, MaxCFactor = 0.3, 1.0
 MwFactor=getvalue(get_temp_var(OldVarList,1,OrigMwFactor),MinMwFactor,MaxMwFactor)
@@ -223,18 +224,18 @@ def get_simple_tile(wincount):
     rows = wincount - 1
     layout = []
     if rows == 0:
-        layout.append((OrigX,OrigY,MaxWidth,MaxHeight-WinTitle-WinBorder))
+        layout.append((OrigX+WinBorder,OrigY+WinBorder,int(MaxWidth-2*WinBorder),int(MaxHeight-WinTitle-2*WinBorder)))
         return layout
 
     else:
-        layout.append((OrigX,OrigY,int(MaxWidth*MwFactor),MaxHeight-WinTitle-WinBorder))
+        layout.append((OrigX+WinBorder,OrigY+WinBorder,int(MaxWidth*MwFactor-2*WinBorder),int(MaxHeight-WinTitle-2*WinBorder)))
 
-    x=OrigX + int((MaxWidth*MwFactor)+(2*WinBorder))
+    x=OrigX + int((MaxWidth*MwFactor)+WinBorder)
     width=int((MaxWidth*(1-MwFactor))-2*WinBorder)
-    height=int(MaxHeight/rows-WinTitle-WinBorder)
+    height=int(MaxHeight/rows-WinTitle-2*WinBorder)
 
     for n in range(0,rows):
-        y= OrigY+int((MaxHeight/rows)*(n))
+        y= OrigY+int((MaxHeight/rows)*(n)+WinBorder)
         layout.append((x,y,width,height))
 
     return layout
@@ -242,11 +243,11 @@ def get_simple_tile(wincount):
 
 def get_vertical_tile(wincount):
     layout = []
-    y = OrigY
-    width = int(MaxWidth/wincount)
-    height = MaxHeight - WinTitle - WinBorder
+    y = OrigY + WinBorder
+    width = int(MaxWidth/wincount-2*WinBorder)
+    height = int(MaxHeight-WinTitle-2*WinBorder)
     for n in range(0,wincount):
-        x= OrigX + n * width
+        x= int(OrigX+n*(MaxWidth/wincount)+WinBorder)
         layout.append((x,y,width,height))
 
     return layout
@@ -254,11 +255,11 @@ def get_vertical_tile(wincount):
 
 def get_horiz_tile(wincount):
     layout = []
-    x = OrigX
-    height = int(MaxHeight/wincount - WinTitle - WinBorder)
-    width = MaxWidth
+    x = OrigX+WinBorder
+    height = int(MaxHeight/wincount-WinTitle-2*WinBorder)
+    width = int(MaxWidth-2*WinBorder)
     for n in range(0,wincount):
-        y= OrigY + int((MaxHeight/wincount)*(n))
+        y= OrigY + int((MaxHeight/wincount)*(n)+WinBorder)
         layout.append((x,y,width,height))
 
     return layout
@@ -267,9 +268,9 @@ def get_horiz_tile(wincount):
 def get_center_tile(wincount):
     layout = []
     width=int(MaxWidth*CFactor)
-    height=int(MaxHeight*CFactor)-WinTitle
-    x=int(MaxWidth/2)+OrigX-int(width/2)
-    y=int(MaxHeight/2)+OrigY-int(height/2)-WinTitle
+    height=int(MaxHeight*CFactor-WinTitle)
+    x=int(OrigX+MaxWidth/2-width/2)
+    y=int(OrigY+MaxHeight/2-height/2-WinTitle)
     for n in range(0,wincount):
         layout.append((x,y,width,height))
 
@@ -384,7 +385,7 @@ def exclude_win(windowid):
     if windowid in winlist:
         winlist.remove(windowid)
     store_vars(Mode,MwFactor,CFactor,IdExcludeSet,IdIncludeSet,Desktop)
-    arrange_mode(winlist,Mode)
+    arrange_mode(winlist,Mode[Desktop])
 
 
 def include_win(windowid):
@@ -395,7 +396,7 @@ def include_win(windowid):
     if not windowid in winlist:
         winlist.append(windowid)
     store_vars(Mode,MwFactor,CFactor,IdExcludeSet,IdIncludeSet,Desktop)
-    arrange_mode(winlist,Mode)
+    arrange_mode(winlist,Mode[Desktop])
 
 def toggle_exclude_win(windowid):
     winlist = create_win_list()
@@ -412,7 +413,7 @@ def toggle_exclude_win(windowid):
             winlist.append(windowid)
 
     store_vars(Mode,MwFactor,CFactor,IdExcludeSet,IdIncludeSet,Desktop)
-    arrange_mode(winlist,Mode)
+    arrange_mode(winlist,Mode[Desktop])
 
 
 def left():
@@ -496,6 +497,10 @@ def unmaximize_wins(winlist):
     for win in winlist:
         unmaximize_win(win)
 
+def maximize_wins(winlist):
+    for win in winlist:
+        maximize_win(win)
+
 
 def normalize_wins(winlist):
     for win in winlist:
@@ -519,18 +524,25 @@ def arrange_mode(wins,mode):
 
     if mode == "simple":
         arrange(get_simple_tile(len(wins)),wins)
-    elif Mode == "horizontal":
+
+    elif mode == "horizontal":
         arrange(get_horiz_tile(len(wins)),wins)
+
     elif mode == "vertical":
         arrange(get_vertical_tile(len(wins)),wins)
+
     elif mode == "max_all":
         arrange(get_max_all(len(wins)),wins)
+
     elif mode == "center":
         arrange(get_center_tile(len(wins)),wins)
+
     elif mode == "left":
         arrange(get_left_tile(len(wins)),wins)
+
     elif mode == "right":
         arrange(get_right_tile(len(wins)),wins)
+
     else:
         arrange(get_simple_tile(len(wins)),wins)
 
@@ -548,7 +560,7 @@ def swap():
     active = get_active_window()
     winlist.remove(active)
     winlist.insert(0,active)
-    arrange_mode(winlist,Mode)
+    arrange_mode(winlist,Mode[Desktop])
 
 
 def vertical():
@@ -565,7 +577,7 @@ def cycle(n):
     winlist = create_win_list()
     #n = n % len(winlist)
     winlist = winlist[-n:] + winlist[:-n]
-    arrange_mode(winlist,Mode)
+    arrange_mode(winlist,Mode[Desktop])
     raise_window(winlist[0])
 
 
@@ -583,7 +595,8 @@ def max_all():
     if active in winlist:
         winlist.remove(active)
         winlist.insert(0,active)
-    arrange_mode(winlist,"max_all")
+    #arrange_mode(winlist,"max_all")
+    maximize_wins(winlist)
     raise_window(winlist[0])
 
 
@@ -601,7 +614,7 @@ def setcfactor(cf):
     return cf
 
 def normalize():
-    set_mode(Mode)
+    set_mode(Mode[Desktop])
 
 def unmaximize():
     unmaximize_win(":ACTIVE:")
@@ -626,17 +639,32 @@ def set_mode(mode):
     else:
         return
 
-    store_vars(mode,MwFactor,CFactor,IdExcludeSet,IdIncludeSet,Desktop)
+    Mode[Desktop] = mode
+
+    store_vars(Mode,MwFactor,CFactor,IdExcludeSet,IdIncludeSet,Desktop)
 
 
-if len(sys.argv) < 2 or sys.argv[1] == '':
-    set_mode(Mode)
-elif sys.argv[1] in ("-d","--daemon","daemon"):
+if len(sys.argv) < 2 or sys.argv[1] in ("", "-h","--help"):
+    print("""\
+Usage: styler.py [OPTION]
+Options:
+         simple,horizontal,vertical,max_all,center,left,right,
+         maximize,unmaximize,normalize,toggle_maximize
+         inc_mwfactor,dec_mwfactor,reset_mwfactor,
+         inc_cfactor,dec_cfactor,reset_cfactor,
+         exclude,include,toggle_exclude,
+         swap,cycle,reverse_cycle,
+         reset,daemon\
+         """)
+elif sys.argv[1] == "reset":
+    Reset = True
+    set_mode(Mode[Desktop])
+elif sys.argv[1] == "daemon":
     if ischanged():
-        set_mode(Mode)
+        set_mode(Mode[Desktop])
 elif sys.argv[1] in ("simple", "horizontal", "vertical", "max_all", "center", "left", "right"):
     Reset = True
-    Mode = sys.argv[1]
+    Mode[Desktop] = sys.argv[1]
     set_mode(sys.argv[1])
 elif sys.argv[1] == "swap":
     swap()
@@ -654,30 +682,36 @@ elif sys.argv[1] == "normalize":
     Reset = True
     normalize()
 elif sys.argv[1] == "exclude":
-    exclude_win(get_active_window())
+    active = get_active_window()
+    if active:
+        exclude_win(active)
 elif sys.argv[1] == "include":
-    include_win(get_active_window())
+    active = get_active_window()
+    if active:
+        include_win(active)
 elif sys.argv[1] == "toggle_exclude":
-    toggle_exclude_win(get_active_window())
+    active = get_active_window()
+    if active:
+        toggle_exclude_win(active)
 elif sys.argv[1] == "inc_mwfactor":
     Reset = True
     MwFactor=setmwfactor(MwFactor+0.05)
-    if Mode in ("simple", "left", "right"):
-        set_mode(Mode)
+    if Mode[Desktop] in ("simple", "left", "right"):
+        set_mode(Mode[Desktop])
     else:
         set_mode("simple")
 elif sys.argv[1] == "dec_mwfactor":
     Reset = True
     MwFactor=setmwfactor(MwFactor-0.05)
-    if Mode in ("simple", "left", "right"):
-        set_mode(Mode)
+    if Mode[Desktop] in ("simple", "left", "right"):
+        set_mode(Mode[Desktop])
     else:
         set_mode("simple")
 elif sys.argv[1] == "reset_mwfactor":
     Reset = True
     MwFactor=setmwfactor(OrigMwFactor)
-    if Mode in ("simple", "left", "right"):
-        set_mode(Mode)
+    if Mode[Desktop] in ("simple", "left", "right"):
+        set_mode(Mode[Desktop])
     else:
         set_mode("simple")
 elif sys.argv[1] == "dec_cfactor":
