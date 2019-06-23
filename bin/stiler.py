@@ -208,7 +208,7 @@ def get_temp_var(var_list,index,def_value):
 #CFactor = 0.75
 #TempFile = "/tmp/tile_winlist"
 BottomPadding = 0
-TopPadding = -2
+TopPadding = -3
 LeftPadding = 0
 RightPadding = 0
 WinTitle = 23
