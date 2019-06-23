@@ -24,6 +24,7 @@ import pickle
 import socket
 import time
 
+
 def get_lock(process_name):
     # Without holding a reference to our socket somewhere it gets garbage
     # collected when the function exits
@@ -59,6 +60,32 @@ def getvalue(value,minvalue,maxvalue):
         return maxvalue
 
     return value
+
+
+def compare_win_list(newlist,oldlist):
+    templist = []
+    for window in oldlist:
+        if newlist.count(window) != 0:
+            templist.append(window)
+    for window in newlist:
+        if oldlist.count(window) == 0:
+            templist.append(window)
+    return templist
+
+
+def compare_win_dict(newdict,olddict):
+    if olddict in ({},newdict):
+        return newdict
+
+    tempdict = dict()
+    for k in newdict.keys():
+        if str(k) in olddict:
+            tempdict[str(k)] = compare_win_list(newdict[str(k)],olddict[str(k)])
+        else:
+            tempdict[str[k]] = newdict[str(k)]
+
+    return tempdict
+
 
 def initialize(id_exclude_set,id_include_set):
     desk_output = commands.getoutput("wmctrl -d").split("\n")
@@ -208,6 +235,7 @@ OldIdExcludeSet=get_temp_var(OldVarList,3,set())
 OldIdIncludeSet=get_temp_var(OldVarList,4,set())
 OldDesktop=get_temp_var(OldVarList,5,set())
 (Desktop,OrigXstr,OrigYstr,MaxWidthStr,MaxHeightStr,WinList,ExcludedWinList,IdExcludeSet,IdIncludeSet) = initialize(OldIdExcludeSet,OldIdIncludeSet)
+WinList = compare_win_dict(WinList,OldWinList)
 MaxWidth = int(MaxWidthStr) - LeftPadding - RightPadding
 MaxHeight = int(MaxHeightStr) - TopPadding - BottomPadding
 OrigX = int(OrigXstr) + LeftPadding
@@ -436,17 +464,6 @@ def center():
     arrange_mode(winlist,"center")
 
 
-def compare_win_list(newlist,oldlist):
-    templist = []
-    for window in oldlist:
-        if newlist.count(window) != 0:
-            templist.append(window)
-    for window in newlist:
-        if oldlist.count(window) == 0:
-            templist.append(window)
-    return templist
-
-
 def create_win_list():
     Windows = WinList[Desktop]
 
@@ -656,6 +673,7 @@ Options:
          swap,cycle,reverse_cycle,
          reset,daemon\
          """)
+    sys.exit()
 elif sys.argv[1] == "reset":
     Reset = True
     set_mode(Mode[Desktop])
