@@ -358,13 +358,13 @@ def move_active(PosX,PosY,Width,Height):
     os.system(command)
 
 
-def move_window(windowid,PosX,PosY,Width,Height):
+def move_win(windowid,PosX,PosY,Width,Height):
     command =  "wmctrl -r " + windowid +  " -e 0," + str(PosX) + "," + str(PosY)+ "," + str(Width) + "," + str(Height) + " -i"
     os.system(command)
     command = "wmctrl -r " + windowid + " -b remove,hidden,shaded -i"
     os.system(command)
 
-def focus_window(windowid):
+def focus_win(windowid):
     command = "xdotool mousemove --sync --window " + windowid + " 1 1"
     os.system(command)
     command = "xdotool windowfocus " + windowid
@@ -406,7 +406,7 @@ def toggle_maximize_win(windowid):
     os.system(command)
 
 
-def raise_window(windowid):
+def raise_win(windowid):
     if windowid == ":ACTIVE:":
         command = "wmctrl -a :ACTIVE: "
     else:
@@ -511,7 +511,7 @@ def is_changed():
 
 def arrange(layout,windows):
     for win , lay  in zip(windows,layout):
-        move_window(win,lay[0],lay[1],lay[2],lay[3])
+        move_win(win,lay[0],lay[1],lay[2],lay[3])
     WinList[Desktop]=windows
     store(WinList,TempFile)
 
@@ -531,7 +531,7 @@ def normalize_wins(winlist):
 
 def raise_wins(winlist):
     for win in winlist:
-        raise_window(win)
+        raise_win(win)
 
 
 def arrange_mode(wins,mode):
@@ -540,7 +540,7 @@ def arrange_mode(wins,mode):
         unmaximize_wins(WinList[Desktop])
         normalize_wins(WinList[Desktop])
         raise_wins(WinList[Desktop])
-        raise_window(WinList[Desktop][0])
+        raise_win(WinList[Desktop][0])
     if len(wins) == 0:
         return
 
@@ -600,7 +600,7 @@ def cycle(n):
     #n = n % len(winlist)
     winlist = winlist[-n:] + winlist[:-n]
     arrange_mode(winlist,Mode[Desktop])
-    raise_window(winlist[0])
+    raise_win(winlist[0])
 
 
 def cycle_focus(n):
@@ -616,18 +616,18 @@ def cycle_focus(n):
     else:
         index = 0
 
-    raise_window(winlist[index])
-    focus_window(winlist[index])
+    raise_win(winlist[index])
+    focus_win(winlist[index])
 
 
 def maximize():
     maximize_win(":ACTIVE:")
-    raise_window(":ACTIVE:")
+    raise_win(":ACTIVE:")
 
 
 def toggle_maximize():
     toggle_maximize_win(":ACTIVE:")
-    raise_window(":ACTIVE:")
+    raise_win(":ACTIVE:")
 
 
 def max_all():
@@ -638,17 +638,17 @@ def max_all():
         winlist.insert(0,active)
     #arrange_mode(winlist,"max_all")
     maximize_wins(winlist)
-    raise_window(winlist[0])
+    raise_win(winlist[0])
 
 
-def setmwfactor(mf):
+def set_mwfactor(mf):
     mf = getvalue(mf,MinMwFactor,MaxMwFactor)
     store_vars(Mode,mf,CFactor,IdExcludeSet,IdIncludeSet,Desktop)
 
     return mf
 
 
-def setcfactor(cf):
+def set_cfactor(cf):
     cf = getvalue(cf,MinCFactor,MaxCFactor)
     store_vars(Mode,MwFactor,cf,IdExcludeSet,IdIncludeSet,Desktop)
 
@@ -661,7 +661,7 @@ def normalize():
 
 def unmaximize():
     unmaximize_win(":ACTIVE:")
-    raise_window(":ACTIVE:")
+    raise_win(":ACTIVE:")
 
 
 def set_mode(mode):
@@ -744,36 +744,36 @@ elif sys.argv[1] == "toggle_exclude":
         toggle_exclude_win(active)
 elif sys.argv[1] == "inc_mwfactor":
     Reset = True
-    MwFactor=setmwfactor(MwFactor+0.05)
+    MwFactor=set_mwfactor(MwFactor+0.05)
     if Mode[Desktop] in ("simple", "left", "right"):
         set_mode(Mode[Desktop])
     else:
         set_mode("simple")
 elif sys.argv[1] == "dec_mwfactor":
     Reset = True
-    MwFactor=setmwfactor(MwFactor-0.05)
+    MwFactor=set_mwfactor(MwFactor-0.05)
     if Mode[Desktop] in ("simple", "left", "right"):
         set_mode(Mode[Desktop])
     else:
         set_mode("simple")
 elif sys.argv[1] == "reset_mwfactor":
     Reset = True
-    MwFactor=setmwfactor(OrigMwFactor)
+    MwFactor=set_mwfactor(OrigMwFactor)
     if Mode[Desktop] in ("simple", "left", "right"):
         set_mode(Mode[Desktop])
     else:
         set_mode("simple")
 elif sys.argv[1] == "dec_cfactor":
     Reset = True
-    CFactor=setcfactor(CFactor-0.05)
+    CFactor=set_cfactor(CFactor-0.05)
     set_mode("center")
 elif sys.argv[1] == "inc_cfactor":
     Reset = True
-    CFactor=setcfactor(CFactor+0.05)
+    CFactor=set_cfactor(CFactor+0.05)
     set_mode("center")
 elif sys.argv[1] == "reset_cfactor":
     Reset = True
-    CFactor=setcfactor(OrigCFactor)
+    CFactor=set_cfactor(OrigCFactor)
     set_mode("center")
 
 
