@@ -79,10 +79,11 @@ def compare_win_dict(newdict,olddict):
 
     tempdict = dict()
     for k in newdict.keys():
-        if str(k) in olddict:
-            tempdict[str(k)] = compare_win_list(newdict[str(k)],olddict[str(k)])
+        k = str(k)
+        if k in olddict:
+            tempdict[k] = compare_win_list(newdict[k],olddict[k])
         else:
-            tempdict[str[k]] = newdict[str(k)]
+            tempdict[k] = newdict[k]
 
     return tempdict
 
