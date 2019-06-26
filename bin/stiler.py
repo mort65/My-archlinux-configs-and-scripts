@@ -468,10 +468,10 @@ def exclude_win(windowid):
 
 
 def include_win(windowid):
-    winlist = create_win_list()
     if is_type_excluded(windowid):
         return
 
+    winlist = create_win_list()
     if windowid in IdExcludeSet:
         IdExcludeSet.remove(windowid)
 
