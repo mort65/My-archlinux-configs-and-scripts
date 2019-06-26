@@ -367,11 +367,13 @@ def move_win(windowid,PosX,PosY,Width,Height):
     command = "wmctrl -r " + windowid + " -b remove,hidden,shaded -i"
     os.system(command)
 
+
 def focus_win(windowid):
     command = "xdotool mousemove --sync --window " + windowid + " 1 1"
     os.system(command)
     command = "xdotool windowfocus " + windowid
     os.system(command)
+
 
 def unmaximize_win(windowid):
     if windowid == ":ACTIVE:":
@@ -438,6 +440,7 @@ def include_win(windowid):
         winlist.append(windowid)
     store_vars(Mode,MwFactor,CFactor,IdExcludeSet,IdIncludeSet,Desktop)
     arrange_mode(winlist,Mode[Desktop])
+
 
 def toggle_exclude_win(windowid):
     winlist = create_win_list()
@@ -518,9 +521,11 @@ def arrange(layout,windows):
     WinList[Desktop]=windows
     store(WinList,TempFile)
 
+
 def unmaximize_wins(winlist):
     for win in winlist:
         unmaximize_win(win)
+
 
 def maximize_wins(winlist):
     for win in winlist:
