@@ -166,7 +166,8 @@ def initialize(id_exclude_set,id_include_set):
         actual_win_list[desk] = map(lambda y: hex(int(y.split()[0],16)) , filter(lambda x: x.split()[1] == desk, win_output))
         excluded_win_list[desk] = map(lambda y: hex(int(y.split()[0],16)) , filter(lambda x: x.split()[1] == desk, excluded_win_output))
 
-    return (desktop,orig_x,orig_y,width,height,actual_win_list,win_list,excluded_win_list,new_id_exclude_set,new_id_include_set)
+    return (desktop,orig_x,orig_y,width,height,actual_win_list,win_list,
+    excluded_win_list,new_id_exclude_set,new_id_include_set)
 
 
 def get_active_window():
@@ -239,7 +240,8 @@ CFactor=getvalue(get_temp_var(OldVarList,2,OrigCFactor),MinCFactor,MaxCFactor)
 OldIdExcludeSet=get_temp_var(OldVarList,3,set())
 OldIdIncludeSet=get_temp_var(OldVarList,4,set())
 OldDesktop=get_temp_var(OldVarList,5,set())
-(Desktop,OrigXstr,OrigYstr,MaxWidthStr,MaxHeightStr,ActualWinList,WinList,ExcludedWinList,IdExcludeSet,IdIncludeSet) = initialize(OldIdExcludeSet,OldIdIncludeSet)
+(Desktop,OrigXstr,OrigYstr,MaxWidthStr,MaxHeightStr,ActualWinList,WinList,
+ExcludedWinList,IdExcludeSet,IdIncludeSet) = initialize(OldIdExcludeSet,OldIdIncludeSet)
 WinList = compare_win_dict(WinList,OldWinList)
 MaxWidth = int(MaxWidthStr) - LeftPadding - RightPadding
 MaxHeight = int(MaxHeightStr) - TopPadding - BottomPadding
@@ -542,6 +544,7 @@ def arrange_mode(wins,mode):
         normalize_wins(WinList[Desktop])
         raise_wins(WinList[Desktop])
         raise_win(WinList[Desktop][0])
+
     if len(wins) == 0:
         return
 
@@ -702,12 +705,12 @@ Options:
          reset,daemon\
          """)
     sys.exit()
-elif sys.argv[1] == "reset":
-    Reset = True
-    set_mode(Mode[Desktop])
 elif sys.argv[1] == "daemon":
     if is_changed():
         set_mode(Mode[Desktop])
+elif sys.argv[1] == "reset":
+    Reset = True
+    set_mode(Mode[Desktop])
 elif sys.argv[1] in ("simple", "horizontal", "vertical", "max_all", "center", "left", "right"):
     Reset = True
     Mode[Desktop] = sys.argv[1]
