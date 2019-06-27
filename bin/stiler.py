@@ -258,10 +258,10 @@ OrigCFactor = 0.8
 TempFile = "/tmp/tile_winlist"
 TempFile2 = "/tmp/temp_varlist"
 TypeExcludeList = ["_NET_WM_WINDOW_TYPE_DIALOG", "_NET_WM_WINDOW_TYPE_SPLASH", "_NET_WM_WINDOW_TYPE_NOTIFICATION","_NET_WM_WINDOW_TYPE_TOOLBAR"]
-PropExcludeList = [("veracrypt","Veracrypt",''),("dukto","Dukto",''),("nitrogen","Nitrogen",''),\
-("keepass2","KeePass2",''),("galculator","Galculator",''),("ultracopier","ultracopier",''),\
-('',"openssh-askpass",''),('',"Wine",''),('',"Zenity",''),('',"Lutris",''),("mlconfig","Mlconfig",''),\
-("st","St",''),('',"mpv","above"),("brave-browser","Brave-browser","maximized_vert,maximized_horz"),("gcr-prompter","Gcr-prompter",'')]#(instance,class,window properties to add)
+PropExcludeList = [("veracrypt","Veracrypt","above"),("dukto","Dukto","above"),("nitrogen","Nitrogen","above"),\
+("keepass2","KeePass2","above"),("galculator","Galculator","above"),("ultracopier","ultracopier","above"),\
+('',"openssh-askpass","above"),('',"Wine",''),('',"Zenity",''),('',"Lutris",''),("mlconfig","Mlconfig","above"),\
+("st","St","above"),('',"mpv","above"),("brave-browser","Brave-browser","maximized_vert,maximized_horz"),("gcr-prompter","Gcr-prompter","above")]#(instance,class,window properties to add)
 OrigMode={"0":"simple","1":"horizontal"}
 
 
