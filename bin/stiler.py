@@ -284,6 +284,7 @@ MaxHeight = int(MaxHeightStr) - TopPadding - BottomPadding
 OrigX = int(OrigXstr) + LeftPadding
 OrigY = int(OrigYstr) + TopPadding
 Reset=False
+Alt_Reset=False
 
 
 def store_vars(*args):
@@ -588,8 +589,7 @@ def raise_wins(winlist):
 
 
 def arrange_mode(wins,mode):
-
-    if Reset:
+    if Reset or Alt_Reset:
         unmaximize_wins(WinList[Desktop])
         normalize_wins(WinList[Desktop])
         raise_wins(WinList[Desktop])
@@ -622,8 +622,7 @@ def arrange_mode(wins,mode):
     else:
         arrange(get_simple_tile(len(wins)),wins)
 
-    if Reset and not sys.argv[1] in ("inc_mwfactor","dec_mwfactor",
-    "reset_mwfactor","inc_cfactor","dec_cfactor","reset_cfactor"):
+    if Reset:
         raise_wins(ExcludedWinList[Desktop])
 
 
@@ -684,6 +683,10 @@ def toggle_maximize():
     toggle_maximize_win(":ACTIVE:")
     raise_win(":ACTIVE:")
 
+def normalize():
+    normalize_win(":ACTIVE:")
+    raise_win(":ACTIVE:")
+
 
 def max_all():
     winlist = create_win_list()
@@ -710,8 +713,19 @@ def set_cfactor(cf):
     return cf
 
 
-def normalize():
+def reset():
     set_mode(Mode[Desktop])
+
+
+def daemon():
+    if is_changed():
+        if OldIdExcludeSet != IdExcludeSet:
+            for id_index in PropExcludedList:
+                exclude = hex(int(id_index[0],16))
+                if exclude in IdExcludeSet and not exclude in OldIdExcludeSet:
+                    set_win_props(id_index[0],PropExcludeList[id_index[1]][2])
+
+        set_mode(Mode[Desktop])
 
 
 def unmaximize():
@@ -753,87 +767,112 @@ Options:
          exclude,include,toggle_exclude,
          cycle_focus,rcycle_focus,
          swap,cycle,rcycle,
-         reset,daemon\
+         reset,alt_reset,
+         daemon\
          """)
     sys.exit()
+
 elif sys.argv[1] == "daemon":
-    if is_changed():
-        if OldIdExcludeSet != IdExcludeSet:
-            for id_index in PropExcludedList:
-                exclude = hex(int(id_index[0],16))
-                if exclude in IdExcludeSet and not exclude in OldIdExcludeSet:
-                    set_win_props(id_index[0],PropExcludeList[id_index[1]][2])
-        set_mode(Mode[Desktop])
+    daemon()
+
 elif sys.argv[1] == "reset":
     Reset = True
-    set_mode(Mode[Desktop])
+    reset()
+
+elif sys.argv[1] == "alt_reset":
+    Alt_Reset = True
+    reset()
+
 elif sys.argv[1] in ("simple", "horizontal", "vertical", "max_all", "center", "left", "right"):
     Reset = True
     Mode[Desktop] = sys.argv[1]
     set_mode(sys.argv[1])
+
 elif sys.argv[1] == "swap":
+    Alt_Reset = True
     swap()
+
 elif sys.argv[1] == "cycle":
+    Alt_Reset = True
     cycle(1)
+
+elif sys.argv[1] == "rcycle":
+    Alt_Reset = True
+    cycle(-1)
+
 elif sys.argv[1] == "cycle_focus":
     cycle_focus(1)
+
 elif sys.argv[1] == "rcycle_focus":
     cycle_focus(-1)
-elif sys.argv[1] == "rcycle":
-    cycle(-1)
+
 elif sys.argv[1] == "maximize":
     maximize()
+
 elif sys.argv[1] == "toggle_maximize":
     toggle_maximize()
+
 elif sys.argv[1] == "unmaximize":
     unmaximize()
+
 elif sys.argv[1] == "normalize":
-    Reset = True
     normalize()
+
 elif sys.argv[1] == "exclude":
     active = get_active_window()
     if active:
         exclude_win(active)
+
 elif sys.argv[1] == "include":
     active = get_active_window()
     if active:
         include_win(active)
+
 elif sys.argv[1] == "toggle_exclude":
     active = get_active_window()
     if active:
         toggle_exclude_win(active)
+
 elif sys.argv[1] == "inc_mwfactor":
-    Reset = True
+    Alt_Reset = True
     MwFactor=set_mwfactor(MwFactor+0.05)
     if Mode[Desktop] in ("simple", "left", "right"):
         set_mode(Mode[Desktop])
     else:
         set_mode("simple")
+
 elif sys.argv[1] == "dec_mwfactor":
-    Reset = True
+    Alt_Reset = True
     MwFactor=set_mwfactor(MwFactor-0.05)
     if Mode[Desktop] in ("simple", "left", "right"):
         set_mode(Mode[Desktop])
     else:
         set_mode("simple")
+
 elif sys.argv[1] == "reset_mwfactor":
-    Reset = True
+    Alt_Reset = True
     MwFactor=set_mwfactor(OrigMwFactor)
     if Mode[Desktop] in ("simple", "left", "right"):
         set_mode(Mode[Desktop])
     else:
         set_mode("simple")
+
 elif sys.argv[1] == "dec_cfactor":
-    Reset = True
+    Alt_Reset = True
     CFactor=set_cfactor(CFactor-0.05)
     set_mode("center")
+
 elif sys.argv[1] == "inc_cfactor":
-    Reset = True
+    Alt_Reset = True
     CFactor=set_cfactor(CFactor+0.05)
     set_mode("center")
+
 elif sys.argv[1] == "reset_cfactor":
-    Reset = True
+    Alt_Reset = True
     CFactor=set_cfactor(OrigCFactor)
     set_mode("center")
 
+else:
+    print("Invalid Argument '" + sys.argv[1] + "'")
+    sys.exit(1)
 
