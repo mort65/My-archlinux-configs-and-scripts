@@ -526,6 +526,7 @@ def center():
 def create_win_list(actual = False):
     if actual:
         Windows = ActualWinList[Desktop]
+
     else:
         Windows = WinList[Desktop]
 
@@ -589,38 +590,36 @@ def raise_wins(winlist):
 
 
 def arrange_mode(wins,mode):
-    if Reset or Alt_Reset:
-        unmaximize_wins(WinList[Desktop])
-        normalize_wins(WinList[Desktop])
-        raise_wins(WinList[Desktop])
-        raise_win(WinList[Desktop][0])
+    if len(wins):
+        if Reset or Alt_Reset:
+            unmaximize_wins(wins)
+            normalize_wins(wins)
+            raise_wins(wins)
+            raise_win(wins[0])
 
-    if len(wins) == 0:
-        return
+        if mode == "simple":
+            arrange(get_simple_tile(len(wins)),wins)
 
-    if mode == "simple":
-        arrange(get_simple_tile(len(wins)),wins)
+        elif mode == "horizontal":
+            arrange(get_horiz_tile(len(wins)),wins)
 
-    elif mode == "horizontal":
-        arrange(get_horiz_tile(len(wins)),wins)
+        elif mode == "vertical":
+            arrange(get_vertical_tile(len(wins)),wins)
 
-    elif mode == "vertical":
-        arrange(get_vertical_tile(len(wins)),wins)
+        elif mode == "max_all":
+            arrange(get_max_all(len(wins)),wins)
 
-    elif mode == "max_all":
-        arrange(get_max_all(len(wins)),wins)
+        elif mode == "center":
+            arrange(get_center_tile(len(wins)),wins)
 
-    elif mode == "center":
-        arrange(get_center_tile(len(wins)),wins)
+        elif mode == "left":
+            arrange(get_left_tile(len(wins)),wins)
 
-    elif mode == "left":
-        arrange(get_left_tile(len(wins)),wins)
+        elif mode == "right":
+            arrange(get_right_tile(len(wins)),wins)
 
-    elif mode == "right":
-        arrange(get_right_tile(len(wins)),wins)
-
-    else:
-        arrange(get_simple_tile(len(wins)),wins)
+        else:
+            arrange(get_simple_tile(len(wins)),wins)
 
     if Reset:
         raise_wins(ExcludedWinList[Desktop])
