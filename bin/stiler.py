@@ -258,10 +258,11 @@ OrigCFactor = 0.8
 TempFile = "/tmp/tile_winlist"
 TempFile2 = "/tmp/temp_varlist"
 TypeExcludeList = ["_NET_WM_WINDOW_TYPE_DIALOG", "_NET_WM_WINDOW_TYPE_SPLASH", "_NET_WM_WINDOW_TYPE_NOTIFICATION","_NET_WM_WINDOW_TYPE_TOOLBAR"]
-PropExcludeList = [("veracrypt","Veracrypt","above"),("dukto","Dukto","above"),("nitrogen","Nitrogen","above"),\
-("keepass2","KeePass2","above"),("galculator","Galculator","above"),("ultracopier","ultracopier","above"),\
-('',"openssh-askpass","above"),('',"Wine",''),('',"Zenity",''),('',"Lutris",''),("mlconfig","Mlconfig","above"),\
-("st","St","above"),('',"mpv","above"),("brave-browser","Brave-browser","maximized_vert,maximized_horz"),("gcr-prompter","Gcr-prompter","above")]#(instance,class,window properties to add)
+PropExcludeList = [("veracrypt","Veracrypt","above"),("dukto","Dukto","above"),("nitrogen","Nitrogen","above"),
+("keepass2","KeePass2","above"),("galculator","Galculator","above"),("ultracopier","ultracopier","above"),
+('',"openssh-askpass","above"),('',"Wine",''),('',"Zenity","above"),('',"Lutris",''),("mlconfig","Mlconfig","above"),
+("st","St","above"),('',"mpv","above"),("brave-browser","Brave-browser","maximized_vert,maximized_horz"),
+("gcr-prompter","Gcr-prompter","above")]#(instance,class,window properties to add)
 OrigMode={"0":"simple","1":"horizontal"}
 
 
@@ -542,7 +543,7 @@ def create_win_list(actual = False):
 
 
 def is_changed():
-    if not Desktop == OldDesktop:
+    if Desktop != OldDesktop:
         return True
 
     if OldWinList == {}:
@@ -550,10 +551,10 @@ def is_changed():
 
     OldWindows = OldWinList[Desktop]
     Windows = WinList[Desktop]
-    if not Windows == OldWindows:
+    if Windows != OldWindows:
         return True
 
-    if not OldIdExcludeSet == IdExcludeSet:
+    if OldIdExcludeSet != IdExcludeSet:
         return True
 
     return False
@@ -621,7 +622,8 @@ def arrange_mode(wins,mode):
     else:
         arrange(get_simple_tile(len(wins)),wins)
 
-    if Reset:
+    if Reset and not sys.argv[1] in ("inc_mwfactor","dec_mwfactor",
+    "reset_mwfactor","inc_cfactor","dec_cfactor","reset_cfactor"):
         raise_wins(ExcludedWinList[Desktop])
 
 
@@ -756,9 +758,11 @@ Options:
     sys.exit()
 elif sys.argv[1] == "daemon":
     if is_changed():
-        for id_index in PropExcludedList:
-            if not OldIdExcludeSet or (id_index[0] in IdExcludeSet and not id_index[0] in OldIdExcludeSet):
-                set_win_props(id_index[0],PropExcludeList[id_index[1]][2])
+        if OldIdExcludeSet != IdExcludeSet:
+            for id_index in PropExcludedList:
+                exclude = hex(int(id_index[0],16))
+                if exclude in IdExcludeSet and not exclude in OldIdExcludeSet:
+                    set_win_props(id_index[0],PropExcludeList[id_index[1]][2])
         set_mode(Mode[Desktop])
 elif sys.argv[1] == "reset":
     Reset = True
