@@ -156,16 +156,24 @@ def initialize(id_exclude_set,id_include_set):
     for win in win_output:
         try:
             wid = win.split()[0]
+            dec_wid = int(wid,16)
+            instance_class = win.split()[6]
+
+
             if is_type_excluded(wid):
+                if instance_class:
+                    index = is_props_excluded(instance_class)
+                    if index > -1:
+                        if not dec_wid in id_exclude_set:
+                            id_exclude_set.append(dec_wid)
+                        prop_excluded_list.append((wid,index))
                 excluded_win_output.append(win)
                 continue
 
-            instance_class = win.split()[6]
             if not instance_class:
                 new_win_output.append(win)
                 continue
 
-            dec_wid = int(wid,16)
             if dec_wid in id_exclude_set:
                 excluded_win_output.append(win)
                 index = is_props_excluded(instance_class)
@@ -492,7 +500,8 @@ def toggle_exclude_win(windowid):
             IdExcludeSet.add(windowid)
             if windowid in winlist:
                 winlist.remove(windowid)
-    else:
+
+    elif not is_type_excluded(windowid):
         IdIncludeSet.add(windowid)
         if windowid in IdExcludeSet:
             IdExcludeSet.remove(windowid)
