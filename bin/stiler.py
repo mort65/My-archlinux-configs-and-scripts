@@ -80,7 +80,7 @@ def get_lock(process_name):
             except socket.error:
                 count += 0.1
                 if count >= 3.0:
-                    sys.exit()
+                    sys.exit(1)
 
 
 get_lock('stiler.py')
@@ -697,47 +697,6 @@ def set_mode(mode):
     store_vars(Mode, MwFactor, CFactor, IdExcludeSet, IdIncludeSet, Desktop)
 
 
-OldWinList = retrieve(TempFile)
-OldVarList = retrieve(TempFile2)
-Mode = get_temp_var(OldVarList, 0, OrigMode)
-MwFactor = getvalue(
-    get_temp_var(
-        OldVarList,
-        1,
-        OrigMwFactor),
-    MinMwFactor,
-    MaxMwFactor)
-CFactor = getvalue(
-    get_temp_var(
-        OldVarList,
-        2,
-        OrigCFactor),
-    MinCFactor,
-    MaxCFactor)
-OldIdExcludeSet = get_temp_var(OldVarList, 3, set())
-OldIdIncludeSet = get_temp_var(OldVarList, 4, set())
-OldDesktop = get_temp_var(OldVarList, 5, set())
-(Desktop,
-    OrigXstr,
-    OrigYstr,
-    MaxWidthStr,
-    MaxHeightStr,
-    ActualWinList,
-    WinList,
-    ExcludedWinList,
-    IdExcludeSet,
-    IdIncludeSet,
-    PropExcludedList) = initialize(OldIdExcludeSet,
-                                   OldIdIncludeSet)
-WinList = compare_win_dict(WinList, OldWinList)
-MaxWidth = int(MaxWidthStr) - LeftPadding - RightPadding
-MaxHeight = int(MaxHeightStr) - TopPadding - BottomPadding
-OrigX = int(OrigXstr) + LeftPadding
-OrigY = int(OrigYstr) + TopPadding
-Reset = False
-Alt_Reset = False
-
-
 if len(sys.argv) < 2 or sys.argv[1] in ("", "-h", "--help"):
     print("""\
 Usage: styler.py [OPTION]
@@ -752,85 +711,125 @@ Options:
          reset,alt_reset,
          daemon\
          """)
-    sys.exit()
-elif sys.argv[1] == "daemon":
-    daemon()
-elif sys.argv[1] == "reset":
-    Reset = True
-    reset()
-elif sys.argv[1] == "alt_reset":
-    Alt_Reset = True
-    reset()
-elif sys.argv[1] in ("simple", "horizontal", "vertical", "max_all", "center", "left", "right"):
-    Reset = True
-    Mode[Desktop] = sys.argv[1]
-    set_mode(sys.argv[1])
-elif sys.argv[1] == "swap":
-    Alt_Reset = True
-    swap()
-elif sys.argv[1] == "cycle":
-    Alt_Reset = True
-    cycle(1)
-elif sys.argv[1] == "rcycle":
-    Alt_Reset = True
-    cycle(-1)
-elif sys.argv[1] == "cycle_focus":
-    cycle_focus(1)
-elif sys.argv[1] == "rcycle_focus":
-    cycle_focus(-1)
-elif sys.argv[1] == "maximize":
-    maximize()
-elif sys.argv[1] == "toggle_maximize":
-    toggle_maximize()
-elif sys.argv[1] == "unmaximize":
-    unmaximize()
-elif sys.argv[1] == "normalize":
-    normalize()
-elif sys.argv[1] == "exclude":
-    active = get_active_window()
-    if active:
-        exclude_win(active)
-elif sys.argv[1] == "include":
-    active = get_active_window()
-    if active:
-        include_win(active)
-elif sys.argv[1] == "toggle_exclude":
-    active = get_active_window()
-    if active:
-        toggle_exclude_win(active)
-elif sys.argv[1] == "inc_mwfactor":
-    Alt_Reset = True
-    MwFactor = set_mwfactor(MwFactor + 0.05)
-    if Mode[Desktop] in ("simple", "left", "right"):
-        set_mode(Mode[Desktop])
-    else:
-        set_mode("simple")
-elif sys.argv[1] == "dec_mwfactor":
-    Alt_Reset = True
-    MwFactor = set_mwfactor(MwFactor - 0.05)
-    if Mode[Desktop] in ("simple", "left", "right"):
-        set_mode(Mode[Desktop])
-    else:
-        set_mode("simple")
-elif sys.argv[1] == "reset_mwfactor":
-    Alt_Reset = True
-    MwFactor = set_mwfactor(OrigMwFactor)
-    if Mode[Desktop] in ("simple", "left", "right"):
-        set_mode(Mode[Desktop])
-    else:
-        set_mode("simple")
-elif sys.argv[1] == "dec_cfactor":
-    Alt_Reset = True
-    CFactor = set_cfactor(CFactor - 0.05)
-    set_mode("center")
-elif sys.argv[1] == "inc_cfactor":
-    Alt_Reset = True
-    CFactor = set_cfactor(CFactor + 0.05)
-    set_mode("center")
-elif sys.argv[1] == "reset_cfactor":
-    Alt_Reset = True
-    CFactor = set_cfactor(OrigCFactor)
-    set_mode("center")
+    sys.exit(0)
 else:
-    print("Invalid Argument '" + sys.argv[1] + "'")
-    sys.exit(1)
+    OldWinList = retrieve(TempFile)
+    OldVarList = retrieve(TempFile2)
+    Mode = get_temp_var(OldVarList, 0, OrigMode)
+    MwFactor = getvalue(
+        get_temp_var(
+            OldVarList,
+            1,
+            OrigMwFactor),
+        MinMwFactor,
+        MaxMwFactor)
+    CFactor = getvalue(
+        get_temp_var(
+            OldVarList,
+            2,
+            OrigCFactor),
+        MinCFactor,
+        MaxCFactor)
+    OldIdExcludeSet = get_temp_var(OldVarList, 3, set())
+    OldIdIncludeSet = get_temp_var(OldVarList, 4, set())
+    OldDesktop = get_temp_var(OldVarList, 5, set())
+    (Desktop,
+        OrigXstr,
+        OrigYstr,
+        MaxWidthStr,
+        MaxHeightStr,
+        ActualWinList,
+        WinList,
+        ExcludedWinList,
+        IdExcludeSet,
+        IdIncludeSet,
+        PropExcludedList) = initialize(OldIdExcludeSet,
+                                       OldIdIncludeSet)
+    WinList = compare_win_dict(WinList, OldWinList)
+    MaxWidth = int(MaxWidthStr) - LeftPadding - RightPadding
+    MaxHeight = int(MaxHeightStr) - TopPadding - BottomPadding
+    OrigX = int(OrigXstr) + LeftPadding
+    OrigY = int(OrigYstr) + TopPadding
+    Reset = False
+    Alt_Reset = False
+    if sys.argv[1] == "daemon":
+        daemon()
+    elif sys.argv[1] == "reset":
+        Reset = True
+        reset()
+    elif sys.argv[1] == "alt_reset":
+        Alt_Reset = True
+        reset()
+    elif sys.argv[1] in ("simple", "horizontal", "vertical", "max_all", "center", "left", "right"):
+        Reset = True
+        Mode[Desktop] = sys.argv[1]
+        set_mode(sys.argv[1])
+    elif sys.argv[1] == "swap":
+        Alt_Reset = True
+        swap()
+    elif sys.argv[1] == "cycle":
+        Alt_Reset = True
+        cycle(1)
+    elif sys.argv[1] == "rcycle":
+        Alt_Reset = True
+        cycle(-1)
+    elif sys.argv[1] == "cycle_focus":
+        cycle_focus(1)
+    elif sys.argv[1] == "rcycle_focus":
+        cycle_focus(-1)
+    elif sys.argv[1] == "maximize":
+        maximize()
+    elif sys.argv[1] == "toggle_maximize":
+        toggle_maximize()
+    elif sys.argv[1] == "unmaximize":
+        unmaximize()
+    elif sys.argv[1] == "normalize":
+        normalize()
+    elif sys.argv[1] == "exclude":
+        active = get_active_window()
+        if active:
+            exclude_win(active)
+    elif sys.argv[1] == "include":
+        active = get_active_window()
+        if active:
+            include_win(active)
+    elif sys.argv[1] == "toggle_exclude":
+        active = get_active_window()
+        if active:
+            toggle_exclude_win(active)
+    elif sys.argv[1] == "inc_mwfactor":
+        Alt_Reset = True
+        MwFactor = set_mwfactor(MwFactor + 0.05)
+        if Mode[Desktop] in ("simple", "left", "right"):
+            set_mode(Mode[Desktop])
+        else:
+            set_mode("simple")
+    elif sys.argv[1] == "dec_mwfactor":
+        Alt_Reset = True
+        MwFactor = set_mwfactor(MwFactor - 0.05)
+        if Mode[Desktop] in ("simple", "left", "right"):
+            set_mode(Mode[Desktop])
+        else:
+            set_mode("simple")
+    elif sys.argv[1] == "reset_mwfactor":
+        Alt_Reset = True
+        MwFactor = set_mwfactor(OrigMwFactor)
+        if Mode[Desktop] in ("simple", "left", "right"):
+            set_mode(Mode[Desktop])
+        else:
+            set_mode("simple")
+    elif sys.argv[1] == "dec_cfactor":
+        Alt_Reset = True
+        CFactor = set_cfactor(CFactor - 0.05)
+        set_mode("center")
+    elif sys.argv[1] == "inc_cfactor":
+        Alt_Reset = True
+        CFactor = set_cfactor(CFactor + 0.05)
+        set_mode("center")
+    elif sys.argv[1] == "reset_cfactor":
+        Alt_Reset = True
+        CFactor = set_cfactor(OrigCFactor)
+        set_mode("center")
+    else:
+        print("Invalid Argument '" + sys.argv[1] + "'")
+        sys.exit(1)
