@@ -25,6 +25,43 @@ import socket
 import time
 
 
+# Global variables
+##############################
+#BottomPadding = 0
+#TopPadding = 0
+#LeftPadding = 0
+#RightPadding = 0
+#WinTitle = 21
+#WinBorder = 1
+#MwFactor = 0.65
+#CFactor = 0.75
+#TempFile = "/tmp/tile_winlist"
+BottomPadding = 0
+TopPadding = -2
+LeftPadding = -2
+RightPadding = 0
+WinTitle = 23
+WinBorder = 3
+OrigMwFactor = 0.5
+OrigCFactor = 0.8
+MinMwFactor, MaxMwFactor = 0.25, 0.90
+MinCFactor, MaxCFactor = 0.3, 1.0
+TempFile = "/tmp/tile_winlist"
+TempFile2 = "/tmp/temp_varlist"
+TypeExcludeList = [
+    "_NET_WM_WINDOW_TYPE_DIALOG",
+    "_NET_WM_WINDOW_TYPE_SPLASH",
+    "_NET_WM_WINDOW_TYPE_NOTIFICATION",
+    "_NET_WM_WINDOW_TYPE_TOOLBAR"]
+PropExcludeList = [("veracrypt", "Veracrypt", "above"), ("dukto", "Dukto", "above"), ("nitrogen", "Nitrogen", "above"),
+                   ("keepass2", "KeePass2", "above"), ("galculator", "Galculator", "above"), ("ultracopier", "ultracopier", "above"),
+                   ('', "openssh-askpass", "above"), ('', "Wine", ''), ('', "Zenity", "above"), ('', "Lutris", ''), ("mlconfig", "Mlconfig", "above"),
+                   ("st", "St", "above"), ('', "mpv", "above"), ("brave-browser", "Brave-browser", "maximized_vert,maximized_horz"),
+                   ("gcr-prompter", "Gcr-prompter", "above")]  # (instance,class,window properties to add)
+OrigMode = {"0": "simple", "1": "horizontal"}
+##############################
+
+
 def get_lock(process_name):
     # Without holding a reference to our socket somewhere it gets garbage
     # collected when the function exits
@@ -229,83 +266,6 @@ def get_temp_var(var_list, index, def_value):
     if var_list == {}:
         return def_value
     return var_list[index]
-
-
-# Global variables
-############################################################################
-#BottomPadding = 0
-#TopPadding = 0
-#LeftPadding = 0
-#RightPadding = 0
-#WinTitle = 21
-#WinBorder = 1
-#MwFactor = 0.65
-#CFactor = 0.75
-#TempFile = "/tmp/tile_winlist"
-BottomPadding = 0
-TopPadding = -2
-LeftPadding = -2
-RightPadding = 0
-WinTitle = 23
-WinBorder = 3
-OrigMwFactor = 0.5
-OrigCFactor = 0.8
-MinMwFactor, MaxMwFactor = 0.25, 0.90
-MinCFactor, MaxCFactor = 0.3, 1.0
-TempFile = "/tmp/tile_winlist"
-TempFile2 = "/tmp/temp_varlist"
-TypeExcludeList = [
-    "_NET_WM_WINDOW_TYPE_DIALOG",
-    "_NET_WM_WINDOW_TYPE_SPLASH",
-    "_NET_WM_WINDOW_TYPE_NOTIFICATION",
-    "_NET_WM_WINDOW_TYPE_TOOLBAR"]
-PropExcludeList = [("veracrypt", "Veracrypt", "above"), ("dukto", "Dukto", "above"), ("nitrogen", "Nitrogen", "above"),
-                   ("keepass2", "KeePass2", "above"), ("galculator", "Galculator", "above"), ("ultracopier", "ultracopier", "above"),
-                   ('', "openssh-askpass", "above"), ('', "Wine", ''), ('', "Zenity", "above"), ('', "Lutris", ''), ("mlconfig", "Mlconfig", "above"),
-                   ("st", "St", "above"), ('', "mpv", "above"), ("brave-browser", "Brave-browser", "maximized_vert,maximized_horz"),
-                   ("gcr-prompter", "Gcr-prompter", "above")]  # (instance,class,window properties to add)
-OrigMode = {"0": "simple", "1": "horizontal"}
-############################################################################
-
-OldWinList = retrieve(TempFile)
-OldVarList = retrieve(TempFile2)
-Mode = get_temp_var(OldVarList, 0, OrigMode)
-MwFactor = getvalue(
-    get_temp_var(
-        OldVarList,
-        1,
-        OrigMwFactor),
-    MinMwFactor,
-    MaxMwFactor)
-CFactor = getvalue(
-    get_temp_var(
-        OldVarList,
-        2,
-        OrigCFactor),
-    MinCFactor,
-    MaxCFactor)
-OldIdExcludeSet = get_temp_var(OldVarList, 3, set())
-OldIdIncludeSet = get_temp_var(OldVarList, 4, set())
-OldDesktop = get_temp_var(OldVarList, 5, set())
-(Desktop,
-    OrigXstr,
-    OrigYstr,
-    MaxWidthStr,
-    MaxHeightStr,
-    ActualWinList,
-    WinList,
-    ExcludedWinList,
-    IdExcludeSet,
-    IdIncludeSet,
-    PropExcludedList) = initialize(OldIdExcludeSet,
-                                   OldIdIncludeSet)
-WinList = compare_win_dict(WinList, OldWinList)
-MaxWidth = int(MaxWidthStr) - LeftPadding - RightPadding
-MaxHeight = int(MaxHeightStr) - TopPadding - BottomPadding
-OrigX = int(OrigXstr) + LeftPadding
-OrigY = int(OrigYstr) + TopPadding
-Reset = False
-Alt_Reset = False
 
 
 def store_vars(*args):
@@ -735,6 +695,47 @@ def set_mode(mode):
         return
     Mode[Desktop] = mode
     store_vars(Mode, MwFactor, CFactor, IdExcludeSet, IdIncludeSet, Desktop)
+
+
+OldWinList = retrieve(TempFile)
+OldVarList = retrieve(TempFile2)
+Mode = get_temp_var(OldVarList, 0, OrigMode)
+MwFactor = getvalue(
+    get_temp_var(
+        OldVarList,
+        1,
+        OrigMwFactor),
+    MinMwFactor,
+    MaxMwFactor)
+CFactor = getvalue(
+    get_temp_var(
+        OldVarList,
+        2,
+        OrigCFactor),
+    MinCFactor,
+    MaxCFactor)
+OldIdExcludeSet = get_temp_var(OldVarList, 3, set())
+OldIdIncludeSet = get_temp_var(OldVarList, 4, set())
+OldDesktop = get_temp_var(OldVarList, 5, set())
+(Desktop,
+    OrigXstr,
+    OrigYstr,
+    MaxWidthStr,
+    MaxHeightStr,
+    ActualWinList,
+    WinList,
+    ExcludedWinList,
+    IdExcludeSet,
+    IdIncludeSet,
+    PropExcludedList) = initialize(OldIdExcludeSet,
+                                   OldIdIncludeSet)
+WinList = compare_win_dict(WinList, OldWinList)
+MaxWidth = int(MaxWidthStr) - LeftPadding - RightPadding
+MaxHeight = int(MaxHeightStr) - TopPadding - BottomPadding
+OrigX = int(OrigXstr) + LeftPadding
+OrigY = int(OrigYstr) + TopPadding
+Reset = False
+Alt_Reset = False
 
 
 if len(sys.argv) < 2 or sys.argv[1] in ("", "-h", "--help"):
