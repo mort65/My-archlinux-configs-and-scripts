@@ -873,5 +873,5 @@ else:
         CFactor = set_cfactor(OrigCFactor)
         set_mode("center")
     else:
-        print("Invalid Argument '" + sys.argv[1] + "'")
+        print("Invalid Argument '{}'".format(sys.argv[1]))
         sys.exit(1)
