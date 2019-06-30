@@ -217,7 +217,6 @@ def initialize(id_exclude_set, id_include_set):
     id_exclude_set = [int(idw, 16) for idw in new_id_exclude_set]
     id_include_set = [int(idw, 16) for idw in new_id_include_set]
     prop_excluded_list = []
-    index = -1
     for win in win_output:
         try:
             wid = win.split()[0]
