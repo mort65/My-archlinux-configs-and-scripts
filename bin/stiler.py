@@ -95,6 +95,9 @@ PropExcludeList = [
      "Gcr-prompter",
      "above"),
     ('',
+     "Send Anywhere",
+     "above"),
+    ('',
      "openssh-askpass",
      "above"),
     ("brave-browser",
@@ -160,28 +163,35 @@ def compare_win_dict(newdict, olddict):
     return tempdict
 
 
-def is_type_excluded(windowid):
-    type_output = commands.getoutput(
-        "xprop -id " +
-        windowid +
-        " _NET_WM_WINDOW_TYPE").split("\n")[0].split(" = ")
-    if len(type_output) > 1 and type_output[1] in TypeExcludeList:
-        return True
-    return False
+def get_win_props(windowid, props):
+    try:
+        output = []
+        outs = commands.getoutput(
+            "xprop -notype -id " +
+            windowid +
+            ' ' +
+            ' '.join(props)).split('\n')
+        for out in outs:
+            if out:
+                try:
+                    output.append(out.split(" = ")[1])
+                except IndexError:
+                    output.append('')
+        return output[:len(props)]
+    except BaseException:
+        return []
 
 
-def is_props_excluded(instance_class):
-    instance_class_list = instance_class.split('.')
-    instance_class_list.extend(['', ''])
+def is_type_excluded(windowtype):
+    return windowtype in TypeExcludeList
+
+
+def is_class_excluded(winclass):
     index = 0
     for exclude in PropExcludeList:
-        if exclude[0] and exclude[1]:
-            if (exclude[0] + '.' + exclude[1]) == instance_class:
-                return index
-        elif exclude[0] or exclude[1]:
-            if (instance_class_list[0] and exclude[0] and instance_class_list[0] == exclude[0]) or (
-                    instance_class_list[1] and exclude[1] and instance_class_list[1] == exclude[1]):
-                return index
+        if (not exclude[0] or (exclude[0] == winclass[0])) and (
+                not exclude[1] or (exclude[1] == winclass[1])):
+            return index
         index += 1
     return -1
 
@@ -202,7 +212,7 @@ def initialize(id_exclude_set, id_include_set):
     height = current[8].split("x")[1]
     orig_x = current[7].split(",")[0]
     orig_y = current[7].split(",")[1]
-    win_output = commands.getoutput("wmctrl -lGx").split("\n")
+    win_output = commands.getoutput("wmctrl -l").split("\n")
     new_win_output = []
     excluded_win_output = []
     idws = [int(win.split()[0], 16) for win in win_output]
@@ -221,29 +231,37 @@ def initialize(id_exclude_set, id_include_set):
         try:
             wid = win.split()[0]
             dec_wid = int(wid, 16)
-            instance_class = win.split()[6]
-            if is_type_excluded(wid):
-                if instance_class:
-                    index = is_props_excluded(instance_class)
+            win_type = ''
+            win_class = []
+            win_props = get_win_props(wid, ("WM_CLASS", "_NET_WM_WINDOW_TYPE"))
+            if win_props:
+                win_class = [s.strip('\"') for s in win_props[0].split(', ')]
+                if len(win_class) == 1:
+                    win_class.append('')
+                if len(win_props) > 1:
+                    win_type = win_props[1]
+            if win_type and is_type_excluded(win_type):
+                if win_class:
+                    index = is_class_excluded(win_class)
                     if index > -1:
                         if dec_wid not in id_exclude_set:
                             id_exclude_set.append(dec_wid)
                         prop_excluded_list.append((wid, index))
                 excluded_win_output.append(win)
                 continue
-            if not instance_class:
+            if len(win_class) != 2 or not win_class[0] + win_class[1]:
                 new_win_output.append(win)
                 continue
             if dec_wid in id_exclude_set:
                 excluded_win_output.append(win)
-                index = is_props_excluded(instance_class)
+                index = is_class_excluded(win_class)
                 if index > -1:
                     prop_excluded_list.append((wid, index))
                 continue
             if dec_wid in id_include_set:
                 new_win_output.append(win)
                 continue
-            index = is_props_excluded(instance_class)
+            index = is_class_excluded(win_class)
             if index > -1:
                 if dec_wid not in id_exclude_set:
                     id_exclude_set.append(dec_wid)
