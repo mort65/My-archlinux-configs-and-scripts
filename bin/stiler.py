@@ -59,6 +59,8 @@ PropExcludeList = [
     ("st", "St", "above"),
     ("", "Zenity", "above"),
     ("dukto", "Dukto", "above"),
+    ("", "Send Anywhere", "above"),
+    ("", "openssh-askpass", "above"),
     ("nitrogen", "Nitrogen", "above"),
     ("keepass2", "KeePass2", "above"),
     ("mlconfig", "Mlconfig", "above"),
@@ -66,8 +68,6 @@ PropExcludeList = [
     ("galculator", "Galculator", "above"),
     ("ultracopier", "ultracopier", "above"),
     ("gcr-prompter", "Gcr-prompter", "above"),
-    ("", "Send Anywhere", "above"),
-    ("", "openssh-askpass", "above"),
     ("brave-browser", "Brave-browser", "maximized_vert,maximized_horz"),
 ]
 OrigMode = {"0": "simple", "1": "horizontal"}
