@@ -631,6 +631,9 @@ def arrange_mode(wins, mode):
             arrange(get_right_tile(len(wins)), wins)
         else:
             arrange(get_simple_tile(len(wins)), wins)
+    else:
+        WinList[Desktop] = []
+        store(WinList, TempFile)
     if Reset:
         raise_wins(ExcludedWinList[Desktop])
 
