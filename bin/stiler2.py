@@ -1,4 +1,5 @@
-#!/usr/bin/python3
+#!/usr/bin/python2
+
 ############################################################################
 # Copyright (c) 2009   unohu <unohu0@gmail.com>                            #
 #                                                                          #
@@ -15,24 +16,26 @@
 # OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.           #
 #                                                                          #
 ############################################################################
+
 import sys
 import os
-import subprocess
+import commands
 import pickle
 import socket
 import time
 
+
 # Global variables
 ##############################
-# BottomPadding = 0
-# TopPadding = 0
-# LeftPadding = 0
-# RightPadding = 0
-# WinTitle = 21
-# WinBorder = 1
-# MwFactor = 0.65
-# CFactor = 0.75
-# TempFile = "/tmp/tile_winlist"
+#BottomPadding = 0
+#TopPadding = 0
+#LeftPadding = 0
+#RightPadding = 0
+#WinTitle = 21
+#WinBorder = 1
+#MwFactor = 0.65
+#CFactor = 0.75
+#TempFile = "/tmp/tile_winlist"
 BottomPadding = 0
 TopPadding = -2
 LeftPadding = -2
@@ -49,44 +52,75 @@ TypeExcludeList = [
     "_NET_WM_WINDOW_TYPE_DIALOG",
     "_NET_WM_WINDOW_TYPE_SPLASH",
     "_NET_WM_WINDOW_TYPE_TOOLBAR",
-    "_NET_WM_WINDOW_TYPE_NOTIFICATION",
-]
+    "_NET_WM_WINDOW_TYPE_NOTIFICATION"]
 # (instance,class,"win properties to add")
 PropExcludeList = [
-    ("", "Wine", ""),
-    ("", "mpv", "above"),
-    ("", "Lutris", ""),
-    ("st", "St", "above"),
-    ("", "Zenity", "above"),
-    ("dukto", "Dukto", "above"),
-    ("nitrogen", "Nitrogen", "above"),
-    ("keepass2", "KeePass2", "above"),
-    ("mlconfig", "Mlconfig", "above"),
-    ("veracrypt", "Veracrypt", "above"),
-    ("galculator", "Galculator", "above"),
-    ("ultracopier", "ultracopier", "above"),
-    ("gcr-prompter", "Gcr-prompter", "above"),
-    ("", "Send Anywhere", "above"),
-    ("", "openssh-askpass", "above"),
-    ("brave-browser", "Brave-browser", "maximized_vert,maximized_horz"),
-]
+    ('',
+     "Wine",
+     ''),
+    ('',
+     "mpv",
+     "above"),
+    ('',
+     "Lutris",
+     ''),
+    ("st",
+     "St",
+     "above"),
+    ('',
+     "Zenity",
+     "above"),
+    ("dukto",
+     "Dukto",
+     "above"),
+    ("nitrogen",
+     "Nitrogen",
+     "above"),
+    ("keepass2",
+     "KeePass2",
+     "above"),
+    ("mlconfig",
+     "Mlconfig",
+     "above"),
+    ("veracrypt",
+     "Veracrypt",
+     "above"),
+    ("galculator",
+     "Galculator",
+     "above"),
+    ("ultracopier",
+     "ultracopier",
+     "above"),
+    ("gcr-prompter",
+     "Gcr-prompter",
+     "above"),
+    ('',
+     "Send Anywhere",
+     "above"),
+    ('',
+     "openssh-askpass",
+     "above"),
+    ("brave-browser",
+     "Brave-browser",
+     "maximized_vert,maximized_horz"), ]
 OrigMode = {"0": "simple", "1": "horizontal"}
 ##############################
+
 
 def get_lock(process_name):
     # Without holding a reference to our socket somewhere it gets garbage
     # collected when the function exits
     get_lock._lock_socket = socket.socket(socket.AF_UNIX, socket.SOCK_DGRAM)
     try:
-        get_lock._lock_socket.bind("\0" + process_name)
-        # print('I got the lock')
+        get_lock._lock_socket.bind('\0' + process_name)
+        #print 'I got the lock'
     except socket.error:
-        # print('lock exists')
+        #print 'lock exists'
         count = 0.0
         while True:
             time.sleep(0.1)
             try:
-                get_lock._lock_socket.bind("\0" + process_name)
+                get_lock._lock_socket.bind('\0' + process_name)
                 break
             except socket.error:
                 count += 0.1
@@ -94,7 +128,7 @@ def get_lock(process_name):
                     sys.exit(1)
 
 
-get_lock("stiler.py")
+get_lock('stiler2.py')
 
 
 def getvalue(value, minvalue, maxvalue):
@@ -120,7 +154,7 @@ def compare_win_dict(newdict, olddict):
     if olddict in ({}, newdict):
         return newdict
     tempdict = dict()
-    for k in list(newdict.keys()):
+    for k in newdict.keys():
         k = str(k)
         if k in olddict:
             tempdict[k] = compare_win_list(newdict[k], olddict[k])
@@ -132,22 +166,24 @@ def compare_win_dict(newdict, olddict):
 def get_win_props(windowid, props):
     try:
         Result = []
-        output = subprocess.getoutput(
-            "xprop -notype -id " + windowid + " " + " ".join(props)
-        ).split("\n")
-        for index in range(len(output)):
+        output = commands.getoutput(
+            "xprop -notype -id " +
+            windowid +
+            ' ' +
+            ' '.join(props)).split('\n')
+        for index in xrange(len(output)):
             if index == len(props):
                 break
             if output[index]:
                 try:
                     Result.append(output[index].split(" = ")[1])
                 except IndexError:
-                    Result.append("")
+                    Result.append('')
             else:
-                Result.append("")
+                Result.append('')
         return Result
     except BaseException:
-        return ["" for i in range(len(props))]
+        return ['' for i in xrange(len(props))]
 
 
 def is_type_excluded(windowtype):
@@ -158,8 +194,7 @@ def is_class_excluded(winclass):
     index = 0
     for exclude in PropExcludeList:
         if (not exclude[0] or (exclude[0] == winclass[0])) and (
-            not exclude[1] or (exclude[1] == winclass[1])
-        ):
+                not exclude[1] or (exclude[1] == winclass[1])):
             return index
         index += 1
     return -1
@@ -173,15 +208,15 @@ def set_win_props(windowid, props):
 
 
 def initialize(id_exclude_set, id_include_set):
-    desk_output = subprocess.getoutput("wmctrl -d").split("\n")
+    desk_output = commands.getoutput("wmctrl -d").split("\n")
     desk_list = [line.split()[0] for line in desk_output]
-    current = [x for x in desk_output if x.split()[1] == "*"][0].split()
+    current = filter(lambda x: x.split()[1] == "*", desk_output)[0].split()
     desktop = current[0]
     width = current[8].split("x")[0]
     height = current[8].split("x")[1]
     orig_x = current[7].split(",")[0]
     orig_y = current[7].split(",")[1]
-    win_output = subprocess.getoutput("wmctrl -l").split("\n")
+    win_output = commands.getoutput("wmctrl -l").split("\n")
     new_win_output = []
     excluded_win_output = []
     idws = [int(win.split()[0], 16) for win in win_output]
@@ -200,13 +235,13 @@ def initialize(id_exclude_set, id_include_set):
         try:
             wid = win.split()[0]
             dec_wid = int(wid, 16)
-            win_type = ""
+            win_type = ''
             win_class = []
             win_props = get_win_props(wid, ("WM_CLASS", "_NET_WM_WINDOW_TYPE"))
             if win_props and win_props[0]:
-                win_class = [s.strip('"') for s in win_props[0].split(", ")]
+                win_class = [s.strip('\"') for s in win_props[0].split(', ')]
                 if len(win_class) == 1:
-                    win_class.append("")
+                    win_class.append('')
                 if len(win_props) > 1:
                     win_type = win_props[1]
             if win_type and is_type_excluded(win_type):
@@ -246,18 +281,12 @@ def initialize(id_exclude_set, id_include_set):
     actual_win_list = {}
     excluded_win_list = {}
     for desk in desk_list:
-        win_list[desk] = [
-            hex(int(y.split()[0], 16))
-            for y in [x for x in new_win_output if x.split()[1] == desk]
-        ]
-        actual_win_list[desk] = [
-            hex(int(y.split()[0], 16))
-            for y in [x for x in win_output if x.split()[1] == desk]
-        ]
-        excluded_win_list[desk] = [
-            hex(int(y.split()[0], 16))
-            for y in [x for x in excluded_win_output if x.split()[1] == desk]
-        ]
+        win_list[desk] = map(lambda y: hex(int(y.split()[0], 16)), filter(
+            lambda x: x.split()[1] == desk, new_win_output))
+        actual_win_list[desk] = map(lambda y: hex(int(y.split()[0], 16)), filter(
+            lambda x: x.split()[1] == desk, win_output))
+        excluded_win_list[desk] = map(lambda y: hex(int(y.split()[0], 16)), filter(
+            lambda x: x.split()[1] == desk, excluded_win_output))
     return (
         desktop,
         orig_x,
@@ -269,33 +298,31 @@ def initialize(id_exclude_set, id_include_set):
         excluded_win_list,
         new_id_exclude_set,
         new_id_include_set,
-        prop_excluded_list,
-    )
+        prop_excluded_list)
 
 
 def get_active_window():
     return str(
-        hex(int(subprocess.getoutput("xdotool getactivewindow 2>/dev/null").split()[0]))
-    )
+        hex(int(commands.getoutput("xdotool getactivewindow 2>/dev/null").split()[0])))
 
 
 def store(object, file):
-    with open(file, "wb") as f:
+    with open(file, 'w') as f:
         pickle.dump(object, f)
     f.close()
 
 
 def retrieve(file):
     try:
-        with open(file, "rb+") as f:
+        with open(file, 'r+') as f:
             obj = pickle.load(f)
         f.close()
-        return obj
+        return(obj)
     except BaseException:
-        f = open(file, "wb")
+        f = open(file, 'w')
         f.close
         dict = {}
-        return dict
+        return (dict)
 
 
 def get_temp_var(var_list, index, def_value):
@@ -312,24 +339,16 @@ def get_simple_tile(wincount):
     rows = wincount - 1
     layout = []
     if rows == 0:
-        layout.append(
-            (
-                OrigX + WinBorder,
-                OrigY + WinBorder,
-                int(MaxWidth - 2 * WinBorder),
-                int(MaxHeight - WinTitle - 2 * WinBorder),
-            )
-        )
+        layout.append((OrigX + WinBorder,
+                       OrigY + WinBorder,
+                       int(MaxWidth - 2 * WinBorder),
+                       int(MaxHeight - WinTitle - 2 * WinBorder)))
         return layout
     else:
-        layout.append(
-            (
-                OrigX + WinBorder,
-                OrigY + WinBorder,
-                int(MaxWidth * MwFactor - 2 * WinBorder),
-                int(MaxHeight - WinTitle - 2 * WinBorder),
-            )
-        )
+        layout.append((OrigX + WinBorder,
+                       OrigY + WinBorder,
+                       int(MaxWidth * MwFactor - 2 * WinBorder),
+                       int(MaxHeight - WinTitle - 2 * WinBorder)))
     x = OrigX + int((MaxWidth * MwFactor) + WinBorder)
     width = int((MaxWidth * (1 - MwFactor)) - 2 * WinBorder)
     height = int(MaxHeight / rows - WinTitle - 2 * WinBorder)
@@ -412,33 +431,14 @@ def get_max_all(wincount):
 
 
 def move_active(PosX, PosY, Width, Height):
-    command = (
-        " wmctrl -r :ACTIVE: -e 0,"
-        + str(PosX)
-        + ","
-        + str(PosY)
-        + ","
-        + str(Width)
-        + ","
-        + str(Height)
-    )
+    command = " wmctrl -r :ACTIVE: -e 0," + \
+        str(PosX) + "," + str(PosY) + "," + str(Width) + "," + str(Height)
     os.system(command)
 
 
 def move_win(windowid, PosX, PosY, Width, Height):
-    command = (
-        "wmctrl -r "
-        + windowid
-        + " -e 0,"
-        + str(PosX)
-        + ","
-        + str(PosY)
-        + ","
-        + str(Width)
-        + ","
-        + str(Height)
-        + " -i"
-    )
+    command = "wmctrl -r " + windowid + " -e 0," + \
+        str(PosX) + "," + str(PosY) + "," + str(Width) + "," + str(Height) + " -i"
     os.system(command)
     command = "wmctrl -r " + windowid + " -b remove,hidden,shaded -i"
     os.system(command)
@@ -455,9 +455,7 @@ def unmaximize_win(windowid):
     if windowid == ":ACTIVE:":
         command = "wmctrl -r :ACTIVE: -b remove,maximized_vert,maximized_horz"
     else:
-        command = (
-            "wmctrl -r " + windowid + " -b remove,maximized_vert,maximized_horz -i"
-        )
+        command = "wmctrl -r " + windowid + " -b remove,maximized_vert,maximized_horz -i"
     os.system(command)
 
 
@@ -481,9 +479,7 @@ def toggle_maximize_win(windowid):
     if windowid == ":ACTIVE:":
         command = "wmctrl -r :ACTIVE: -b toggle,maximized_vert,maximized_horz"
     else:
-        command = (
-            "wmctrl -r " + windowid + " -b toggle,maximized_vert,maximized_horz -i"
-        )
+        command = "wmctrl -r " + windowid + " -b toggle,maximized_vert,maximized_horz -i"
     os.system(command)
 
 
@@ -664,7 +660,7 @@ def horiz():
 
 def cycle(n):
     winlist = create_win_list()
-    # n = n % len(winlist)
+    #n = n % len(winlist)
     winlist = winlist[-n:] + winlist[:-n]
     arrange_mode(winlist, Mode[Desktop])
     raise_win(winlist[0])
@@ -672,7 +668,7 @@ def cycle(n):
 
 def cycle_focus(n):
     winlist = create_win_list(actual=True)
-    # n = n % len(winlist)
+    #n = n % len(winlist)
     active = get_active_window()
     if active and active in winlist:
         index = winlist.index(active)
@@ -765,8 +761,7 @@ def set_mode(mode):
 
 
 if len(sys.argv) < 2 or sys.argv[1] in ("", "-h", "--help"):
-    print(
-        """\
+    print("""\
 Usage: styler.py [OPTION]
 Options:
          simple,horizontal,vertical,max_all,center,left,right,
@@ -778,22 +773,30 @@ Options:
          swap,cycle,rcycle,
          reset,alt_reset,
          daemon\
-         """
-    )
+         """)
     sys.exit(0)
 else:
     OldWinList = retrieve(TempFile)
     OldVarList = retrieve(TempFile2)
     Mode = get_temp_var(OldVarList, 0, OrigMode)
     MwFactor = getvalue(
-        get_temp_var(OldVarList, 1, OrigMwFactor), MinMwFactor, MaxMwFactor
-    )
-    CFactor = getvalue(get_temp_var(OldVarList, 2, OrigCFactor), MinCFactor, MaxCFactor)
+        get_temp_var(
+            OldVarList,
+            1,
+            OrigMwFactor),
+        MinMwFactor,
+        MaxMwFactor)
+    CFactor = getvalue(
+        get_temp_var(
+            OldVarList,
+            2,
+            OrigCFactor),
+        MinCFactor,
+        MaxCFactor)
     OldIdExcludeSet = get_temp_var(OldVarList, 3, set())
     OldIdIncludeSet = get_temp_var(OldVarList, 4, set())
     OldDesktop = get_temp_var(OldVarList, 5, set())
-    (
-        Desktop,
+    (Desktop,
         OrigXstr,
         OrigYstr,
         MaxWidthStr,
@@ -803,8 +806,8 @@ else:
         ExcludedWinList,
         IdExcludeSet,
         IdIncludeSet,
-        PropExcludedList,
-    ) = initialize(OldIdExcludeSet, OldIdIncludeSet)
+        PropExcludedList) = initialize(OldIdExcludeSet,
+                                       OldIdIncludeSet)
     WinList = compare_win_dict(WinList, OldWinList)
     MaxWidth = int(MaxWidthStr) - LeftPadding - RightPadding
     MaxHeight = int(MaxHeightStr) - TopPadding - BottomPadding
@@ -820,15 +823,7 @@ else:
     elif sys.argv[1] == "alt_reset":
         Alt_Reset = True
         reset()
-    elif sys.argv[1] in (
-        "simple",
-        "horizontal",
-        "vertical",
-        "max_all",
-        "center",
-        "left",
-        "right",
-    ):
+    elif sys.argv[1] in ("simple", "horizontal", "vertical", "max_all", "center", "left", "right"):
         Reset = True
         Mode[Desktop] = sys.argv[1]
         set_mode(sys.argv[1])
@@ -899,5 +894,5 @@ else:
         CFactor = set_cfactor(OrigCFactor)
         set_mode("center")
     else:
-        print(("Invalid Argument '{}'".format(sys.argv[1])))
+        print("Invalid Argument '{}'".format(sys.argv[1]))
         sys.exit(1)
