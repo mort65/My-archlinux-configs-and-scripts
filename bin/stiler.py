@@ -70,7 +70,7 @@ PropExcludeList = [
     ("gcr-prompter", "Gcr-prompter", "above"),
     ("brave-browser", "Brave-browser", "maximized_vert,maximized_horz"),
 ]
-OrigMode = {"0": "simple", "1": "horizontal"}
+OrigMode = {"0": "simple", "1": "horiz"}
 ##############################
 
 
@@ -340,7 +340,7 @@ def get_simple_tile(wincount):
     return layout
 
 
-def get_vertical_tile(wincount):
+def get_vert_tile(wincount):
     layout = []
     y = OrigY + WinBorder
     width = int(MaxWidth / wincount - 2 * WinBorder)
@@ -622,10 +622,10 @@ def arrange_mode(wins, mode):
             raise_win(wins[0])
         if mode == "simple":
             arrange(get_simple_tile(len(wins)), wins)
-        elif mode == "horizontal":
+        elif mode == "horiz":
             arrange(get_horiz_tile(len(wins)), wins)
-        elif mode == "vertical":
-            arrange(get_vertical_tile(len(wins)), wins)
+        elif mode == "vert":
+            arrange(get_vert_tile(len(wins)), wins)
         elif mode == "max_all":
             arrange(get_max_all(len(wins)), wins)
         elif mode == "center":
@@ -656,14 +656,14 @@ def swap():
     arrange_mode(winlist, Mode[Desktop])
 
 
-def vertical():
+def vert():
     winlist = create_win_list()
-    arrange_mode(winlist, "vertical")
+    arrange_mode(winlist, "vert")
 
 
 def horiz():
     winlist = create_win_list()
-    arrange_mode(winlist, "horizontal")
+    arrange_mode(winlist, "horiz")
 
 
 def cycle(n):
@@ -750,10 +750,10 @@ def unmaximize():
 def set_mode(mode):
     if mode == "simple":
         simple()
-    elif mode == "horizontal":
+    elif mode == "horiz":
         horiz()
-    elif mode == "vertical":
-        vertical()
+    elif mode == "vert":
+        vert()
     elif mode == "max_all":
         max_all()
     elif mode == "center":
@@ -763,7 +763,8 @@ def set_mode(mode):
     elif mode == "right":
         right()
     else:
-        return
+        mode = OrigMode[Desktop]
+        globals()[mode]()
     Mode[Desktop] = mode
     store_vars(Mode, MwFactor, CFactor, IdExcludeSet, IdIncludeSet, Desktop)
 
@@ -773,8 +774,8 @@ if len(sys.argv) < 2 or sys.argv[1] in ("", "-h", "--help"):
         """\
 Usage: styler.py [OPTION]
 Options:
-         simple,horizontal,vertical,max_all,center,left,right,
-         maximize,unmaximize,normalize,toggle_maximize
+         maximize,unmaximize,normalize,toggle_maximize,
+         simple,horiz,vert,max_all,center,left,right,
          inc_mwfactor,dec_mwfactor,reset_mwfactor,
          inc_cfactor,dec_cfactor,reset_cfactor,
          exclude,include,toggle_exclude,
@@ -826,8 +827,8 @@ else:
         reset()
     elif sys.argv[1] in (
         "simple",
-        "horizontal",
-        "vertical",
+        "horiz",
+        "vert",
         "max_all",
         "center",
         "left",
