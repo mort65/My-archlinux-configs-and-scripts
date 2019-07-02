@@ -73,6 +73,7 @@ PropExcludeList = [
 OrigMode = {"0": "simple", "1": "horizontal"}
 ##############################
 
+
 def get_lock(process_name):
     # Without holding a reference to our socket somewhere it gets garbage
     # collected when the function exits
@@ -299,7 +300,7 @@ def retrieve(file):
 
 
 def get_temp_var(var_list, index, def_value):
-    if var_list == {}:
+    if len(var_list) < index + 1 or not var_list[index]:
         return def_value
     return var_list[index]
 

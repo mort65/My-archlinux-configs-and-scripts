@@ -326,7 +326,7 @@ def retrieve(file):
 
 
 def get_temp_var(var_list, index, def_value):
-    if var_list == {}:
+    if len(var_list) < index + 1 or not var_list[index]:
         return def_value
     return var_list[index]
 
