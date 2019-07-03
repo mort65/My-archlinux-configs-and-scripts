@@ -448,8 +448,6 @@ def move_win(windowid, PosX, PosY, Width, Height):
 
 
 def focus_win(windowid):
-    # command = "xdotool mousemove --sync --window " + windowid + " 0 0"
-    # os.system(command)
     command = "xdotool windowfocus " + windowid
     os.system(command)
 
@@ -559,14 +557,7 @@ def create_win_list(actual=False):
         Windows = ActualWinList[Desktop]
     else:
         Windows = WinList[Desktop]
-    if OldWinList == {}:
-        pass
-    else:
-        OldWindows = OldWinList[Desktop]
-        if Windows == OldWindows:
-            pass
-        else:
-            Windows = compare_win_list(Windows, OldWindows)
+
     return Windows
 
 
@@ -612,7 +603,9 @@ def raise_wins(winlist):
 
 
 def arrange_mode(wins, mode):
+    global WinList
     if len(wins):
+        WinList[Desktop] = wins
         if Reset or Alt_Reset:
             unmaximize_wins(wins)
             normalize_wins(wins)
@@ -646,7 +639,7 @@ def simple():
     arrange_mode(Windows, "simple")
 
 
-def swap():
+def _swap():
     winlist = create_win_list()
     active = get_active_window()
     winlist.remove(active)
@@ -664,9 +657,9 @@ def horiz():
     arrange_mode(winlist, "horiz")
 
 
-def cycle(n):
+def _cycle(n):
     winlist = create_win_list()
-    #n = n % len(winlist)
+    n = n % len(winlist)
     winlist = winlist[-n:] + winlist[:-n]
     arrange_mode(winlist, Mode[Desktop])
     raise_win(winlist[0])
@@ -674,7 +667,7 @@ def cycle(n):
 
 def cycle_focus(n):
     winlist = create_win_list(actual=True)
-    #n = n % len(winlist)
+    n = n % len(winlist)
     active = get_active_window()
     if active and active in winlist:
         index = winlist.index(active)
@@ -726,8 +719,8 @@ def set_cfactor(cf):
     return cf
 
 
-def reset():
-    set_mode(Mode[Desktop])
+def _reset():
+    _set_mode(Mode[Desktop])
 
 
 def daemon():
@@ -737,7 +730,7 @@ def daemon():
                 exclude = hex(int(id_index[0], 16))
                 if exclude in IdExcludeSet and exclude not in OldIdExcludeSet:
                     set_win_props(id_index[0], PropExcludeList[id_index[1]][2])
-        set_mode(Mode[Desktop])
+        _set_mode(Mode[Desktop])
 
 
 def unmaximize():
@@ -745,7 +738,7 @@ def unmaximize():
     raise_win(":ACTIVE:")
 
 
-def set_mode(mode):
+def _set_mode(mode):
     if mode == "simple":
         simple()
     elif mode == "horiz":
@@ -767,6 +760,106 @@ def set_mode(mode):
     store_vars(Mode, MwFactor, CFactor, IdExcludeSet, IdIncludeSet, Desktop)
 
 
+def reset():
+    global Reset
+    Reset = True
+    _reset()
+
+
+def alt_reset():
+    global Alt_Reset
+    Alt_Reset = True
+    _reset()
+
+
+def set_mode(mode):
+    global Reset, Mode
+    Reset = True
+    Mode[Desktop] = mode
+    _set_mode(Mode[Desktop])
+
+
+def swap():
+    global Alt_Reset
+    Alt_Reset = True
+    _swap()
+
+
+def cycle(n):
+    global Alt_Reset
+    Alt_Reset = True
+    _cycle(n)
+
+
+def exclude_active():
+    active = get_active_window()
+    if active:
+        exclude_win(active)
+
+
+def toggle_exclude_active():
+    active = get_active_window()
+    if active:
+        toggle_exclude_win(active)
+
+
+def include_active():
+    active = get_active_window()
+    if active:
+        include_win(active)
+
+
+def inc_mwfactor():
+    global Alt_Reset, MwFactor
+    Alt_Reset = True
+    MwFactor = set_mwfactor(MwFactor + 0.05)
+    if Mode[Desktop] in ("simple", "left", "right"):
+        _set_mode(Mode[Desktop])
+    else:
+        _set_mode("simple")
+
+
+def dec_mwfactor():
+    global Alt_Reset, MwFactor
+    Alt_Reset = True
+    MwFactor = set_mwfactor(MwFactor - 0.05)
+    if Mode[Desktop] in ("simple", "left", "right"):
+        _set_mode(Mode[Desktop])
+    else:
+        _set_mode("simple")
+
+
+def reset_mwfactor():
+    global Alt_Reset, MwFactor
+    Alt_Reset = True
+    MwFactor = set_mwfactor(OrigMwFactor)
+    if Mode[Desktop] in ("simple", "left", "right"):
+        _set_mode(Mode[Desktop])
+    else:
+        _set_mode("simple")
+
+
+def dec_cfactor():
+    global Alt_Reset, CFactor
+    Alt_Reset = True
+    CFactor = set_cfactor(CFactor - 0.05)
+    _set_mode("center")
+
+
+def inc_cfactor():
+    global Alt_Reset, CFactor
+    Alt_Reset = True
+    CFactor = set_cfactor(CFactor + 0.05)
+    _set_mode("center")
+
+
+def reset_cfactor():
+    global Alt_Reset, CFactor
+    Alt_Reset = True
+    CFactor = set_cfactor(OrigCFactor)
+    _set_mode("center")
+
+
 def show_usage():
     print("""\
     Usage: styler.py [OPTION]
@@ -783,9 +876,14 @@ def show_usage():
              """)
 
 
+def is_main():
+    return __name__ == "__main__"
+
+
 OldWinList = retrieve(TempFile)
 OldVarList = retrieve(TempFile2)
 Mode = get_temp_var(OldVarList, 0, OrigMode)
+Modes = ("simple", "horiz", "vert", "max_all", "center", "left", "right")
 MwFactor = getvalue(
     get_temp_var(
         OldVarList,
@@ -822,7 +920,7 @@ OrigX = int(OrigXstr) + LeftPadding
 OrigY = int(OrigYstr) + TopPadding
 Reset = False
 Alt_Reset = False
-if __name__ == "__main__":
+if is_main():
     if len(sys.argv) < 2 or sys.argv[1] in ("", "-h", "--help"):
         show_usage()
         sys.exit(0)
@@ -830,23 +928,16 @@ if __name__ == "__main__":
         if sys.argv[1] == "daemon":
             daemon()
         elif sys.argv[1] == "reset":
-            Reset = True
             reset()
         elif sys.argv[1] == "alt_reset":
-            Alt_Reset = True
-            reset()
-        elif sys.argv[1] in ("simple", "horiz", "vert", "max_all", "center", "left", "right"):
-            Reset = True
-            Mode[Desktop] = sys.argv[1]
+            alt_reset()
+        elif sys.argv[1] in Modes:
             set_mode(sys.argv[1])
         elif sys.argv[1] == "swap":
-            Alt_Reset = True
             swap()
         elif sys.argv[1] == "cycle":
-            Alt_Reset = True
             cycle(1)
         elif sys.argv[1] == "rcycle":
-            Alt_Reset = True
             cycle(-1)
         elif sys.argv[1] == "cycle_focus":
             cycle_focus(1)
@@ -861,50 +952,23 @@ if __name__ == "__main__":
         elif sys.argv[1] == "normalize":
             normalize()
         elif sys.argv[1] == "exclude":
-            active = get_active_window()
-            if active:
-                exclude_win(active)
+            exclude_active()
         elif sys.argv[1] == "include":
-            active = get_active_window()
-            if active:
-                include_win(active)
+            include_active()
         elif sys.argv[1] == "toggle_exclude":
-            active = get_active_window()
-            if active:
-                toggle_exclude_win(active)
+            toggle_exclude_active()
         elif sys.argv[1] == "inc_mwfactor":
-            Alt_Reset = True
-            MwFactor = set_mwfactor(MwFactor + 0.05)
-            if Mode[Desktop] in ("simple", "left", "right"):
-                set_mode(Mode[Desktop])
-            else:
-                set_mode("simple")
+            inc_mwfactor()
         elif sys.argv[1] == "dec_mwfactor":
-            Alt_Reset = True
-            MwFactor = set_mwfactor(MwFactor - 0.05)
-            if Mode[Desktop] in ("simple", "left", "right"):
-                set_mode(Mode[Desktop])
-            else:
-                set_mode("simple")
+            dec_mwfactor()
         elif sys.argv[1] == "reset_mwfactor":
-            Alt_Reset = True
-            MwFactor = set_mwfactor(OrigMwFactor)
-            if Mode[Desktop] in ("simple", "left", "right"):
-                set_mode(Mode[Desktop])
-            else:
-                set_mode("simple")
+            reset_mwfactor()
         elif sys.argv[1] == "dec_cfactor":
-            Alt_Reset = True
-            CFactor = set_cfactor(CFactor - 0.05)
-            set_mode("center")
+            dec_cfactor()
         elif sys.argv[1] == "inc_cfactor":
-            Alt_Reset = True
-            CFactor = set_cfactor(CFactor + 0.05)
-            set_mode("center")
+            inc_cfactor()
         elif sys.argv[1] == "reset_cfactor":
-            Alt_Reset = True
-            CFactor = set_cfactor(OrigCFactor)
-            set_mode("center")
+            reset_cfactor()
         else:
             print("Invalid Argument '{}'".format(sys.argv[1]))
             sys.exit(1)
