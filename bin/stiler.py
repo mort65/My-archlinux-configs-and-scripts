@@ -54,8 +54,8 @@ TypeExcludeList = [
 # (instance,class,"win properties to add")
 PropExcludeList = [
     ("", "Wine", ""),
-    ("", "mpv", "above"),
     ("", "Lutris", ""),
+    ("", "mpv", "above"),
     ("st", "St", "above"),
     ("", "Zenity", "above"),
     ("dukto", "Dukto", "above"),
@@ -68,6 +68,7 @@ PropExcludeList = [
     ("galculator", "Galculator", "above"),
     ("ultracopier", "ultracopier", "above"),
     ("gcr-prompter", "Gcr-prompter", "above"),
+    ("feedreader", "Feedreader", "maximized_vert,maximized_horz"),
     ("brave-browser", "Brave-browser", "maximized_vert,maximized_horz"),
 ]
 OrigMode = {"0": "simple", "1": "horiz"}
@@ -446,8 +447,8 @@ def move_win(windowid, PosX, PosY, Width, Height):
 
 
 def focus_win(windowid):
-    command = "xdotool mousemove --sync --window " + windowid + " 1 1"
-    os.system(command)
+    # command = "xdotool mousemove --sync --window " + windowid + " 0 0"
+    # os.system(command)
     command = "xdotool windowfocus " + windowid
     os.system(command)
 

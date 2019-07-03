@@ -100,6 +100,9 @@ PropExcludeList = [
     ('',
      "openssh-askpass",
      "above"),
+    ("feedreader",
+     "Feedreader",
+     "maximized_vert,maximized_horz"),
     ("brave-browser",
      "Brave-browser",
      "maximized_vert,maximized_horz"), ]
@@ -445,8 +448,8 @@ def move_win(windowid, PosX, PosY, Width, Height):
 
 
 def focus_win(windowid):
-    command = "xdotool mousemove --sync --window " + windowid + " 1 1"
-    os.system(command)
+    # command = "xdotool mousemove --sync --window " + windowid + " 0 0"
+    # os.system(command)
     command = "xdotool windowfocus " + windowid
     os.system(command)
 
