@@ -131,6 +131,15 @@ def compare_win_dict(newdict, olddict):
     return tempdict
 
 
+def get_win_prop(windowid, prop):
+    try:
+        return subprocess.getoutput(
+            "xprop -notype -id " + windowid + " " + prop
+        ).split(" = ")[1]
+    except BaseException:
+        return ""
+
+
 def get_win_props(windowid, props):
     try:
         Result = []
@@ -277,7 +286,13 @@ def initialize(id_exclude_set, id_include_set):
 
 def get_active_window():
     return str(
-        hex(int(subprocess.getoutput("xdotool getactivewindow 2>/dev/null").split()[0]))
+        hex(
+            int(
+                subprocess.getoutput(
+                    "xdotool getactivewindow 2>/dev/null"
+                ).split()[0]
+            )
+        )
     )
 
 
@@ -308,6 +323,10 @@ def get_temp_var(var_list, index, def_value):
 
 def store_vars(*args):
     store(args, TempFile2)
+
+
+def is_hidden(windowid):
+    return "_NET_WM_STATE_HIDDEN" in get_win_prop(windowid, "_NET_WM_STATE")
 
 
 def get_simple_tile(wincount):
@@ -456,7 +475,9 @@ def unmaximize_win(windowid):
         command = "wmctrl -r :ACTIVE: -b remove,maximized_vert,maximized_horz"
     else:
         command = (
-            "wmctrl -r " + windowid + " -b remove,maximized_vert,maximized_horz -i"
+            "wmctrl -r "
+            + windowid
+            + " -b remove,maximized_vert,maximized_horz -i"
         )
     os.system(command)
 
@@ -473,7 +494,11 @@ def maximize_win(windowid):
     if windowid == ":ACTIVE:":
         command = "wmctrl -r :ACTIVE: -b add,maximized_vert,maximized_horz"
     else:
-        command = "wmctrl -r " + windowid + " -b add,maximized_vert,maximized_horz -i"
+        command = (
+            "wmctrl -r "
+            + windowid
+            + " -b add,maximized_vert,maximized_horz -i"
+        )
     os.system(command)
 
 
@@ -482,17 +507,18 @@ def toggle_maximize_win(windowid):
         command = "wmctrl -r :ACTIVE: -b toggle,maximized_vert,maximized_horz"
     else:
         command = (
-            "wmctrl -r " + windowid + " -b toggle,maximized_vert,maximized_horz -i"
+            "wmctrl -r "
+            + windowid
+            + " -b toggle,maximized_vert,maximized_horz -i"
         )
     os.system(command)
 
 
 def raise_win(windowid):
     if windowid == ":ACTIVE:":
-        command = "wmctrl -a :ACTIVE: "
-    else:
-        command = "wmctrl -a " + windowid + " -i"
-    os.system(command)
+        os.system("wmctrl -a :ACTIVE: ")
+    elif not is_hidden(windowid):
+        os.system("wmctrl -a " + windowid + " -i")
 
 
 def exclude_win(windowid):
@@ -942,8 +968,12 @@ OldWinList = retrieve(TempFile)
 OldVarList = retrieve(TempFile2)
 Mode = get_temp_var(OldVarList, 0, OrigMode)
 Modes = ("simple", "horiz", "vert", "max_all", "center", "left", "right")
-MwFactor = getvalue(get_temp_var(OldVarList, 1, OrigMwFactor), MinMwFactor, MaxMwFactor)
-CFactor = getvalue(get_temp_var(OldVarList, 2, OrigCFactor), MinCFactor, MaxCFactor)
+MwFactor = getvalue(
+    get_temp_var(OldVarList, 1, OrigMwFactor), MinMwFactor, MaxMwFactor
+)
+CFactor = getvalue(
+    get_temp_var(OldVarList, 2, OrigCFactor), MinCFactor, MaxCFactor
+)
 OldIdExcludeSet = get_temp_var(OldVarList, 3, set())
 OldIdIncludeSet = get_temp_var(OldVarList, 4, set())
 OldDesktop = get_temp_var(OldVarList, 5, set())

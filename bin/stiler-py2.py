@@ -166,6 +166,17 @@ def compare_win_dict(newdict, olddict):
     return tempdict
 
 
+def get_win_prop(windowid, prop):
+    try:
+        return commands.getoutput(
+            "xprop -notype -id " +
+            windowid +
+            " " +
+            prop).split(" = ")[1]
+    except BaseException:
+        return ''
+
+
 def get_win_props(windowid, props):
     try:
         Result = []
@@ -328,6 +339,10 @@ def retrieve(file):
         return (dict)
 
 
+def is_hidden(windowid):
+    return "_NET_WM_STATE_HIDDEN" in get_win_prop(windowid, "_NET_WM_STATE")
+
+
 def get_temp_var(var_list, index, def_value):
     if len(var_list) < index + 1 or not var_list[index]:
         return def_value
@@ -486,10 +501,9 @@ def toggle_maximize_win(windowid):
 
 def raise_win(windowid):
     if windowid == ":ACTIVE:":
-        command = "wmctrl -a :ACTIVE: "
-    else:
-        command = "wmctrl -a " + windowid + " -i"
-    os.system(command)
+        os.system("wmctrl -a :ACTIVE: ")
+    elif not is_hidden(windowid):
+        os.system("wmctrl -a " + windowid + " -i")
 
 
 def exclude_win(windowid):
