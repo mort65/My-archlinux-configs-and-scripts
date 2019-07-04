@@ -557,7 +557,6 @@ def create_win_list(actual=False):
         Windows = ActualWinList[Desktop]
     else:
         Windows = WinList[Desktop]
-
     return Windows
 
 
@@ -885,9 +884,7 @@ def check_args(args):
         show_usage()
         return
     arg = args[1]
-    if arg in ("", "-h", "--help"):
-        show_usage()
-    elif arg == "daemon":
+    if arg == "daemon":
         daemon()
     elif arg == "reset":
         reset()
