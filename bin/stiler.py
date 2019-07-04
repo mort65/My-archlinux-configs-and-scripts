@@ -45,6 +45,12 @@ MinMwFactor, MaxMwFactor = 0.25, 0.90
 MinCFactor, MaxCFactor = 0.3, 1.0
 TempFile = "/tmp/tile_winlist"
 TempFile2 = "/tmp/temp_varlist"
+StateExcludeList = [
+    "_NET_WM_STATE_HIDDEN",
+    "_NET_WM_STATE_STICKY",
+    "_NET_WM_STATE_MODAL",
+]
+ActionIncludeList = ["_NET_WM_ACTION_RESIZE", "_NET_WM_ACTION_MOVE"]
 TypeExcludeList = [
     "_NET_WM_WINDOW_TYPE_DIALOG",
     "_NET_WM_WINDOW_TYPE_SPLASH",
@@ -162,15 +168,23 @@ def get_win_props(windowid, props):
 
 
 def is_type_excluded(windowtype):
-    if not windowtype:
-        return False
-    return windowtype in TypeExcludeList
+    return windowtype in TypeExcludeList if windowtype else False
+
+
+def is_actions_included(windowactions):
+    return (
+        set(ActionIncludeList).issubset(windowactions.split(", "))
+        if windowactions
+        else False
+    )
 
 
 def is_state_excluded(windowstate):
-    if not windowstate:
-        return False
-    return "_NET_WM_STATE_HIDDEN" in windowstate
+    return (
+        not set(StateExcludeList).isdisjoint(windowstate.split(", "))
+        if windowstate
+        else False
+    )
 
 
 def is_class_excluded(winclass):
@@ -185,10 +199,8 @@ def is_class_excluded(winclass):
 
 
 def set_win_props(windowid, props):
-    if not props:
-        return
-    command = "wmctrl -r " + windowid + " -b add," + props + " -i"
-    os.system(command)
+    if props:
+        os.system("wmctrl -r " + windowid + " -b add," + props + " -i")
 
 
 def initialize(id_exclude_set, id_include_set):
@@ -221,9 +233,16 @@ def initialize(id_exclude_set, id_include_set):
             dec_wid = int(wid, 16)
             win_type = ""
             win_state = ""
+            win_actions = ""
             win_class = []
             win_props = get_win_props(
-                wid, ("WM_CLASS", "_NET_WM_WINDOW_TYPE", "_NET_WM_STATE")
+                wid,
+                (
+                    "WM_CLASS",
+                    "_NET_WM_WINDOW_TYPE",
+                    "_NET_WM_STATE",
+                    "_NET_WM_ALLOWED_ACTIONS",
+                ),
             )
             if win_props:
                 if win_props[0]:
@@ -236,8 +255,11 @@ def initialize(id_exclude_set, id_include_set):
                     win_type = win_props[1]
                 if len(win_props) > 2:
                     win_state = win_props[2]
+                if len(win_props) > 3:
+                    win_actions = win_props[3]
             if (
                 is_state_excluded(win_state)
+                or not is_actions_included(win_actions)
                 or dec_wid not in id_include_set
                 and is_type_excluded(win_type)
             ):
@@ -453,7 +475,7 @@ def get_max_all(wincount):
 
 
 def move_active(PosX, PosY, Width, Height):
-    command = (
+    os.system(
         " wmctrl -r :ACTIVE: -e 0,"
         + str(PosX)
         + ","
@@ -463,11 +485,10 @@ def move_active(PosX, PosY, Width, Height):
         + ","
         + str(Height)
     )
-    os.system(command)
 
 
 def move_win(windowid, PosX, PosY, Width, Height):
-    command = (
+    os.system(
         "wmctrl -r "
         + windowid
         + " -e 0,"
@@ -480,14 +501,11 @@ def move_win(windowid, PosX, PosY, Width, Height):
         + str(Height)
         + " -i"
     )
-    os.system(command)
-    command = "wmctrl -r " + windowid + " -b remove,hidden,shaded -i"
-    os.system(command)
+    os.system("wmctrl -r " + windowid + " -b remove,hidden,shaded -i")
 
 
 def focus_win(windowid):
-    command = "xdotool windowfocus " + windowid
-    os.system(command)
+    os.system("xdotool windowfocus " + windowid)
 
 
 def unmaximize_win(windowid):
@@ -534,10 +552,10 @@ def toggle_maximize_win(windowid):
     os.system(command)
 
 
-def raise_win(windowid):
+def raise_win(windowid, hidden=False):
     if windowid == ":ACTIVE:":
         os.system("wmctrl -a :ACTIVE: ")
-    elif not is_hidden(windowid):
+    elif hidden or not is_hidden(windowid):
         os.system("wmctrl -a " + windowid + " -i")
 
 
@@ -601,11 +619,20 @@ def center():
     arrange_mode(winlist, "center")
 
 
-def create_win_list(actual=False):
+def create_win_list(actual=False, notaskbar=True):
     if actual:
         Windows = ActualWinList[Desktop]
     else:
         Windows = WinList[Desktop]
+    if not notaskbar:
+        return [
+            wid
+            for wid in Windows
+            if not {
+                "_NET_WM_STATE_SKIP_TASKBAR",
+                "_NET_WM_STATE_HIDDEN",
+            }.issubset(get_win_prop(wid, "_NET_WM_STATE").split(", "))
+        ]
     return Windows
 
 
@@ -714,7 +741,7 @@ def _cycle(n):
 
 
 def cycle_focus(n):
-    winlist = create_win_list(actual=True)
+    winlist = create_win_list(actual=True, notaskbar=False)
     n = n % len(winlist)
     active = get_active_window()
     if active and active in winlist:
@@ -725,7 +752,7 @@ def cycle_focus(n):
             index = 0
     else:
         index = 0
-    raise_win(winlist[index])
+    raise_win(winlist[index], hidden=True)
     focus_win(winlist[index])
 
 
