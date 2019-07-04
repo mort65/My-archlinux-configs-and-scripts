@@ -230,8 +230,8 @@ def initialize(id_exclude_set, id_include_set):
                     win_class = [
                         s.strip('"') for s in win_props[0].split(", ")
                     ]
-                if len(win_class) > 0:
-                    win_class.append("")
+                    if len(win_class) == 1:
+                        win_class.append("")
                 if len(win_props) > 1:
                     win_type = win_props[1]
                 if len(win_props) > 2:
