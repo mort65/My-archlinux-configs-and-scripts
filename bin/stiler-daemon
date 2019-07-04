@@ -8,14 +8,14 @@ while true ;do
 		~/bin/stiler.py reset
 		break
 	fi
-	sleep 1
+	sleep .5
 done
 
-sleep 1
+sleep .5
 
 while true ;do
 	if ! pidof -x "stiler.py" >/dev/null 2>&1 ;then
 		~/bin/stiler.py daemon
 	fi
-	sleep 1
+	sleep .5
 done
