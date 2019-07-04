@@ -880,6 +880,62 @@ def is_main():
     return __name__ == "__main__"
 
 
+def check_args(args):
+    if len(args) < 2 or args[1] in ("", "-h", "--help"):
+        show_usage()
+        return
+    arg = args[1]
+    if arg in ("", "-h", "--help"):
+        show_usage()
+    elif arg == "daemon":
+        daemon()
+    elif arg == "reset":
+        reset()
+    elif arg == "alt_reset":
+        alt_reset()
+    elif arg in Modes:
+        set_mode(arg)
+    elif arg == "swap":
+        swap()
+    elif arg == "cycle":
+        cycle(1)
+    elif arg == "rcycle":
+        cycle(-1)
+    elif arg == "cycle_focus":
+        cycle_focus(1)
+    elif arg == "rcycle_focus":
+        cycle_focus(-1)
+    elif arg == "maximize":
+        maximize()
+    elif arg == "toggle_maximize":
+        toggle_maximize()
+    elif arg == "unmaximize":
+        unmaximize()
+    elif arg == "normalize":
+        normalize()
+    elif arg == "exclude":
+        exclude_active()
+    elif arg == "include":
+        include_active()
+    elif arg == "toggle_exclude":
+        toggle_exclude_active()
+    elif arg == "inc_mwfactor":
+        inc_mwfactor()
+    elif arg == "dec_mwfactor":
+        dec_mwfactor()
+    elif arg == "reset_mwfactor":
+        reset_mwfactor()
+    elif arg == "dec_cfactor":
+        dec_cfactor()
+    elif arg == "inc_cfactor":
+        inc_cfactor()
+    elif arg == "reset_cfactor":
+        reset_cfactor()
+    else:
+        print("Invalid Argument '{}'".format(arg))
+        sys.exit(1)
+
+
 OldWinList = retrieve(TempFile)
 OldVarList = retrieve(TempFile2)
 Mode = get_temp_var(OldVarList, 0, OrigMode)
@@ -921,54 +977,4 @@ OrigY = int(OrigYstr) + TopPadding
 Reset = False
 Alt_Reset = False
 if is_main():
-    if len(sys.argv) < 2 or sys.argv[1] in ("", "-h", "--help"):
-        show_usage()
-        sys.exit(0)
-    else:
-        if sys.argv[1] == "daemon":
-            daemon()
-        elif sys.argv[1] == "reset":
-            reset()
-        elif sys.argv[1] == "alt_reset":
-            alt_reset()
-        elif sys.argv[1] in Modes:
-            set_mode(sys.argv[1])
-        elif sys.argv[1] == "swap":
-            swap()
-        elif sys.argv[1] == "cycle":
-            cycle(1)
-        elif sys.argv[1] == "rcycle":
-            cycle(-1)
-        elif sys.argv[1] == "cycle_focus":
-            cycle_focus(1)
-        elif sys.argv[1] == "rcycle_focus":
-            cycle_focus(-1)
-        elif sys.argv[1] == "maximize":
-            maximize()
-        elif sys.argv[1] == "toggle_maximize":
-            toggle_maximize()
-        elif sys.argv[1] == "unmaximize":
-            unmaximize()
-        elif sys.argv[1] == "normalize":
-            normalize()
-        elif sys.argv[1] == "exclude":
-            exclude_active()
-        elif sys.argv[1] == "include":
-            include_active()
-        elif sys.argv[1] == "toggle_exclude":
-            toggle_exclude_active()
-        elif sys.argv[1] == "inc_mwfactor":
-            inc_mwfactor()
-        elif sys.argv[1] == "dec_mwfactor":
-            dec_mwfactor()
-        elif sys.argv[1] == "reset_mwfactor":
-            reset_mwfactor()
-        elif sys.argv[1] == "dec_cfactor":
-            dec_cfactor()
-        elif sys.argv[1] == "inc_cfactor":
-            inc_cfactor()
-        elif sys.argv[1] == "reset_cfactor":
-            reset_cfactor()
-        else:
-            print("Invalid Argument '{}'".format(sys.argv[1]))
-            sys.exit(1)
+    check_args(sys.argv)
