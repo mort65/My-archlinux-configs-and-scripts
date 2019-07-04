@@ -236,7 +236,11 @@ def initialize(id_exclude_set, id_include_set):
                     win_type = win_props[1]
                 if len(win_props) > 2:
                     win_state = win_props[2]
-            if is_state_excluded(win_state) or is_type_excluded(win_type):
+            if (
+                is_state_excluded(win_state)
+                or dec_wid not in id_include_set
+                and is_type_excluded(win_type)
+            ):
                 if win_class:
                     index = is_class_excluded(win_class)
                     if index > -1:
