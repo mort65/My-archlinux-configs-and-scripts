@@ -162,7 +162,15 @@ def get_win_props(windowid, props):
 
 
 def is_type_excluded(windowtype):
+    if not windowtype:
+        return False
     return windowtype in TypeExcludeList
+
+
+def is_state_excluded(windowstate):
+    if not windowstate:
+        return False
+    return "_NET_WM_STATE_HIDDEN" in windowstate
 
 
 def is_class_excluded(winclass):
@@ -212,15 +220,23 @@ def initialize(id_exclude_set, id_include_set):
             wid = win.split()[0]
             dec_wid = int(wid, 16)
             win_type = ""
+            win_state = ""
             win_class = []
-            win_props = get_win_props(wid, ("WM_CLASS", "_NET_WM_WINDOW_TYPE"))
-            if win_props and win_props[0]:
-                win_class = [s.strip('"') for s in win_props[0].split(", ")]
-                if len(win_class) == 1:
+            win_props = get_win_props(
+                wid, ("WM_CLASS", "_NET_WM_WINDOW_TYPE", "_NET_WM_STATE")
+            )
+            if win_props:
+                if win_props[0]:
+                    win_class = [
+                        s.strip('"') for s in win_props[0].split(", ")
+                    ]
+                if len(win_class) > 0:
                     win_class.append("")
                 if len(win_props) > 1:
                     win_type = win_props[1]
-            if win_type and is_type_excluded(win_type):
+                if len(win_props) > 2:
+                    win_state = win_props[2]
+            if is_state_excluded(win_state) or is_type_excluded(win_type):
                 if win_class:
                     index = is_class_excluded(win_class)
                     if index > -1:
