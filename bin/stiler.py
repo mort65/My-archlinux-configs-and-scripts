@@ -63,9 +63,11 @@ PropExcludeList = [
     ("", "Lutris", ""),
     ("", "mpv", "above"),
     ("st", "St", "above"),
+    ("totem", "Totem", ""),
     ("", "Zenity", "above"),
     ("dukto", "Dukto", "above"),
     ("", "Send Anywhere", "above"),
+    ("feedreader", "Feedreader", ""),
     ("", "openssh-askpass", "above"),
     ("nitrogen", "Nitrogen", "above"),
     ("keepass2", "KeePass2", "above"),
@@ -74,7 +76,6 @@ PropExcludeList = [
     ("galculator", "Galculator", "above"),
     ("ultracopier", "ultracopier", "above"),
     ("gcr-prompter", "Gcr-prompter", "above"),
-    ("feedreader", "Feedreader", "maximized_vert,maximized_horz"),
     ("brave-browser", "Brave-browser", "maximized_vert,maximized_horz"),
 ]
 OrigMode = {"0": "simple", "1": "horiz"}

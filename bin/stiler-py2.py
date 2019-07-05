@@ -73,6 +73,9 @@ PropExcludeList = [
     ("st",
      "St",
      "above"),
+    ("totem",
+     "Totem",
+     ''),
     ('',
      "Zenity",
      "above"),
@@ -94,6 +97,9 @@ PropExcludeList = [
     ("galculator",
      "Galculator",
      "above"),
+    ("feedreader",
+     "Feedreader",
+     ''),
     ("ultracopier",
      "ultracopier",
      "above"),
@@ -106,9 +112,6 @@ PropExcludeList = [
     ('',
      "openssh-askpass",
      "above"),
-    ("feedreader",
-     "Feedreader",
-     "maximized_vert,maximized_horz"),
     ("brave-browser",
      "Brave-browser",
      "maximized_vert,maximized_horz"), ]
@@ -928,7 +931,7 @@ def reset_cfactor():
 
 
 def show_usage():
-    print("""\
+    print """\
     Usage: styler.py [OPTION]
     Options:
              maximize,unmaximize,normalize,toggle_maximize,
@@ -940,7 +943,7 @@ def show_usage():
              swap,cycle,rcycle,
              reset,alt_reset,
              daemon\
-             """)
+             """
 
 
 def is_main():
@@ -997,7 +1000,7 @@ def check_args(args):
     elif arg == "reset_cfactor":
         reset_cfactor()
     else:
-        print("Invalid Argument '{}'".format(arg))
+        print "Invalid Argument '{}'".format(arg)
         sys.exit(1)
 
 
