@@ -1,8 +1,0 @@
-#!/bin/sh
-
-if pidof -x "feedreader" >/dev/null 2>&1 ;then
-	exec feedreader &
-else
-	nohup alltray -C feedreader > /dev/null 2>&1 &
-
-fi
