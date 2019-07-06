@@ -65,6 +65,7 @@ PropExcludeList = [
     ("st", "St", "above"),
     ("totem", "Totem", ""),
     ("", "Zenity", "above"),
+    ("", "Tor Browser", ""),
     ("dukto", "Dukto", "above"),
     ("", "Send Anywhere", "above"),
     ("feedreader", "Feedreader", ""),
