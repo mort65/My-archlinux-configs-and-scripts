@@ -143,7 +143,7 @@ def get_lock(process_name):
                     sys.exit(1)
 
 
-get_lock('stiler2.py')
+get_lock('stiler-py2.py')
 
 
 def getvalue(value, minvalue, maxvalue):
