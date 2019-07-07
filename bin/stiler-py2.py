@@ -98,8 +98,8 @@ PropExcludeList = [
      "Galculator",
      "above"),
     ('',
-    "Tor Browser",
-    ''),
+     "Tor Browser",
+     ''),
     ("feedreader",
      "Feedreader",
      ''),
@@ -178,7 +178,7 @@ def compare_win_dict(newdict, olddict):
     return tempdict
 
 
-def get_win_prop(windowid, prop):
+def win_prop(windowid, prop):
     try:
         return commands.getoutput(
             "xprop -notype -id " +
@@ -189,7 +189,7 @@ def get_win_prop(windowid, prop):
         return ''
 
 
-def get_win_props(windowid, props):
+def win_props(windowid, props):
     try:
         Result = []
         output = commands.getoutput(
@@ -240,6 +240,41 @@ def is_class_excluded(winclass):
     return -1
 
 
+def get_win_props(windowid):
+    win_type = ""
+    win_state = ""
+    win_actions = ""
+    win_class = ["", ""]
+    winprops = win_props(
+        windowid,
+        (
+            "WM_CLASS",
+            "_NET_WM_WINDOW_TYPE",
+            "_NET_WM_STATE",
+            "_NET_WM_ALLOWED_ACTIONS",
+        ),
+    )
+    if winprops:
+        if winprops[0]:
+            win_class = [
+                s.strip('"') for s in winprops[0].split(", ")
+            ]
+            if len(win_class) == 1:
+                win_class.append("")
+        if len(winprops) > 1:
+            win_type = winprops[1]
+        if len(winprops) > 2:
+            win_state = winprops[2]
+        if len(winprops) > 3:
+            win_actions = winprops[3]
+    return (win_class, win_type, win_state, win_actions)
+
+
+def is_includible(dec_wid, id_include_set, win_type, win_state, win_actions):
+    return not (is_state_excluded(win_state) or not is_actions_included(
+        win_actions) or dec_wid not in id_include_set and is_type_excluded(win_type))
+
+
 def set_win_props(windowid, props):
     if props:
         os.system("wmctrl -r " + windowid + " -b add," + props + " -i")
@@ -273,30 +308,17 @@ def initialize(id_exclude_set, id_include_set):
         try:
             wid = win.split()[0]
             dec_wid = int(wid, 16)
-            win_type = ''
-            win_state = ''
-            win_actions = ''
-            win_class = []
-            win_props = get_win_props(
-                wid,
-                ("WM_CLASS",
-                 "_NET_WM_WINDOW_TYPE",
-                 "_NET_WM_STATE",
-                 "_NET_WM_ALLOWED_ACTIONS"))
-            if win_props:
-                if win_props[0]:
-                    win_class = [s.strip('\"')
-                                 for s in win_props[0].split(', ')]
-                    if len(win_class) == 1:
-                        win_class.append('')
-                if len(win_props) > 1:
-                    win_type = win_props[1]
-                if len(win_props) > 2:
-                    win_state = win_props[2]
-                if len(win_props) > 3:
-                    win_actions = win_props[3]
-            if is_state_excluded(win_state) or not is_actions_included(
-                    win_actions) or dec_wid not in id_include_set and is_type_excluded(win_type):
+            win_desk = win.split()[1]
+            if win_desk != desktop:
+                new_win_output.append(win)
+                continue
+            (win_class, win_type, win_state, win_actions) = get_win_props(wid)
+            if not is_includible(
+                    dec_wid,
+                    id_include_set,
+                    win_type,
+                    win_state,
+                    win_actions):
                 if win_class:
                     index = is_class_excluded(win_class)
                     if index > -1:
@@ -305,7 +327,7 @@ def initialize(id_exclude_set, id_include_set):
                         prop_excluded_list.append((wid, index))
                 excluded_win_output.append(win)
                 continue
-            if len(win_class) != 2 or not win_class[0] + win_class[1]:
+            if len(win_class) != 2:
                 new_win_output.append(win)
                 continue
             if dec_wid in id_exclude_set:
@@ -315,6 +337,9 @@ def initialize(id_exclude_set, id_include_set):
                     prop_excluded_list.append((wid, index))
                 continue
             if dec_wid in id_include_set:
+                new_win_output.append(win)
+                continue
+            if not win_class[0] + win_class[1]:
                 new_win_output.append(win)
                 continue
             index = is_class_excluded(win_class)
@@ -358,27 +383,26 @@ def get_active_window():
         hex(int(commands.getoutput("xdotool getactivewindow 2>/dev/null").split()[0])))
 
 
-def store(object, file):
-    with open(file, 'w') as f:
-        pickle.dump(object, f)
+def store(obj, fname):
+    with open(fname, "w") as f:
+        pickle.dump(obj, f)
     f.close()
 
 
-def retrieve(file):
+def retrieve(fname):
     try:
-        with open(file, 'r+') as f:
+        with open(fname, "r+") as f:
             obj = pickle.load(f)
         f.close()
-        return(obj)
+        return obj
     except BaseException:
-        f = open(file, 'w')
-        f.close
-        dict = {}
-        return (dict)
+        with open(fname, "w"):
+            pass
+        return {}
 
 
 def is_hidden(windowid):
-    return "_NET_WM_STATE_HIDDEN" in get_win_prop(windowid, "_NET_WM_STATE")
+    return "_NET_WM_STATE_HIDDEN" in win_prop(windowid, "_NET_WM_STATE")
 
 
 def get_temp_var(var_list, index, def_value):
@@ -558,18 +582,22 @@ def raise_win(windowid, hidden=False):
 
 
 def exclude_win(windowid):
+    global IdIncludeSet, IdExcludeSet
     winlist = create_win_list()
     IdExcludeSet.add(windowid)
     if windowid in IdIncludeSet:
         IdIncludeSet.remove(windowid)
-    if windowid in winlist:
+    if winlist and windowid in winlist:
         winlist.remove(windowid)
     store_vars(Mode, MwFactor, CFactor, IdExcludeSet, IdIncludeSet, Desktop)
     arrange_mode(winlist, Mode[Desktop])
 
 
 def include_win(windowid):
-    if is_type_excluded(windowid):
+    global IdIncludeSet, IdExcludeSet
+    (win_class, win_type, win_state, win_actions) = get_win_props(windowid)
+    if not is_includible(int(windowid, 16), IdIncludeSet,
+                         win_type, win_state, win_actions):
         return
     winlist = create_win_list()
     if windowid in IdExcludeSet:
@@ -582,13 +610,15 @@ def include_win(windowid):
 
 
 def toggle_exclude_win(windowid):
+    global IdIncludeSet, IdExcludeSet
+    (win_class, win_type, win_state, win_actions) = get_win_props(windowid)
     winlist = create_win_list()
-    if windowid in IdIncludeSet:
-        IdIncludeSet.remove(windowid)
+    if windowid in winlist:
+        if windowid in IdIncludeSet:
+            IdIncludeSet.remove(windowid)
         IdExcludeSet.add(windowid)
-        if windowid in winlist:
-            winlist.remove(windowid)
-    elif not is_type_excluded(windowid):
+        winlist.remove(windowid)
+    elif is_includible(int(windowid, 16), IdIncludeSet, win_type, win_state, win_actions):
         IdIncludeSet.add(windowid)
         if windowid in IdExcludeSet:
             IdExcludeSet.remove(windowid)
@@ -628,7 +658,7 @@ def create_win_list(actual=False, notaskbar=True):
                 "_NET_WM_STATE_SKIP_TASKBAR",
                 "_NET_WM_STATE_HIDDEN",
             }.issubset(
-                get_win_prop(
+                win_prop(
                     wid,
                     "_NET_WM_STATE").split(", "))]
     return Windows
@@ -714,6 +744,8 @@ def simple():
 
 def _swap():
     winlist = create_win_list()
+    if not winlist:
+        return
     active = get_active_window()
     winlist.remove(active)
     winlist.insert(0, active)
@@ -732,6 +764,8 @@ def horiz():
 
 def _cycle(n):
     winlist = create_win_list()
+    if not winlist:
+        return
     n = n % len(winlist)
     winlist = winlist[-n:] + winlist[:-n]
     arrange_mode(winlist, Mode[Desktop])
@@ -740,6 +774,8 @@ def _cycle(n):
 
 def cycle_focus(n):
     winlist = create_win_list(actual=True, notaskbar=False)
+    if not winlist:
+        return
     n = n % len(winlist)
     active = get_active_window()
     if active and active in winlist:
@@ -764,6 +800,20 @@ def toggle_maximize():
     raise_win(":ACTIVE:")
 
 
+def maximize_alt():
+    active = get_active_window()
+    (win_class, win_type, win_state, win_actions) = get_win_props(active)
+    if not is_includible(int(active, 16), IdIncludeSet,
+                         win_type, win_state, win_actions):
+        return
+    X = OrigX
+    Y = OrigY
+    Height = MaxHeight - WinTitle - WinBorder
+    Width = MaxWidth
+    move_win(active, X, Y, Width, Height)
+    raise_win(active)
+
+
 def normalize():
     normalize_win(":ACTIVE:")
     raise_win(":ACTIVE:")
@@ -775,9 +825,9 @@ def max_all():
     if active in winlist:
         winlist.remove(active)
         winlist.insert(0, active)
-    # arrange_mode(winlist,"max_all")
-    maximize_wins(winlist)
-    raise_win(winlist[0])
+    arrange_mode(winlist, "max_all")
+    # maximize_wins(winlist)
+    # raise_win(winlist[0])
 
 
 def set_mwfactor(mf):
@@ -937,7 +987,7 @@ def show_usage():
     print """\
     Usage: styler.py [OPTION]
     Options:
-             maximize,unmaximize,normalize,toggle_maximize,
+             maximize,unmaximize,normalize,toggle_maximize,maximize_alt
              simple,horiz,vert,max_all,center,left,right,
              inc_mwfactor,dec_mwfactor,reset_mwfactor,
              inc_cfactor,dec_cfactor,reset_cfactor,
@@ -953,57 +1003,70 @@ def is_main():
     return __name__ == "__main__"
 
 
+def check_cmd(cmd):
+    try:
+        if not cmd:
+            return
+        if cmd[0] == "reset":
+            reset()
+        elif cmd[0] == "alt_reset":
+            alt_reset()
+        elif cmd[0] in Modes:
+            set_mode(cmd[0])
+        elif cmd[0] == "swap":
+            swap()
+        elif cmd[0] == "cycle":
+            cycle(1)
+        elif cmd[0] == "rcycle":
+            cycle(-1)
+        elif cmd[0] == "cycle_focus":
+            cycle_focus(1)
+        elif cmd[0] == "rcycle_focus":
+            cycle_focus(-1)
+        elif cmd[0] == "maximize":
+            maximize()
+        elif cmd[0] == "toggle_maximize":
+            toggle_maximize()
+        elif cmd[0] == "unmaximize":
+            unmaximize()
+        elif cmd[0] == "maximize_alt":
+            maximize_alt()
+        elif cmd[0] == "normalize":
+            normalize()
+        elif cmd[0] == "exclude":
+            exclude_active()
+        elif cmd[0] == "include":
+            include_active()
+        elif cmd[0] == "toggle_exclude":
+            toggle_exclude_active()
+        elif cmd[0] == "inc_mwfactor":
+            inc_mwfactor()
+        elif cmd[0] == "dec_mwfactor":
+            dec_mwfactor()
+        elif cmd[0] == "reset_mwfactor":
+            reset_mwfactor()
+        elif cmd[0] == "dec_cfactor":
+            dec_cfactor()
+        elif cmd[0] == "inc_cfactor":
+            inc_cfactor()
+        elif cmd[0] == "reset_cfactor":
+            reset_cfactor()
+        else:
+            return False
+        return True
+    except BaseException as e:
+        print e
+        return False
+
+
 def check_args(args):
-    if len(args) < 2 or args[1] in ("", "-h", "--help"):
+    if len(args) < 2 or args[1] in ("", "-h", "help", "--help"):
         show_usage()
         return
-    arg = args[1]
-    if arg == "daemon":
+    elif args[1] == "daemon":
         daemon()
-    elif arg == "reset":
-        reset()
-    elif arg == "alt_reset":
-        alt_reset()
-    elif arg in Modes:
-        set_mode(arg)
-    elif arg == "swap":
-        swap()
-    elif arg == "cycle":
-        cycle(1)
-    elif arg == "rcycle":
-        cycle(-1)
-    elif arg == "cycle_focus":
-        cycle_focus(1)
-    elif arg == "rcycle_focus":
-        cycle_focus(-1)
-    elif arg == "maximize":
-        maximize()
-    elif arg == "toggle_maximize":
-        toggle_maximize()
-    elif arg == "unmaximize":
-        unmaximize()
-    elif arg == "normalize":
-        normalize()
-    elif arg == "exclude":
-        exclude_active()
-    elif arg == "include":
-        include_active()
-    elif arg == "toggle_exclude":
-        toggle_exclude_active()
-    elif arg == "inc_mwfactor":
-        inc_mwfactor()
-    elif arg == "dec_mwfactor":
-        dec_mwfactor()
-    elif arg == "reset_mwfactor":
-        reset_mwfactor()
-    elif arg == "dec_cfactor":
-        dec_cfactor()
-    elif arg == "inc_cfactor":
-        inc_cfactor()
-    elif arg == "reset_cfactor":
-        reset_cfactor()
-    else:
-        print "Invalid Argument '{}'".format(arg)
+    elif not check_cmd(args[1:]):
+        print("Invalid Argument '{}'".format(" ".join(args[1:])))
         sys.exit(1)
 
 
