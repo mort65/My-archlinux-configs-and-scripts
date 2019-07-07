@@ -589,7 +589,14 @@ def exclude_win(windowid):
         IdIncludeSet.remove(windowid)
     if winlist and windowid in winlist:
         winlist.remove(windowid)
-    store_vars(Mode, MwFactor, CFactor, IdExcludeSet, IdIncludeSet, Desktop)
+    store_vars(
+        Mode,
+        MwFactor,
+        CFactor,
+        IdExcludeSet,
+        IdIncludeSet,
+        Desktop,
+        MaxWinDict)
     arrange_mode(winlist, Mode[Desktop])
 
 
@@ -605,7 +612,14 @@ def include_win(windowid):
     IdIncludeSet.add(windowid)
     if windowid not in winlist:
         winlist.append(windowid)
-    store_vars(Mode, MwFactor, CFactor, IdExcludeSet, IdIncludeSet, Desktop)
+    store_vars(
+        Mode,
+        MwFactor,
+        CFactor,
+        IdExcludeSet,
+        IdIncludeSet,
+        Desktop,
+        MaxWinDict)
     arrange_mode(winlist, Mode[Desktop])
 
 
@@ -624,7 +638,14 @@ def toggle_exclude_win(windowid):
             IdExcludeSet.remove(windowid)
         if windowid not in winlist:
             winlist.append(windowid)
-    store_vars(Mode, MwFactor, CFactor, IdExcludeSet, IdIncludeSet, Desktop)
+    store_vars(
+        Mode,
+        MwFactor,
+        CFactor,
+        IdExcludeSet,
+        IdIncludeSet,
+        Desktop,
+        MaxWinDict)
     arrange_mode(winlist, Mode[Desktop])
 
 
@@ -645,6 +666,14 @@ def center():
         winlist.remove(active)
         winlist.insert(0, active)
     arrange_mode(winlist, "center")
+
+
+def set_max_win():
+    global MaxWinDict
+    if MaxWinDict[Desktop] and MaxWinDict[Desktop] == get_active_window():
+        maximize_alt()
+    else:
+        MaxWinDict[Desktop] = 0
 
 
 def create_win_list(actual=False, notaskbar=True):
@@ -801,10 +830,20 @@ def toggle_maximize():
 
 
 def maximize_alt():
+    global MaxWinDict
     active = get_active_window()
     (win_class, win_type, win_state, win_actions) = get_win_props(active)
-    if not is_includible(int(active, 16), IdIncludeSet,
-                         win_type, win_state, win_actions):
+    if active not in WinList[Desktop]:
+        if {"_NET_WM_STATE_MAXIMIZED_HORZ",
+                "_NET_WM_STATE_MAXIMIZED_VERT"}.isdisjoint(win_state.split(", ")):
+            print('maximize')
+            maximize()
+        else:
+            unmaximize()
+        return
+    if not is_includible(
+        int(active, 16), IdIncludeSet, win_type, win_state, win_actions
+    ):
         return
     X = OrigX
     Y = OrigY
@@ -812,6 +851,15 @@ def maximize_alt():
     Width = MaxWidth
     move_win(active, X, Y, Width, Height)
     raise_win(active)
+    MaxWinDict[Desktop] = active
+    store_vars(
+        Mode,
+        MwFactor,
+        CFactor,
+        IdExcludeSet,
+        IdIncludeSet,
+        Desktop,
+        MaxWinDict)
 
 
 def normalize():
@@ -832,13 +880,27 @@ def max_all():
 
 def set_mwfactor(mf):
     mf = getvalue(mf, MinMwFactor, MaxMwFactor)
-    store_vars(Mode, mf, CFactor, IdExcludeSet, IdIncludeSet, Desktop)
+    store_vars(
+        Mode,
+        MwFactor,
+        CFactor,
+        IdExcludeSet,
+        IdIncludeSet,
+        Desktop,
+        MaxWinDict)
     return mf
 
 
 def set_cfactor(cf):
     cf = getvalue(cf, MinCFactor, MaxCFactor)
-    store_vars(Mode, MwFactor, cf, IdExcludeSet, IdIncludeSet, Desktop)
+    store_vars(
+        Mode,
+        MwFactor,
+        CFactor,
+        IdExcludeSet,
+        IdIncludeSet,
+        Desktop,
+        MaxWinDict)
     return cf
 
 
@@ -862,6 +924,7 @@ def unmaximize():
 
 
 def _set_mode(mode):
+    global Mode
     if mode == "simple":
         simple()
     elif mode == "horiz":
@@ -879,19 +942,29 @@ def _set_mode(mode):
     else:
         mode = OrigMode[Desktop]
         globals()[mode]()
+    set_max_win()
     Mode[Desktop] = mode
-    store_vars(Mode, MwFactor, CFactor, IdExcludeSet, IdIncludeSet, Desktop)
+    store_vars(
+        Mode,
+        MwFactor,
+        CFactor,
+        IdExcludeSet,
+        IdIncludeSet,
+        Desktop,
+        MaxWinDict)
 
 
 def reset():
-    global Reset
+    global Reset, MaxWinDict
     Reset = True
+    MaxWinDict[Desktop] = 0
     _reset()
 
 
 def alt_reset():
-    global Alt_Reset
+    global Alt_Reset, MaxWinDict
     Alt_Reset = True
+    MaxWinDict[Desktop] = 0
     _reset()
 
 
@@ -933,8 +1006,9 @@ def include_active():
 
 
 def inc_mwfactor():
-    global Alt_Reset, MwFactor
+    global Alt_Reset, MwFactor, MaxWinDict
     Alt_Reset = True
+    MaxWinDict[Desktop] = 0
     MwFactor = set_mwfactor(MwFactor + 0.05)
     if Mode[Desktop] in ("simple", "left", "right"):
         _set_mode(Mode[Desktop])
@@ -943,8 +1017,9 @@ def inc_mwfactor():
 
 
 def dec_mwfactor():
-    global Alt_Reset, MwFactor
+    global Alt_Reset, MwFactor, MaxWinDict
     Alt_Reset = True
+    MaxWinDict[Desktop] = 0
     MwFactor = set_mwfactor(MwFactor - 0.05)
     if Mode[Desktop] in ("simple", "left", "right"):
         _set_mode(Mode[Desktop])
@@ -953,8 +1028,9 @@ def dec_mwfactor():
 
 
 def reset_mwfactor():
-    global Alt_Reset, MwFactor
+    global Alt_Reset, MwFactor, MaxWinDict
     Alt_Reset = True
+    MaxWinDict[Desktop] = 0
     MwFactor = set_mwfactor(OrigMwFactor)
     if Mode[Desktop] in ("simple", "left", "right"):
         _set_mode(Mode[Desktop])
@@ -963,22 +1039,25 @@ def reset_mwfactor():
 
 
 def dec_cfactor():
-    global Alt_Reset, CFactor
+    global Alt_Reset, CFactor, MaxWinDict
     Alt_Reset = True
+    MaxWinDict[Desktop] = 0
     CFactor = set_cfactor(CFactor - 0.05)
     _set_mode("center")
 
 
 def inc_cfactor():
-    global Alt_Reset, CFactor
+    global Alt_Reset, CFactor, MaxWinDict
     Alt_Reset = True
+    MaxWinDict[Desktop] = 0
     CFactor = set_cfactor(CFactor + 0.05)
     _set_mode("center")
 
 
 def reset_cfactor():
-    global Alt_Reset, CFactor
+    global Alt_Reset, CFactor, MaxWinDict
     Alt_Reset = True
+    MaxWinDict[Desktop] = 0
     CFactor = set_cfactor(OrigCFactor)
     _set_mode("center")
 
@@ -1091,6 +1170,7 @@ CFactor = getvalue(
 OldIdExcludeSet = get_temp_var(OldVarList, 3, set())
 OldIdIncludeSet = get_temp_var(OldVarList, 4, set())
 OldDesktop = get_temp_var(OldVarList, 5, set())
+MaxWinDict = get_temp_var(OldVarList, 6, dict())
 (Desktop,
     OrigXstr,
     OrigYstr,
