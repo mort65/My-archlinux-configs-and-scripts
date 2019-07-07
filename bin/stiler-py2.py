@@ -670,8 +670,11 @@ def center():
 
 def set_max_win():
     global MaxWinDict
+    active = get_active_window()
     if MaxWinDict[Desktop] and MaxWinDict[Desktop] == get_active_window():
-        maximize_alt()
+        if {"_NET_WM_STATE_MAXIMIZED_HORZ", "_NET_WM_STATE_MAXIMIZED_VERT",
+                }.isdisjoint(win_prop(active, "_NET_WM_STATE").split(", ")):
+            maximize_alt()
     else:
         MaxWinDict[Desktop] = 0
 
@@ -833,13 +836,14 @@ def maximize_alt():
     global MaxWinDict
     active = get_active_window()
     (win_class, win_type, win_state, win_actions) = get_win_props(active)
-    if active not in WinList[Desktop]:
-        if {"_NET_WM_STATE_MAXIMIZED_HORZ",
-                "_NET_WM_STATE_MAXIMIZED_VERT"}.isdisjoint(win_state.split(", ")):
-            print('maximize')
+    if {"_NET_WM_STATE_MAXIMIZED_HORZ",
+        "_NET_WM_STATE_MAXIMIZED_VERT",
+        }.isdisjoint(win_state.split(", ")):
+        if active not in WinList[Desktop]:
             maximize()
-        else:
-            unmaximize()
+            return
+    else:
+        unmaximize()
         return
     if not is_includible(
         int(active, 16), IdIncludeSet, win_type, win_state, win_actions
@@ -859,7 +863,8 @@ def maximize_alt():
         IdExcludeSet,
         IdIncludeSet,
         Desktop,
-        MaxWinDict)
+        MaxWinDict,
+    )
 
 
 def normalize():
