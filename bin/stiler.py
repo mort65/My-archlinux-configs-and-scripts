@@ -148,23 +148,46 @@ def win_prop(windowid, prop):
         return ""
 
 
+def get_props(out, props):
+    result = []
+    for index in range(len(out)):
+        if index == len(props):
+            break
+        if out[index]:
+            try:
+                result.append(out[index].split(" = ")[1])
+            except IndexError:
+                result.append("")
+        else:
+            result.append("")
+    return result
+
+
+def process_props(winprops):
+    win_type = ""
+    win_state = ""
+    win_actions = ""
+    win_class = ["", ""]
+    if winprops:
+        if winprops[0]:
+            win_class = [s.strip('"') for s in winprops[0].split(", ")]
+            if len(win_class) == 1:
+                win_class.append("")
+        if len(winprops) > 1:
+            win_type = winprops[1]
+        if len(winprops) > 2:
+            win_state = winprops[2]
+        if len(winprops) > 3:
+            win_actions = winprops[3]
+    return (win_class, win_type, win_state, win_actions)
+
+
 def win_props(windowid, props):
     try:
-        Result = []
         output = subprocess.getoutput(
             "xprop -notype -id " + windowid + " " + " ".join(props)
         ).split("\n")
-        for index in range(len(output)):
-            if index == len(props):
-                break
-            if output[index]:
-                try:
-                    Result.append(output[index].split(" = ")[1])
-                except IndexError:
-                    Result.append("")
-            else:
-                Result.append("")
-        return Result
+        return get_props(output, props)
     except BaseException:
         return ["" for i in range(len(props))]
 
@@ -201,10 +224,6 @@ def is_class_excluded(winclass):
 
 
 def get_win_props(windowid):
-    win_type = ""
-    win_state = ""
-    win_actions = ""
-    win_class = ["", ""]
     winprops = win_props(
         windowid,
         (
@@ -214,18 +233,18 @@ def get_win_props(windowid):
             "_NET_WM_ALLOWED_ACTIONS",
         ),
     )
-    if winprops:
-        if winprops[0]:
-            win_class = [s.strip('"') for s in winprops[0].split(", ")]
-            if len(win_class) == 1:
-                win_class.append("")
-        if len(winprops) > 1:
-            win_type = winprops[1]
-        if len(winprops) > 2:
-            win_state = winprops[2]
-        if len(winprops) > 3:
-            win_actions = winprops[3]
-    return (win_class, win_type, win_state, win_actions)
+    return process_props(winprops)
+
+
+def get_winlist_props(winlist, props):
+    inp = ""
+    result = []
+    for win in winlist:
+        inp += "xprop {} -id {};echo;".format(" ".join(props), win.split()[0])
+    output = subprocess.getoutput(inp).split("\n\n")
+    for out in output:
+        result.append(process_props(get_props(out.split("\n"), props)))
+    return result
 
 
 def is_includible(dec_wid, id_include_set, win_type, win_state, win_actions):
@@ -266,24 +285,34 @@ def initialize(id_exclude_set, id_include_set):
     id_exclude_set = [int(idw, 16) for idw in new_id_exclude_set]
     id_include_set = [int(idw, 16) for idw in new_id_include_set]
     prop_excluded_list = []
-    for win in win_output:
+    win_props = get_winlist_props(
+        win_output,
+        (
+            "WM_CLASS",
+            "_NET_WM_WINDOW_TYPE",
+            "_NET_WM_STATE",
+            "_NET_WM_ALLOWED_ACTIONS",
+        ),
+    )
+    for index in range(len(win_output)):
         try:
+            win = win_output[index]
             wid = win.split()[0]
             dec_wid = int(wid, 16)
             win_desk = win.split()[1]
             if win_desk != desktop:
                 new_win_output.append(win)
                 continue
-            (win_class, win_type, win_state, win_actions) = get_win_props(wid)
+            (win_class, win_type, win_state, win_actions) = win_props[index]
             if not is_includible(
                 dec_wid, id_include_set, win_type, win_state, win_actions
             ):
                 if win_class:
-                    index = is_class_excluded(win_class)
-                    if index > -1:
+                    i = is_class_excluded(win_class)
+                    if i > -1:
                         if dec_wid not in id_exclude_set:
                             id_exclude_set.append(dec_wid)
-                        prop_excluded_list.append((wid, index))
+                        prop_excluded_list.append((wid, i))
                 excluded_win_output.append(win)
                 continue
             if len(win_class) != 2:
@@ -291,9 +320,9 @@ def initialize(id_exclude_set, id_include_set):
                 continue
             if dec_wid in id_exclude_set:
                 excluded_win_output.append(win)
-                index = is_class_excluded(win_class)
-                if index > -1:
-                    prop_excluded_list.append((wid, index))
+                i = is_class_excluded(win_class)
+                if i > -1:
+                    prop_excluded_list.append((wid, i))
                 continue
             if dec_wid in id_include_set:
                 new_win_output.append(win)
@@ -301,12 +330,12 @@ def initialize(id_exclude_set, id_include_set):
             if not win_class[0] + win_class[1]:
                 new_win_output.append(win)
                 continue
-            index = is_class_excluded(win_class)
-            if index > -1:
+            i = is_class_excluded(win_class)
+            if i > -1:
                 if dec_wid not in id_exclude_set:
                     id_exclude_set.append(dec_wid)
                 excluded_win_output.append(win)
-                prop_excluded_list.append((wid, index))
+                prop_excluded_list.append((wid, i))
                 continue
             new_win_output.append(win)
         except IndexError:
@@ -1224,6 +1253,8 @@ MaxWidth = int(MaxWidthStr) - LeftPadding - RightPadding
 MaxHeight = int(MaxHeightStr) - TopPadding - BottomPadding
 OrigX = int(OrigXstr) + LeftPadding
 OrigY = int(OrigYstr) + TopPadding
+if not Desktop in MaxWinDict:
+    MaxWinDict[Desktop] = 0
 Reset = False
 Alt_Reset = False
 if is_main():
