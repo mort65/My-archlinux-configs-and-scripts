@@ -589,6 +589,7 @@ def exclude_win(windowid):
         IdIncludeSet.remove(windowid)
     if winlist and windowid in winlist:
         winlist.remove(windowid)
+    raise_win(windowid)
     store_vars(
         Mode,
         MwFactor,
@@ -632,6 +633,7 @@ def toggle_exclude_win(windowid):
             IdIncludeSet.remove(windowid)
         IdExcludeSet.add(windowid)
         winlist.remove(windowid)
+        raise_win(windowid)
     elif is_includible(int(windowid, 16), IdIncludeSet, win_type, win_state, win_actions):
         IdIncludeSet.add(windowid)
         if windowid in IdExcludeSet:
@@ -668,13 +670,13 @@ def center():
     arrange_mode(winlist, "center")
 
 
-def set_max_win():
+def restore_max_win():
     global MaxWinDict
     active = get_active_window()
-    if MaxWinDict[Desktop] and MaxWinDict[Desktop] == get_active_window():
+    if MaxWinDict[Desktop]:
         if {"_NET_WM_STATE_MAXIMIZED_HORZ", "_NET_WM_STATE_MAXIMIZED_VERT",
                 }.isdisjoint(win_prop(active, "_NET_WM_STATE").split(", ")):
-            maximize_alt()
+            toggle_maximize_alt( MaxWinDict[Desktop],1)
     else:
         MaxWinDict[Desktop] = 0
 
@@ -822,29 +824,44 @@ def cycle_focus(n):
     focus_win(winlist[index])
 
 
-def maximize():
-    maximize_win(":ACTIVE:")
-    raise_win(":ACTIVE:")
+def normalize(windowid=":ACTIVE:"):
+    normalize_win(windowid)
+    raise_win(windowid)
 
 
-def toggle_maximize():
-    toggle_maximize_win(":ACTIVE:")
-    raise_win(":ACTIVE:")
+def toggle_maximize(windowid=":ACTIVE:"):
+    toggle_maximize_win(windowid)
+    raise_win(windowid)
 
 
-def maximize_alt():
+def toggle_maximize_alt(windowid=":ACTIVE:", toggle=-1):
+    if not windowid:
+        return
     global MaxWinDict
-    active = get_active_window()
-    (win_class, win_type, win_state, win_actions) = get_win_props(active)
-    if {"_NET_WM_STATE_MAXIMIZED_HORZ",
-        "_NET_WM_STATE_MAXIMIZED_VERT",
-        }.isdisjoint(win_state.split(", ")):
-        if active not in WinList[Desktop]:
-            maximize()
+    if windowid == ":ACTIVE:":
+        active = get_active_window()
+        if not active:
             return
     else:
-        unmaximize()
+        active = windowid
+        if not active in create_win_list(actual=True):
+            return
+    (win_class, win_type, win_state, win_actions) = get_win_props(active)
+    if {
+        "_NET_WM_STATE_MAXIMIZED_HORZ",
+        "_NET_WM_STATE_MAXIMIZED_VERT",
+    }.isdisjoint(win_state.split(", ")):
+        if toggle in (-1,1) and not active in WinList[Desktop]:
+            maximize(active)
+            raise_win(active)
+            return
+    elif toggle in (-1,0):
+        unmaximize(active)
+        MaxWinDict[Desktop] = 0
+        raise_win(active)
+        store_vars(Mode,MwFactor,CFactor,IdExcludeSet,IdIncludeSet,Desktop,MaxWinDict,)
         return
+
     if not is_includible(
         int(active, 16), IdIncludeSet, win_type, win_state, win_actions
     ):
@@ -853,9 +870,21 @@ def maximize_alt():
     Y = OrigY
     Height = MaxHeight - WinTitle - WinBorder
     Width = MaxWidth
-    move_win(active, X, Y, Width, Height)
-    raise_win(active)
-    MaxWinDict[Desktop] = active
+    wininfo = commands.getoutput("xwininfo -id {}".format(active)).split("\n")
+    x = int(wininfo[3].split(':')[1].strip())
+    y = int(wininfo[4].split(':')[1].strip())
+    width = int(wininfo[7].split(':')[1].strip())
+    height = int(wininfo[8].split(':')[1].strip())
+    if toggle in (-1,0) and (X,Y,Width,Height) == (x - LeftPadding - WinBorder,y - WinTitle - WinBorder,width,height):
+        MaxWinDict[Desktop] = 0
+        if toggle == -1:
+            _set_mode(Mode[Desktop])
+        raise_win(active)
+    else:
+        MaxWinDict[Desktop] = active
+        move_win(active, X, Y, Width, Height)
+        raise_win(active)
+
     store_vars(
         Mode,
         MwFactor,
@@ -923,9 +952,9 @@ def daemon():
         _set_mode(Mode[Desktop])
 
 
-def unmaximize():
-    unmaximize_win(":ACTIVE:")
-    raise_win(":ACTIVE:")
+def unmaximize(windowid=":ACTIVE:"):
+    unmaximize_win(windowid)
+    raise_win(windowid)
 
 
 def _set_mode(mode):
@@ -947,7 +976,7 @@ def _set_mode(mode):
     else:
         mode = OrigMode[Desktop]
         globals()[mode]()
-    set_max_win()
+    restore_max_win()
     Mode[Desktop] = mode
     store_vars(
         Mode,
@@ -1071,7 +1100,7 @@ def show_usage():
     print """\
     Usage: styler.py [OPTION]
     Options:
-             maximize,unmaximize,normalize,toggle_maximize,maximize_alt
+             maximize,unmaximize,normalize,toggle_maximize,toggle_maximize_alt
              simple,horiz,vert,max_all,center,left,right,
              inc_mwfactor,dec_mwfactor,reset_mwfactor,
              inc_cfactor,dec_cfactor,reset_cfactor,
@@ -1113,8 +1142,8 @@ def check_cmd(cmd):
             toggle_maximize()
         elif cmd[0] == "unmaximize":
             unmaximize()
-        elif cmd[0] == "maximize_alt":
-            maximize_alt()
+        elif cmd[0] == "toggle_maximize_alt":
+            toggle_maximize_alt()
         elif cmd[0] == "normalize":
             normalize()
         elif cmd[0] == "exclude":
