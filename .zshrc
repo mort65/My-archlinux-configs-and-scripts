@@ -364,6 +364,9 @@ alias rsync-cp="rsync -ah --partial --info=progress2"
 alias rsync-mv="rsync -ah --partial --remove-source-files --info=progress2"
 alias stilerd="nohup stiler-daemon &> /dev/null &"
 alias black='/usr/bin/black -l 79'
+alias pytest='python3 -m cProfile -s cumtime'
+alias py3test='python3 -m cProfile -s cumtime'
+alias py2test='python2 -m cProfile -s cumtime'
 
 ##Env:
 #####################################
