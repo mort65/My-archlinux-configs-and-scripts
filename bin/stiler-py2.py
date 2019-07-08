@@ -676,7 +676,7 @@ def restore_max_win():
     if MaxWinDict[Desktop]:
         if {"_NET_WM_STATE_MAXIMIZED_HORZ", "_NET_WM_STATE_MAXIMIZED_VERT",
                 }.isdisjoint(win_prop(active, "_NET_WM_STATE").split(", ")):
-            toggle_maximize_alt( MaxWinDict[Desktop],1)
+            toggle_maximize_alt(MaxWinDict[Desktop], 1)
     else:
         MaxWinDict[Desktop] = 0
 
@@ -844,22 +844,30 @@ def toggle_maximize_alt(windowid=":ACTIVE:", toggle=-1):
             return
     else:
         active = windowid
-        if not active in create_win_list(actual=True):
+        if active not in create_win_list(actual=True):
             return
     (win_class, win_type, win_state, win_actions) = get_win_props(active)
     if {
         "_NET_WM_STATE_MAXIMIZED_HORZ",
         "_NET_WM_STATE_MAXIMIZED_VERT",
     }.isdisjoint(win_state.split(", ")):
-        if toggle in (-1,1) and not active in WinList[Desktop]:
+        if toggle in (-1, 1) and active not in WinList[Desktop]:
             maximize(active)
             raise_win(active)
             return
-    elif toggle in (-1,0):
+    elif toggle in (-1, 0):
         unmaximize(active)
         MaxWinDict[Desktop] = 0
         raise_win(active)
-        store_vars(Mode,MwFactor,CFactor,IdExcludeSet,IdIncludeSet,Desktop,MaxWinDict,)
+        store_vars(
+            Mode,
+            MwFactor,
+            CFactor,
+            IdExcludeSet,
+            IdIncludeSet,
+            Desktop,
+            MaxWinDict,
+        )
         return
 
     if not is_includible(
@@ -875,7 +883,14 @@ def toggle_maximize_alt(windowid=":ACTIVE:", toggle=-1):
     y = int(wininfo[4].split(':')[1].strip())
     width = int(wininfo[7].split(':')[1].strip())
     height = int(wininfo[8].split(':')[1].strip())
-    if toggle in (-1,0) and (X,Y,Width,Height) == (x - LeftPadding - WinBorder,y - WinTitle - WinBorder,width,height):
+    if toggle in (-1,
+                  0) and (X,
+                          Y,
+                          Width,
+                          Height) == (x - LeftPadding - WinBorder,
+                                      y - WinTitle - WinBorder,
+                                      width,
+                                      height):
         MaxWinDict[Desktop] = 0
         if toggle == -1:
             _set_mode(Mode[Desktop])
