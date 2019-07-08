@@ -595,6 +595,14 @@ def maximize_win(windowid):
     os.system(command)
 
 
+def minimize_win(windowid):
+    if windowid == ":ACTIVE:":
+        active = get_active_window()
+    else:
+        active = windowid
+    os.system("xdotool windowminimize {}".format(active))
+
+
 def toggle_maximize_win(windowid):
     if windowid == ":ACTIVE:":
         command = "wmctrl -r :ACTIVE: -b toggle,maximized_vert,maximized_horz"
@@ -1001,6 +1009,10 @@ def unmaximize(windowid=":ACTIVE:"):
     raise_win(windowid)
 
 
+def minimize(windowid=":ACTIVE:"):
+    minimize_win(windowid)
+
+
 def _set_mode(mode):
     global Mode
     if mode == "simple":
@@ -1144,15 +1156,15 @@ def show_usage():
     print """\
     Usage: styler.py [OPTION]
     Options:
-             maximize,unmaximize,normalize,toggle_maximize,toggle_maximize_alt
-             simple,horiz,vert,max_all,center,left,right,
-             inc_mwfactor,dec_mwfactor,reset_mwfactor,
-             inc_cfactor,dec_cfactor,reset_cfactor,
-             exclude,include,toggle_exclude,
-             cycle_focus,rcycle_focus,
-             swap,cycle,rcycle,
-             reset,alt_reset,
-             daemon\
+         maximize,unmaximize,normalize,minimize,toggle_maximize,toggle_maximize_alt
+         simple,horiz,vert,max_all,center,left,right,
+         inc_mwfactor,dec_mwfactor,reset_mwfactor,
+         inc_cfactor,dec_cfactor,reset_cfactor,
+         exclude,include,toggle_exclude,
+         cycle_focus,rcycle_focus,
+         swap,cycle,rcycle,
+         reset,alt_reset,
+         daemon\
              """
 
 
@@ -1182,6 +1194,8 @@ def check_cmd(cmd):
             cycle_focus(-1)
         elif cmd[0] == "maximize":
             maximize()
+        elif cmd[0] == "minimize":
+            minimize()
         elif cmd[0] == "toggle_maximize":
             toggle_maximize()
         elif cmd[0] == "unmaximize":
