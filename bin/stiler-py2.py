@@ -1172,55 +1172,56 @@ def is_main():
     return __name__ == "__main__"
 
 
-def check_cmd(cmd):
+def check_cmds(cmds):
     try:
-        if not cmd:
+        if not cmds:
             return
-        if cmd[0] == "reset":
+        cmd = cmds[0]
+        if cmd == "reset":
             reset()
-        elif cmd[0] == "alt_reset":
+        elif cmd == "alt_reset":
             alt_reset()
-        elif cmd[0] in Modes:
-            set_mode(cmd[0])
-        elif cmd[0] == "swap":
+        elif cmd in Modes:
+            set_mode(cmd)
+        elif cmd == "swap":
             swap()
-        elif cmd[0] == "cycle":
+        elif cmd == "cycle":
             cycle(1)
-        elif cmd[0] == "rcycle":
+        elif cmd == "rcycle":
             cycle(-1)
-        elif cmd[0] == "cycle_focus":
+        elif cmd == "cycle_focus":
             cycle_focus(1)
-        elif cmd[0] == "rcycle_focus":
+        elif cmd == "rcycle_focus":
             cycle_focus(-1)
-        elif cmd[0] == "maximize":
+        elif cmd == "maximize":
             maximize()
-        elif cmd[0] == "minimize":
+        elif cmd == "minimize":
             minimize()
-        elif cmd[0] == "toggle_maximize":
+        elif cmd == "toggle_maximize":
             toggle_maximize()
-        elif cmd[0] == "unmaximize":
+        elif cmd == "unmaximize":
             unmaximize()
-        elif cmd[0] == "toggle_maximize_alt":
+        elif cmd == "toggle_maximize_alt":
             toggle_maximize_alt()
-        elif cmd[0] == "normalize":
+        elif cmd == "normalize":
             normalize()
-        elif cmd[0] == "exclude":
+        elif cmd == "exclude":
             exclude_active()
-        elif cmd[0] == "include":
+        elif cmd == "include":
             include_active()
-        elif cmd[0] == "toggle_exclude":
+        elif cmd == "toggle_exclude":
             toggle_exclude_active()
-        elif cmd[0] == "inc_mwfactor":
+        elif cmd == "inc_mwfactor":
             inc_mwfactor()
-        elif cmd[0] == "dec_mwfactor":
+        elif cmd == "dec_mwfactor":
             dec_mwfactor()
-        elif cmd[0] == "reset_mwfactor":
+        elif cmd == "reset_mwfactor":
             reset_mwfactor()
-        elif cmd[0] == "dec_cfactor":
+        elif cmd == "dec_cfactor":
             dec_cfactor()
-        elif cmd[0] == "inc_cfactor":
+        elif cmd == "inc_cfactor":
             inc_cfactor()
-        elif cmd[0] == "reset_cfactor":
+        elif cmd == "reset_cfactor":
             reset_cfactor()
         else:
             return False
@@ -1236,7 +1237,7 @@ def check_args(args):
         return
     elif args[1] == "daemon":
         daemon()
-    elif not check_cmd(args[1:]):
+    elif not check_cmds(args[1:]):
         print("Invalid Argument '{}'".format(" ".join(args[1:])))
         sys.exit(1)
 
