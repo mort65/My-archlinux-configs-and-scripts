@@ -286,7 +286,7 @@ def initialize(id_exclude_set, id_include_set):
     id_exclude_set = [int(idw, 16) for idw in new_id_exclude_set]
     id_include_set = [int(idw, 16) for idw in new_id_include_set]
     prop_excluded_list = []
-    win_props = get_winlist_props(
+    prop_output = get_winlist_props(
         win_output,
         (
             "WM_CLASS",
@@ -304,7 +304,7 @@ def initialize(id_exclude_set, id_include_set):
             if win_desk != desktop:
                 new_win_output.append(win)
                 continue
-            (win_class, win_type, win_state, win_actions) = win_props[index]
+            (win_class, win_type, win_state, win_actions) = prop_output[index]
             if not is_includible(
                 dec_wid, id_include_set, win_type, win_state, win_actions
             ):
