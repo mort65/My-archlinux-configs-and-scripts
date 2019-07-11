@@ -262,7 +262,8 @@ def set_win_props(windowid, props):
 
 
 def initialize(id_exclude_set, id_include_set):
-    desk_output = subprocess.getoutput("wmctrl -d").split("\n")
+    output = subprocess.getoutput("wmctrl -d;echo;wmctrl -l").split('\n\n')
+    desk_output = output[0].split("\n")
     desk_list = [line.split()[0] for line in desk_output]
     current = [x for x in desk_output if x.split()[1] == "*"][0].split()
     desktop = current[0]
@@ -270,7 +271,7 @@ def initialize(id_exclude_set, id_include_set):
     height = current[8].split("x")[1]
     orig_x = current[7].split(",")[0]
     orig_y = current[7].split(",")[1]
-    win_output = subprocess.getoutput("wmctrl -l").split("\n")
+    win_output = output[1].split("\n")
     new_win_output = []
     excluded_win_output = []
     idws = [int(win.split()[0], 16) for win in win_output]
