@@ -122,6 +122,10 @@ OrigMode = {"0": "simple", "1": "horiz"}
 ##############################
 
 
+def is_main():
+    return __name__ == "__main__"
+
+
 def get_lock(process_name):
     # Without holding a reference to our socket somewhere it gets garbage
     # collected when the function exits
@@ -129,21 +133,24 @@ def get_lock(process_name):
     try:
         get_lock._lock_socket.bind('\0' + process_name)
         #print 'I got the lock'
+        return True
     except socket.error:
         #print 'lock exists'
+        if is_main() and len(sys.argv) > 1 and sys.argv[1] == "daemon":
+            return False
         count = 0.0
         while True:
             time.sleep(0.1)
             try:
                 get_lock._lock_socket.bind('\0' + process_name)
-                break
+                return True
             except socket.error:
                 count += 0.1
-                if count >= 3.0:
-                    sys.exit(1)
+                if count >= 1.0:
+                    return False
 
 
-get_lock('stiler-py2.py')
+get_lock('stiler-py2.py') or sys.exit(1)
 
 
 def getvalue(value, minvalue, maxvalue):
