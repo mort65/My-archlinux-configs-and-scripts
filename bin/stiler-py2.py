@@ -146,7 +146,7 @@ def get_lock(process_name):
                 return True
             except socket.error:
                 count += 0.1
-                if count >= 1.0:
+                if count >= 2.0:
                     return False
 
 
