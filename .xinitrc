@@ -48,6 +48,16 @@ case $session in
 	    echo 'xfce4' > ~/.session
 	    exec startxfce4
 	    ;;
+    lxqt              )
+	    export DESKTOP_SESSION="lxqt"
+	    echo 'lxqt' > ~/.session
+	    exec startlxqt
+	    ;;
+    openbox           )
+	    export DESKTOP_SESSION="openbox"
+	    echo 'openbox' > ~/.session
+	    exec openbox-session
+	    ;;
     # No known session, try to run it as command
     *                 ) exec "$1";;
 esac

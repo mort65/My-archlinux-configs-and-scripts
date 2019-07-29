@@ -362,12 +362,13 @@ export -f nnn
 #####################################
 export USERNAME=${SUDO_USER:-$(id -u -n)}
 
-export PATH=$PATH:$HOME/bin
-export VISUAL="vim"
-export EDITOR="vim"
-export TERMINAL="mlterm"
-export BROWSER="brave"
-export FILEMANAGER="thunar"
+source "$HOME"/.myenvs
+#export PATH=$PATH:$HOME/bin
+#export VISUAL="vim"
+#export EDITOR="vim"
+#export TERMINAL="mlterm"
+#export BROWSER="opera"
+#export FILEMANAGER="pcmanfm-qt"
 
 #NNN
 ###################################
@@ -382,6 +383,4 @@ export NNN_RESTRICT_NAV_OPEN=1
 export NNN_IDLE_TIMEOUT=1800
 export NNN_CONTEXT_COLORS="4563"
 alias ncp="< $HOME/.nnncp tr '\0' '\n'"
-
-
 

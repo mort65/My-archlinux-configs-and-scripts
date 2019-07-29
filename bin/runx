@@ -6,11 +6,15 @@ if [ -n "$1" ] ;then
 		m|-m|menu|-menu)
 			echo "Select session ************"
 			echo "  1) dwm"
-			echo "  2) xfce4"
+			echo "  2) lxqt"
+			echo "  3) xfce4"
+			echo "  4) openbox"
 			read -r n
 			case $n in
 				1) startx ~/.xinitrc dwm;;
-				2) startx ~/.xinitrc xfce4;;
+				2) startx ~/.xinitrc lxqt;;
+				3) startx ~/.xinitrc xfce4;;
+				4) startx ~/.xinitrc openbox;;
   				*) echo "invalid option";;
 			esac
 			;;

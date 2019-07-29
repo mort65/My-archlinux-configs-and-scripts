@@ -203,7 +203,6 @@ jdatestatus()
 
 #force terminal to use 256-colors
 export TERM="xterm-256color"
-
 ##Prompt
 #####################################
 
@@ -371,13 +370,14 @@ alias py2test='python2 -m cProfile -s cumtime'
 ##Env:
 #####################################
 
-export PATH=$PATH:$HOME/bin
-export VISUAL="vim"
-export EDITOR="vim"
-export TERMINAL="mlterm"
-export BROWSER="brave"
-export FILEMANAGER="thunar"
-export SUDO_ASKPASS="/usr/bin/qt4-ssh-askpass"
+source "$HOME"/.myenvs
+#export PATH=$PATH:$HOME/bin
+#export VISUAL="vim"
+#export EDITOR="vim"
+#export TERMINAL="mlterm"
+#export BROWSER="opera"
+#export FILEMANAGER="pcmanfm-qt"
+#export SUDO_ASKPASS="/usr/bin/qt4-ssh-askpass"
 #NNN
 ###################################
 
@@ -398,5 +398,4 @@ alias ds2backup="~/.script/wine/ds2savebackup -i"
 alias ds2sofsbackup="~/.script/wine/ds2sofs_savebackup -i"
 #Enable Vi-mode
 bindkey -v
-
-neofetch
+#neofetch
