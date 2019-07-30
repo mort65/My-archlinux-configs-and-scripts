@@ -76,6 +76,9 @@ PropExcludeList = [
     ("totem",
      "Totem",
      ''),
+    ("Opera",
+     "Opera",
+     ''),
     ('',
      "Zenity",
      "above"),
@@ -611,6 +614,14 @@ def minimize_win(windowid):
     os.system("xdotool windowminimize {}".format(active))
 
 
+def close_win(windowid):
+    if windowid == ":ACTIVE:":
+        active = get_active_window()
+    else:
+        active = windowid
+    os.system("xdotool windowkill {}".format(active))
+
+
 def toggle_maximize_win(windowid):
     if windowid == ":ACTIVE:":
         command = "wmctrl -r :ACTIVE: -b toggle,maximized_vert,maximized_horz"
@@ -859,10 +870,7 @@ def cycle_focus(n):
     active = get_active_window()
     if active and active in winlist:
         index = winlist.index(active)
-        if index + n < len(winlist):
-            index += n
-        else:
-            index = 0
+        index = (index + n) % len(winlist)
     else:
         index = 0
     raise_win(winlist[index], hidden=True)
@@ -1017,8 +1025,18 @@ def unmaximize(windowid=":ACTIVE:"):
     raise_win(windowid)
 
 
+def close(windowid=":ACTIVE:"):
+    close_win(windowid)
+
+
 def minimize(windowid=":ACTIVE:"):
     minimize_win(windowid)
+
+
+def minimize_all():
+    winlist = create_win_list(actual=True, notaskbar=True)
+    for win in winlist:
+        minimize_win(win)
 
 
 def _set_mode(mode):
@@ -1164,14 +1182,14 @@ def show_usage():
     print """\
     Usage: styler.py [OPTION]
     Options:
-         maximize,unmaximize,normalize,minimize,toggle_maximize,toggle_maximize_alt
+         maximize,unmaximize,normalize,minimize,toggle_maximize,
+         reset,alt_reset,toggle_maximize_alt,minimize_all,close,
          simple,horiz,vert,max_all,center,left,right,
          inc_mwfactor,dec_mwfactor,reset_mwfactor,
          inc_cfactor,dec_cfactor,reset_cfactor,
          exclude,include,toggle_exclude,
          cycle_focus,rcycle_focus,
          swap,cycle,rcycle,
-         reset,alt_reset,
          daemon\
              """
 
@@ -1231,6 +1249,10 @@ def check_cmds(cmds):
             inc_cfactor()
         elif cmd == "reset_cfactor":
             reset_cfactor()
+        elif cmd == "minimize_all":
+            minimize_all()
+        elif cmd == "close":
+            close()
         else:
             return False
         return True
