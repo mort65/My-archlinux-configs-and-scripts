@@ -14,6 +14,7 @@ SIGTRM=111
 SIGWEB=112
 SIGTXT=113
 SIGVIS=114
+SIGMUS=115
 
 if [ "$DESKTOP_SESSION" == dwm ]; then
 	{ /usr/bin/bash "$HOMEDIR"/.script/dwm-sendsignal "${1}" ;  }
@@ -22,19 +23,29 @@ else
 		if [ -n "${FILEMANAGER}" ]; then
 			{ exec "$FILEMANAGER" & } &> /dev/null
 		else
-			{ exec xdg-open ~ & } &> /dev/null
+			{ exec exo-open --launch "FileManager" & } &> /dev/null
 		fi
 	elif [ "${1}" -eq "$SIGWEB" ]; then
 		if [ -n "${BROWSER}" ]; then
 			{ exec "$BROWSER" & } &> /dev/null
 		else
-			{ exec xdg-open "http://" & } &> /dev/null
+			{ exec exo-open --launch "WebBrowser" & } &> /dev/null
+		fi
+	elif [ "${1}" -eq "$SIGMUS" ]; then
+		if [ -n "${MUSPLAYER}" ]; then
+			{ exec "$MUSPLAYER" & } &> /dev/null
+		else
+			if [ -n "${TERMINAL}" ]; then
+				{ exec "$TERMINAL" -e cmus & } &> /dev/null
+			else
+				{ exec st -e cmus & } &> /dev/null
+			fi
 		fi
 	elif [ "${1}" -eq "$SIGTRM" ]; then
 		if [ -n "${TERMINAL}" ]; then
 			{ exec "$TERMINAL" & } &> /dev/null
 		else
-			{ exec xterm & } &> /dev/null
+			{ exec  exo-open --launch "TerminalEmulator" & } &> /dev/null
 		fi
 	elif [ "${1}" -eq "$SIGTXT" ]; then
 		if [ -n "${EDITOR}" ]; then

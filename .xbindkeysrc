@@ -93,6 +93,10 @@ XF86AudioNext
 "playerctl prev"
 XF86AudioPrev
 
+# Mail
+"exo-open --launch MailReader"
+XF86Mail
+
 ##################################
 # End of xbindkeys configuration #
 ##################################
