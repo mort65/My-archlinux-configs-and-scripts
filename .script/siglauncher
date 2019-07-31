@@ -77,7 +77,7 @@ fi
 
 if [ -n "$APP" ] ;then
 	if [ "$2" = "-r" ] ;then
-		. "$HOMEDIR/bin/raise_or_run" "$APP"
+		. "$HOMEDIR/bin/raise" "$APP"
 	else
 		{ exec "$APP" & } &> /dev/null
 	fi

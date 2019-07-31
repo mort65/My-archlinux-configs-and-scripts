@@ -130,7 +130,7 @@ Control+Mod4 + Home
 Control+Mod4 + t
 
 #Alt Terminal
-"$HOME/bin/raise_or_run qterminal"
+"$HOME/bin/raise qterminal"
 Control+Mod4 + Return
 
 #Web browser
@@ -158,7 +158,7 @@ Mod4 + o
 Mod4 + Scroll_Lock
 
 #Task manager
-"$HOME/bin/raise_or_run lxtask"
+"$HOME/bin/raise lxtask"
 Mod4 + Delete
 
 ##################################
