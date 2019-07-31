@@ -37,11 +37,11 @@ else
 			{ exec xterm & } &> /dev/null
 		fi
 	elif [ "${1}" -eq "$SIGTXT" ]; then
-		if [ -n "${EDIT}" ]; then
+		if [ -n "${EDITOR}" ]; then
 			if [ -n "${TERMINAL}" ]; then
-				{ exec "$TERMINAL" -e "$EDIT" & } &> /dev/null
+				{ exec "$TERMINAL" -e "$EDITOR" & } &> /dev/null
 			else
-				{ exec st -e "$EDIT" & } &> /dev/null
+				{ exec st -e "$EDITOR" & } &> /dev/null
 			fi
 		else
 			{ exec st -e vim & } &> /dev/null
