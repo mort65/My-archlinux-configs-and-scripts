@@ -1,0 +1,65 @@
+#!/bin/bash
+
+
+if [ "${#}" -ne 1 ]; then
+	exit 1
+fi
+
+USERNAME=${SUDO_USER:-$(id -u -n)}
+HOMEDIR="/home/$USERNAME"
+
+SIGEXT=9
+SIGFLE=110
+SIGTRM=111
+SIGWEB=112
+SIGTXT=113
+SIGVIS=114
+
+if [ "$DESKTOP_SESSION" == dwm ]; then
+	{ /usr/bin/bash "$HOMEDIR"/.script/dwm-sendsignal "${1}" ;  }
+else
+	if [ "${1}" -eq "$SIGFLE" ]; then
+		if [ -n "${FILEMANAGER}" ]; then
+			{ exec "$FILEMANAGER" & } &> /dev/null
+		else
+			{ exec xdg-open ~ & } &> /dev/null
+		fi
+	elif [ "${1}" -eq "$SIGWEB" ]; then
+		if [ -n "${BROWSER}" ]; then
+			{ exec "$BROWSER" & } &> /dev/null
+		else
+			{ exec xdg-open "http://" & } &> /dev/null
+		fi
+	elif [ "${1}" -eq "$SIGTRM" ]; then
+		if [ -n "${TERMINAL}" ]; then
+			{ exec "$TERMINAL" & } &> /dev/null
+		else
+			{ exec xterm & } &> /dev/null
+		fi
+	elif [ "${1}" -eq "$SIGTXT" ]; then
+		if [ -n "${EDIT}" ]; then
+			if [ -n "${TERMINAL}" ]; then
+				{ exec "$TERMINAL" -e "$EDIT" & } &> /dev/null
+			else
+				{ exec st -e "$EDIT" & } &> /dev/null
+			fi
+		else
+			{ exec st -e vim & } &> /dev/null
+		fi
+	elif [ "${1}" -eq "$SIGVIS" ]; then
+		if [ -n "${VISEDIT}" ]; then
+			{ exec "$VISEDIT" & } &> /dev/null
+		elif [ -n "${VISUAL}" ]; then
+			if [ -n "${TERMINAL}" ]; then
+				{ exec "$TERMINAL" -e "$VISUAL" & } &> /dev/null
+			else
+				{ exec st -e "$VISUAL" & } &> /dev/null
+			fi
+		else
+			{ exec st -e vim & } &> /dev/null
+		fi
+	elif [ "${1}" -eq "$SIGEXT" ]; then
+		{ /usr/bin/bash "$HOMEDIR"/bin/logoff ;  }
+	fi
+fi
+

@@ -37,6 +37,8 @@ fi
 # Here dwm is kept as default
 session=${1:-dwm}
 
+killall xbindkeys
+
 case $session in
     dwm               )
 	    export DESKTOP_SESSION="dwm"
@@ -49,6 +51,7 @@ case $session in
 	    exec startxfce4
 	    ;;
     lxqt              )
+	    xbindkeys -f ~/.xbindkeysrc-lxqt
 	    export DESKTOP_SESSION="lxqt"
 	    echo 'lxqt' > ~/.session
 	    exec startlxqt

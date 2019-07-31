@@ -2,6 +2,7 @@ export PATH=$PATH:$HOME/bin
 export EDITOR="vim"
 export VISUAL="vim"
 export TERMINAL="mlterm"
+export VISEDIT="geany"
 export BROWSER="opera"
 export FILEMANAGER="pcmanfm-qt"
 export SUDO_ASKPASS="/usr/bin/qt4-ssh-askpass"
