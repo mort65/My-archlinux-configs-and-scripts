@@ -123,15 +123,15 @@ Mod4 + z
 
 #File manager
 "$HOME/.script/siglauncher 110 -r"
-Control + Home
+Mod4 + Home
 
 #Terminal
 "$HOME/.script/siglauncher 111"
-Control + t
+Mod4 + t
 
 #Alt Terminal
 "$HOME/bin/raise qterminal"
-Control + Return
+Mod4 + Return
 
 #Web browser
 "$HOME/.script/siglauncher 112 -r"
