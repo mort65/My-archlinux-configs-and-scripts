@@ -46,17 +46,19 @@ case $session in
 	    exec dwm
 	    ;;
     xfce|xfce4        )
+	    xbindkeys -f ~/.xbindkeysrc-1
 	    export DESKTOP_SESSION="xfce4"
 	    echo 'xfce4' > ~/.session
 	    exec startxfce4
 	    ;;
     lxqt              )
-	    xbindkeys -f ~/.xbindkeysrc-lxqt
+	    xbindkeys -f ~/.xbindkeysrc-1
 	    export DESKTOP_SESSION="lxqt"
 	    echo 'lxqt' > ~/.session
 	    exec startlxqt
 	    ;;
     openbox           )
+	    xbindkeys -f ~/.xbindkeysrc-1
 	    export DESKTOP_SESSION="openbox"
 	    echo 'openbox' > ~/.session
 	    exec openbox-session
