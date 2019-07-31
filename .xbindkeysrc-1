@@ -122,31 +122,31 @@ Shift+Mod4 + Tab
 Mod4 + z
 
 #File manager
-"$HOME/.script/siglauncher 110"
+"$HOME/.script/siglauncher 110 -r"
 Control+Mod4 + Home
 
 #Terminal
-"$HOME/.script/siglauncher 111"
+"$HOME/.script/siglauncher 111 -r"
 Control+Mod4 + t
 
 #Alt Terminal
-"qterminal"
+"$HOME/bin/raise_or_run qterminal"
 Control+Mod4 + Return
 
 #Web browser
-"$HOME/.script/siglauncher 112"
+"$HOME/.script/siglauncher 112 -r"
 Control+Mod4 + w
 
 #Terminal text editor
-"$HOME/.script/siglauncher 113"
+"$HOME/.script/siglauncher 113 -r"
 Control+Mod4 + e
 
 #Graphical text editor
-"$HOME/.script/siglauncher 114"
+"$HOME/.script/siglauncher 114 -r"
 Control+Mod4 + g
 
 #Music player
-"$HOME/.script/siglauncher 115"
+"$HOME/.script/siglauncher 115 -r"
 Control+Mod4 + m
 
 #Launch rofi
@@ -158,7 +158,7 @@ Mod4 + o
 Mod4 + Scroll_Lock
 
 #Task manager
-"lxtask"
+"$HOME/bin/raise_or_run lxtask"
 Mod4 + Delete
 
 ##################################

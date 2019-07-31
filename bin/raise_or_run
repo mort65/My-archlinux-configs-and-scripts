@@ -1,0 +1,10 @@
+#!/bin/sh
+#raise or run the program
+
+PID="$(pgrep -xo "${1}")"
+
+if [ -n "$PID" ]; then
+	{ wmctrl -a "$(wmctrl -lp | grep "0x[0-9a-f]\+[[:space:]]\+[0-9]\+[[:space:]]${PID}" | cut -c 1-10)" -i ; } > /dev/null 2>&1 && exit
+fi
+
+exec "${1}" &
