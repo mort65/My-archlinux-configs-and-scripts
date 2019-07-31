@@ -3,12 +3,12 @@
 
 WINS="$(wmctrl -lp)"
 pgrep -x "$1" | while read -r line ; do
-	{ wmctrl -a "$(echo "$WINS" | grep "0x[0-9a-f]\+[[:space:]]\+[0-9]\+[[:space:]]${line}" | awk '{print $1}')" -i ; } > /dev/null 2>&1 && exit 100
-	done
+    { wmctrl -a "$(echo "$WINS" | grep "0x[0-9a-f]\+[[:space:]]\+[0-9]\+[[:space:]]${line}" | awk '{print $1}')" -i ; } > /dev/null 2>&1 && exit 100
+done
 
 if [ $? -eq 100 ]; then
-	exit 0
+    exit 0
 else
-	exec "${1}" &
+    exec "${1}" &
 fi
 
