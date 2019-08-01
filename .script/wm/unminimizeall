@@ -3,13 +3,13 @@
 active="$(echo "obase=16; $(xdotool getactivewindow 2>/dev/null)" | bc -l)"
 
 wmctrl -l | while read -r line ;do
-    { xprop -notype -id "$line" '_NET_WM_STATE' | \
-            grep -ve "_NET_WM_STATE_SKIP_TASKBAR\(,\|$\)" && \
-        wmctrl -r "$line" -b remove,hidden -i ; } > /dev/null 2>&1
+        { xprop -notype -id "$line" '_NET_WM_STATE' | \
+                        grep -ve "_NET_WM_STATE_SKIP_TASKBAR\(,\|$\)" && \
+                wmctrl -r "$line" -b remove,hidden -i ; } > /dev/null 2>&1
 done
 
 if [ -n "$active" ] ;then
-    xdotool windowraise "$active"
-    xdotool windowfocus "$active"
+        xdotool windowraise "$active"
+        xdotool windowfocus "$active"
 fi
 

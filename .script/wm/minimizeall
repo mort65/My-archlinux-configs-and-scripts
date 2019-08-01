@@ -1,7 +1,7 @@
 #!/bin/sh
 wmctrl -l | while read -r line ;do
-    { xprop -notype -id "$line" '_NET_WM_STATE' | grep -ve \
-            "\(_NET_WM_STATE_HIDDEN,\?\|_NET_WM_STATE_SKIP_TASKBAR\(,\|$\)\)" \
-        && xdotool windowminimize "$line" ; } > /dev/null 2>&1
+        { xprop -notype -id "$line" '_NET_WM_STATE' | grep -ve \
+                        "\(_NET_WM_STATE_HIDDEN,\?\|_NET_WM_STATE_SKIP_TASKBAR\(,\|$\)\)" \
+                && xdotool windowminimize "$line" ; } > /dev/null 2>&1
 done
 
