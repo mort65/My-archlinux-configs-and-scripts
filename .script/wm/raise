@@ -5,8 +5,8 @@ WINS="$(wmctrl -lp)"
 
 pgrep -x "$1" | while read -r line ; do
         win="$(echo "$WINS" | \
-        awk '{if ($2 >= 0 && $3 == l) print $1}' \
-        l="${line}")"
+        awk '{if ($2 >= 0 && $3 == i) print $1}' \
+        i="${line}")"
 
         if [ -n "$win" ];then
                 wmctrl -a "$win" -i
