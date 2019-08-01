@@ -125,6 +125,18 @@ Mod4 + z
 "$HOME/.script/wm/unminimizeall"
 Mod4+Alt + z
 
+#Maximize/Unmaximize active window
+"$HOME/.script/wm/toggle_maximize"
+Mod4 + f
+
+#Toggle above for active window (Prior=PageUp)
+"$HOME/.script/wm/toggle_above"
+Mod4 + Prior
+
+#Toggle above for active window (Next=PageDown)
+"$HOME/.script/wm/toggle_below"
+Mod4 + Next
+
 #File manager
 "$HOME/.script/siglauncher 110 -r"
 Control+Mod4 + Home
