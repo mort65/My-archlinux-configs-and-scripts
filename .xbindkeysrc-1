@@ -165,6 +165,10 @@ Control+Mod4 + g
 "$HOME/.script/siglauncher 115 -r"
 Control+Mod4 + m
 
+#Launch dmenu
+"$HOME/bin/dmenu_launch"
+Mod4 + d
+
 #Launch rofi
 "$HOME/bin/rofi_launch"
 Mod4 + o
