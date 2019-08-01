@@ -4,7 +4,7 @@
 WINS="$(wmctrl -lp)"
 
 pgrep -x "$1" | while read -r line ; do
-        win="$(echo "$WINS" | \
+        win="$(echo "${WINS}" | \
         awk '{if ($2 >= 0 && $3 == p) print $1}' \
         p="${line}")"
 
