@@ -118,20 +118,24 @@ Mod4 + Tab
 Shift+Mod4 + Tab
 
 #Minimize All windows
-"$HOME/bin/stiler.py minimize_all"
+"$HOME/.script/wm/minimizeall"
 Mod4 + z
+
+#Unminimize All windows
+"$HOME/.script/wm/unminimizeall"
+Alt + z
 
 #File manager
 "$HOME/.script/siglauncher 110 -r"
-Mod4 + Home
+Control+Mod4 + Home
 
 #Terminal
 "$HOME/.script/siglauncher 111"
-Mod4 + t
+Control+Mod4 + t
 
 #Alt Terminal
-"$HOME/bin/raise qterminal"
-Mod4 + Return
+"$HOME/.script/wm/raise qterminal"
+Control+Mod4 + Return
 
 #Web browser
 "$HOME/.script/siglauncher 112 -r"
@@ -158,8 +162,8 @@ Mod4 + o
 Mod4 + Scroll_Lock
 
 #Task manager
-"$HOME/bin/raise lxtask"
-Mod4 + Delete
+"$HOME/.script/wm/raise lxtask"
+Control+Mod4 + Delete
 
 ##################################
 # End of xbindkeys configuration #
