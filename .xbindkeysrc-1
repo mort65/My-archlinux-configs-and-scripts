@@ -167,7 +167,7 @@ Control+Mod4 + m
 
 #Launch dmenu
 "$HOME/bin/dmenu_launch"
-Mod4 + d
+Mod4 + u
 
 #Launch rofi
 "$HOME/bin/rofi_launch"
