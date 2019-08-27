@@ -557,7 +557,7 @@ if __name__ == "__main__":
     Initial_Image_File = None
     Image_Dirs = (None,) #will use ~/Pictures
     if len(sys.argv) > 1:
-        if os.path.isfile(sys.argv[1]):  # set wallpaper the exit
+        if os.path.isfile(sys.argv[1]):  # set wallpaper then exit
             Initial_Image_File = sys.argv[1]
             Image_Dirs = None
             Interval_In_Secs = 0
