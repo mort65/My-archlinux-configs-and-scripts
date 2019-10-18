@@ -1,3 +1,4 @@
+
 #!/bin/bash
 
 #this script check for archlinux news and if no news found update archlinux.
@@ -6,6 +7,7 @@ Args=$@
 USERNAME=${SUDO_USER:-$(id -u -n)}
 HOMEDIR="/home/$USERNAME"
 SUDO=""
+
 if [ $EUID -ne 0 ]; then
     SUDO='/usr/bin/sudo'
 fi
@@ -454,7 +456,7 @@ if [[ $Install == "Yes" ]] || [[ $Build == "Yes" ]]; then
         echo ""
         echo -e $blue"===>$reset Checking the build package file for error..."
         echo ""
-        /usr/bin/find . -maxdepth 1 -name '*.pkg.tar.xz' -exec /usr/bin/namcap {} \;
+	/usr/bin/find . -maxdepth 1 \( -name '*.pkg.tar.xz' -o -name '*.pkg.tar.zst' \) -exec /usr/bin/namcap {} \;
         echo ""
         read -p "Press enter to continue..."
     fi
@@ -462,7 +464,7 @@ if [[ $Install == "Yes" ]] || [[ $Build == "Yes" ]]; then
         echo ""
         echo -e $blue"===>$reset Installing the package..."
         echo ""
-        { /usr/bin/find . -maxdepth 1 -name '*.pkg.tar.xz' -exec $SUDO /usr/bin/pacman -U {} \; ; } || { echo "" ; echo -e $red"Error:$reset Cannot install the package" ; echo "" ; read -p "Press enter to exit..." ; exit 1; }
+	{ /usr/bin/find . -maxdepth 1 \( -name '*.pkg.tar.xz' -o -name '*.pkg.tar.zst' \) -exec $SUDO /usr/bin/pacman -U {} \; ; } || { echo "" ; echo -e $red"Error:$reset Cannot install the package" ; echo "" ; read -p "Press enter to exit..." ; exit 1; }
     fi
 fi
 if [[ $Sync == "Yes" ]]; then
@@ -471,7 +473,11 @@ if [[ $Sync == "Yes" ]]; then
     echo
     if [[ ! $Refresh == "Yes" ]]; then
         if [[ $AUR == "Yes" ]]; then
-            if [ -x /usr/bin/yaourt ]; then
+            if [ -x /usr/bin/yay ]; then
+                { /usr/bin/sudo -u $USERNAME /usr/bin/yay -Syu ; } || { echo -e $red"Error:$reset Cannot update the system" ; read -p "Press enter to exit..." ; exit 1; }
+            elif [ -x /usr/bin/trizen ]; then
+                { /usr/bin/sudo -u $USERNAME /usr/bin/trizen -Syu ; } || { echo -e $red"Error:$reset Cannot update the system" ; read -p "Press enter to exit..." ; exit 1; }
+            elif [ -x /usr/bin/yaourt ]; then
                 { /usr/bin/sudo -u $USERNAME /usr/bin/yaourt -Syua ; } || { echo -e $red"Error:$reset Cannot update the system" ; read -p "Press enter to exit..." ; exit 1; }
             else
                 echo -e $red"Error:$reset Yaourt not found"
@@ -484,7 +490,11 @@ if [[ $Sync == "Yes" ]]; then
         fi
     else
         if [[ $AUR == "Yes" ]]; then
-            if [ -x /usr/bin/yaourt ]; then
+            if [ -x /usr/bin/yay ]; then
+                { /usr/bin/sudo -u $USERNAME /usr/bin/yay -Syyu ; } || { echo -e $red"Error:$reset Cannot update the system" ; read -p "Press enter to exit..." ; exit 1; }
+            elif [ -x /usr/bin/trizen ]; then
+                { /usr/bin/sudo -u $USERNAME /usr/bin/trizen -Syyu ; } || { echo -e $red"Error:$reset Cannot update the system" ; read -p "Press enter to exit..." ; exit 1; }
+            elif [ -x /usr/bin/yaourt ]; then
                 { /usr/bin/sudo -u $USERNAME /usr/bin/yaourt -Syyua ; } || { echo -e $red"Error:$reset Cannot update the system" ; read -p "Press enter to exit..." ; exit 1; }
             else
                 echo -e $red"Error:$reset Yaourt not found"
@@ -499,7 +509,7 @@ if [[ $Sync == "Yes" ]]; then
 fi
 echo
 if [[ ! $RSSOff == "Yes" ]]; then
-    [ -f $RSSFILE ] && cat "${RSSFILE}" 2> /dev/null
+    [ -f $RSSFILE ] && cat "${RSSFILE}" | 2> /dev/null
 fi
 echo
 if [[ ! $LoggingOff == "Yes" ]]; then
